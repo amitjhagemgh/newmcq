@@ -1,0 +1,85 @@
+body {
+    min-height: 100vh;
+}
+
+.dashboard-container {
+    min-height: calc(100vh - 112px);
+}
+
+.dashboard-container > .row {
+    height: 100%;
+}
+
+.assigned-exams {
+    display: inline-block;
+    /* justify-content: space-between; */
+    position: relative;
+    /* width: fit-content; */
+}
+
+.assigned-exams span {
+    position: absolute;
+    aspect-ratio: 1 / 1;
+    width: 12px;
+    height: 12px;
+    padding: 0;
+    font-size: 8px;
+    text-align: center;
+    right: 0px;
+    bottom: 33px;
+    opacity: 0;
+    cursor: pointer;
+    transition: opacity 0.1s ease-in-out;
+}
+
+.assigned-exams:hover span {
+    opacity: 1;
+}
+
+.add-option {
+    left: 16px;
+    /* top: 6px; */
+}
+
+.add-questions-options {
+    width: 95%;
+}
+
+i[class*="fa-"] {
+    cursor: pointer;
+}
+
+input[type="checkbox"].d-none + label{
+    margin: 2px;
+}
+
+input:checked + label {
+    background-color: lime;
+}
+
+table, th, tr, td {
+    border: 1px solid black;
+}
+[colspan='8'] {
+    text-align: center;
+}
+
+.toggle-correct {
+    margin-left: 5px;
+}
+
+[for^="edit_options"] {
+    margin-right: 5px;
+}
+
+.remove-option {
+    margin-left: 5px;
+}
+
+.min-height-100-vh {
+    min-height: 100vh;
+}
+
+#exam-duration {
+    width: 50%;
+}

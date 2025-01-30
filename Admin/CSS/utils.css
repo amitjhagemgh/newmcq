@@ -1,0 +1,8 @@
+.invisible {
+    visibility: hidden;
+}
+
+.font-size-20 {
+    font-size: 25px;
+    font-weight: 200;
+}

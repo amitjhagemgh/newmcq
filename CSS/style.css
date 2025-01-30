@@ -1,0 +1,63 @@
+body {
+    min-height: 100vh;
+}
+
+#countdown {
+    text-align: right;
+    background-color: #ffff00;
+    width: fit-content;
+    padding: 10px 15px;
+    position: fixed;
+    right: 0;
+    top: 52px;
+    margin: 20px;
+    border-radius: 10px;
+    border: 2px solid black;
+    font-weight: bold;
+    z-index: 1;
+}
+
+.dashboard-container .row {
+    min-height: 100vh;
+}
+
+.dashboard-container .row .col-6 {
+    min-height: 100%;
+}
+
+.dashboard-container .row .col-6:last-child {
+    border-left: 2px solid black;
+}
+
+.dashboard-container .card {
+    width: 75%;
+}
+
+.quizes-btn {
+    font-size: 100px;
+}
+
+table, th, tr, td {
+    border: 1px solid black;
+}
+
+[colspan] {
+    text-align: center;
+}
+
+.opinion-btn {
+    font-size: 25px;
+}
+
+.dashboard-container .col-6 {
+    display: grid;
+    place-content: center;
+}
+
+.col-6 [href="all_quizes.php"] {
+    margin-bottom: 77px;
+}
+
+.min-height-100-vh {
+    min-height: 100vh;
+}
