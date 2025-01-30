@@ -121,7 +121,7 @@ if(count($inputData["questions"]) == 0) {
     // Insert main result
     $sql = "INSERT INTO result(user_id, score, exam_id, questions_attempted_id, correctly_questions_attempted_id) 
             VALUES ('$user_id', '$score', '$exam_id', '0', '0')";
-    $result = mysqli_query($conn, $sq);
+    $result = mysqli_query($conn, $sql);
     
     if (!$result) {
         http_response_code(500);
