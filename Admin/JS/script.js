@@ -210,34 +210,73 @@ function mcqQuestions() {
         const questionTypes = document.querySelectorAll(".question-type");
 
         Array.from(questionTypes).forEach((e) => {
-            // Store removed elements to restore them if needed
             let removedElements = [];
-
+        
             e.addEventListener("change", () => {
                 let currentElement = e.closest(".add-question-type-box").nextElementSibling;
-
+        
                 if (e.value === "title") {
-                    // Remove all siblings with the class "option-container"
                     while (currentElement) {
-                        let next = currentElement.nextElementSibling; // Store next sibling
+                        let next = currentElement.nextElementSibling;
                         if (currentElement.classList.contains("option-container")) {
-                            removedElements.push(currentElement); // Store removed element
-                            currentElement.remove(); // Remove element from DOM
+                            removedElements.push(currentElement);
+                            currentElement.remove();
                         }
-                        currentElement = next; // Move to the next sibling
+                        currentElement = next;
                     }
+                } else if (e.value == "weighted") {
+                    e.parentElement.parentElement.querySelectorAll(".toggle-correct").forEach((toggle) => {
+                        toggle.style.display = "none";
+                    });
+        
+                    let optionContainers = e.parentElement.parentElement.querySelectorAll(".option-container");
+                    optionContainers.forEach((option, index) => {
+                        // Check if already added to avoid duplication
+                        if (!option.querySelector(".marking-field")) {
+                            let markingFieldElement = document.createElement("input");
+                            let markingLabelElement = document.createElement("label");
+        
+                            markingLabelElement.innerText = String.fromCharCode(65 + index) + " Mark"; // Fix charAt issue
+                            markingFieldElement.setAttribute("type", "text");
+                            markingFieldElement.setAttribute("min", "0");
+                            markingFieldElement.value = "1"; // Default marks
+                            markingFieldElement.classList.add("marking-field");
+                            markingFieldElement.classList.add("form-control");
+                            markingLabelElement.classList.add("marking-label");
+                            markingLabelElement.classList.add("form-label");
+        
+                            option.appendChild(markingLabelElement);
+                            option.appendChild(markingFieldElement);
+        
+                            // Allow only numeric input
+                            markingFieldElement.addEventListener("input", () => {
+                                markingFieldElement.value = markingFieldElement.value.replace(/\D/g, ""); // Remove non-numeric chars
+                            });
+                        }
+                    });
                 } else {
-                    // Restore previously removed elements if they exist
+                    e.parentElement.parentElement.querySelectorAll(".toggle-correct").forEach((toggle) => {
+                        if (toggle.hasAttribute("style")) {
+                            toggle.removeAttribute("style");
+                        }
+                    });
+        
+                    // Remove marking fields if not weighted
+                    e.parentElement.parentElement.querySelectorAll(".option-container").forEach((option) => {
+                        option.querySelectorAll(".marking-field, .marking-label").forEach((el) => el.remove());
+                    });
+        
                     if (removedElements.length > 0) {
-                        const parent = e.closest("form"); // Parent form to append elements
+                        const parent = e.closest("form");
                         removedElements.forEach((el) => {
-                            parent.appendChild(el); // Re-add the element at the end of the form
+                            parent.appendChild(el);
                         });
-                        removedElements = []; // Clear the array
+                        removedElements = [];
                     }
                 }
             });
         });
+        
     });
     document.addEventListener("DOMContentLoaded", () => {
         // Get all question type select elements for both add and edit forms
@@ -260,6 +299,10 @@ function mcqQuestions() {
                         }
                         currentElement = next; // Move to the next sibling
                     }
+                    // } else if(e.value === "weighted") {
+                    //     e.parentElement.parentElement.querySelectorAll(".toggle-correct").forEach((toggle) => {
+                    //         toggle.style.display = "none";
+                    //     })
                 } else {
                     // Restore previously removed elements if they exist
                     if (removedElements.length > 0) {
@@ -299,16 +342,16 @@ function mcqQuestions() {
     Array.from(addOption).forEach((e, i) => {
         e.addEventListener("click", () => {
             let addQuestionsOptionsElement;
-
+    
             // Check if it's Add Form or Edit Form
             if (e.classList.contains("add-question-add-option")) {
                 addQuestionsOptionsElement = e.previousElementSibling.querySelectorAll(".add-questions-options");
             } else if (e.classList.contains("edit-question-add-option")) {
                 addQuestionsOptionsElement = e.previousElementSibling.querySelectorAll(".add-questions-options");
             }
-
+    
             let option;
-
+    
             // Case 1: If no options exist, start with 'A'
             if (addQuestionsOptionsElement.length === 0) {
                 option = 'A';
@@ -317,12 +360,27 @@ function mcqQuestions() {
                 let lastAddQuestionsOptionsElement = addQuestionsOptionsElement[addQuestionsOptionsElement.length - 1];
                 option = lastAddQuestionsOptionsElement.getAttribute("id").slice(-1); // Get last option letter
             }
-
+    
             // Calculate next option letter (A -> B -> C -> D -> E...)
             let nextOption = String.fromCharCode(option.charCodeAt(0) + 1);
-
+    
+            // ✅ Fix: Ensure form exists before checking "weighted" type
+            let formElement = e.previousElementSibling;
+            let questionTypeElement = formElement ? formElement.querySelector(".question-type") : null;
+            let isWeighted = questionTypeElement && questionTypeElement.value === "weighted";
+    
+            // ✅ Generate marking input field if "weighted" is selected
+            let markingFieldHTML = isWeighted
+                ? `<label class="marking-label form-label">${nextOption.toUpperCase()} Mark</label>
+                   <input type="text" class="marking-field form-control" value="1" min="0" required>`
+                : "";
+            console.log(markingFieldHTML);
+            console.log(isWeighted);
+            console.log(questionTypeElement);
+            console.log(formElement);
+            console.log(e);
             let newElement;
-
+    
             // Case for Add Form
             if (e.classList.contains("add-question-add-option")) {
                 newElement = `<div class="mb-3 option-container">
@@ -331,6 +389,7 @@ function mcqQuestions() {
                                 <input type="text" class="form-control d-inline-block add-questions-options" id="opt_${nextOption}" name="options[]" required>
                                 <input type="hidden" class="form-control invisible add-questions-options" id="correct_opt_${nextOption}" name="correct_options[]">
                                 <i class="fa-solid fa-xmark remove-option" style="cursor: pointer;"></i>
+                                ${markingFieldHTML}
                             </div>`;
             }
             // Case for Edit Form
@@ -341,25 +400,39 @@ function mcqQuestions() {
                                 <input type="text" class="form-control d-inline-block add-questions-options" id="edit_options_${nextOption}" name="options[]" required>
                                 <input type="hidden" class="form-control invisible add-questions-options" id="correct_opt_${nextOption}" name="correct_options[]">
                                 <i class="fa-solid fa-xmark remove-option" style="cursor: pointer;"></i>
+                                ${markingFieldHTML}
                             </div>`;
             }
-
+    
             // Insert the new option element after the last option, or if no options, after the add button
             if (addQuestionsOptionsElement.length === 0) {
                 e.nextElementSibling.insertAdjacentHTML('afterend', newElement);
             } else {
                 addQuestionsOptionsElement[addQuestionsOptionsElement.length - 1].parentElement.insertAdjacentHTML('afterend', newElement);
             }
-
+    
             // Add functionality to the newly added options (remove and toggle correct)
             addRemoveOptionEvent();
             toggleCorrect();
+    
+            // ✅ Add event listener to new marking fields
+            if (isWeighted) {
+                let newMarkingField = formElement.querySelector(".option-container:last-child .marking-field");
+                if (newMarkingField) {
+                    newMarkingField.addEventListener("input", () => {
+                        newMarkingField.value = newMarkingField.value.replace(/\D/g, ""); // Allow only numbers
+                    });
+                }
+            }
         });
-
+    
         // Add functionality to initially available options
         addRemoveOptionEvent();
         toggleCorrect();
     });
+    
+    
+    
 
     let editQuestion = document.querySelectorAll(".edit-question");
     let editQuestionSubmit = document.querySelectorAll(".edit_question_submit");
@@ -416,7 +489,7 @@ function mcqQuestions() {
             }
         } else {
             event.target.parentElement.parentElement.querySelectorAll(".toggle-correct").forEach(e => {
-                if(e.parentElement.parentElement.querySelector(".question-type").value == "single") {
+                if (e.parentElement.parentElement.querySelector(".question-type").value == "single") {
                     if (e.classList.contains("text-success")) {
                         e.classList.remove("text-success");
                     }
@@ -552,7 +625,7 @@ function mcqQuestions() {
     Array.from(resetButtonElements).forEach((e) => {
         e.parentElement.parentElement.nextElementSibling.lastElementChild.addEventListener("click", () => {
             Array.from(e.parentElement.querySelectorAll("input")).forEach((e) => {
-                if(e.hasAttribute("disabled")) {
+                if (e.hasAttribute("disabled")) {
                     e.removeAttribute("disabled");
                 }
             });
@@ -560,7 +633,7 @@ function mcqQuestions() {
         });
         e.parentElement.parentElement.previousElementSibling.lastElementChild.addEventListener("click", () => {
             Array.from(e.parentElement.querySelectorAll("input")).forEach((e) => {
-                if(e.hasAttribute("disabled")) {
+                if (e.hasAttribute("disabled")) {
                     e.removeAttribute("disabled");
                 }
             });
@@ -597,18 +670,18 @@ function questionBank() {
         submitCreateQuiz.click();
     });
     selectQuizElement.addEventListener("change", () => {
-        if(selectQuizElement.value == "") {
-            if(newQuizElement.getAttribute("disabled")) {
+        if (selectQuizElement.value == "") {
+            if (newQuizElement.getAttribute("disabled")) {
                 newQuizElement.removeAttribute("disabled");
             }
-            if(examDurationInputElement.getAttribute("disabled")) {
+            if (examDurationInputElement.getAttribute("disabled")) {
                 examDurationInputElement.removeAttribute("disabled");
             }
         } else {
-            if(!newQuizElement.getAttribute("disabled")) {
+            if (!newQuizElement.getAttribute("disabled")) {
                 newQuizElement.setAttribute("disabled", true);
             }
-            if(!examDurationInputElement.getAttribute("disabled")) {
+            if (!examDurationInputElement.getAttribute("disabled")) {
                 examDurationInputElement.setAttribute("disabled", true);
             }
         }
@@ -617,23 +690,23 @@ function questionBank() {
     examDurationInputElement.addEventListener("input", (event) => {
         event.target.value = event.target.value.split("").filter(e => !isNaN(e) && e != " ").join("");
     })
-    
+
     Array.from(addToQuiz).forEach(e => {
-        e.addEventListener("click", function() {
+        e.addEventListener("click", function () {
             // console.log(e.parentElement.parentElement);
             let uniqueQuestionID = e.parentElement.parentElement.querySelectorAll(".dt-type-numeric")[1];
-            if(e.checked == true) {
+            if (e.checked == true) {
                 console.log(uniqueQuestionID);
                 let questionHiddenElement = document.createElement("input");
                 questionHiddenElement.setAttribute("type", "hidden");
                 questionHiddenElement.setAttribute("value", uniqueQuestionID.innerText.trim());
-                questionHiddenElement.setAttribute("name", "unique-question-id-"+uniqueQuestionID.innerText.trim());
-                questionHiddenElement.setAttribute("id", "unique-question-id-"+uniqueQuestionID.innerText.trim());
+                questionHiddenElement.setAttribute("name", "unique-question-id-" + uniqueQuestionID.innerText.trim());
+                questionHiddenElement.setAttribute("id", "unique-question-id-" + uniqueQuestionID.innerText.trim());
                 console.log(submitCreateQuiz);
                 createQuizForm.insertBefore(questionHiddenElement, submitCreateQuiz);
             } else {
                 // console.log("unique-question-id-" + uniqueQuestionID.innerText);
-                if(createQuizForm.contains(document.getElementById("unique-question-id-" + uniqueQuestionID.innerText))) {
+                if (createQuizForm.contains(document.getElementById("unique-question-id-" + uniqueQuestionID.innerText))) {
                     createQuizForm.removeChild(document.getElementById("unique-question-id-" + uniqueQuestionID.innerText));
                 }
             }
@@ -681,77 +754,77 @@ if (document.getElementById("user-result-table-pdf")) {
 window.onload = function () {
     try {
         download_button.addEventListener
-        ('click', async function () {
-            const filename = 'exam_data.pdf';
+            ('click', async function () {
+                const filename = 'exam_data.pdf';
 
-            try {
-                const opt = {
-                    margin: 0.5,
-                    filename: filename,
-                    enableLinks: true,
-                    pagebreak: { 
-                        mode: ['avoid-all', 'css', 'legacy'],
-                        before: '.page-break-before',
-                        after: '.page-break-after'
-                    },
-                    // image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: {
-                        scale: 2,
-                        useCORS: true,
-                        letterRendering: true,
-                        scrollX: 0,
-                        scrollY: 0,
-                        windowWidth: document.documentElement.offsetWidth,
-                        windowHeight: document.documentElement.offsetHeight
-                    },
-                    jsPDF: {
-                        unit: 'in',
-                        format: document.title == "MBTI Result" ? 'letter' : [14, 8.5],
-                        orientation: document.title == "Personality Type Test Result" ? 'portrait' : 'landscape',
-                        compress: true,
-                        precision: 2,
-                        putTotalPages: true
-                    }
-                };
-                const contentElement = content.cloneNode(true);
-                
-                // Ensure all content is visible before conversion
-                contentElement.style.height = 'auto';
-                contentElement.style.overflow = 'visible';
-                
-                // Create a temporary container
-                const container = document.createElement('div');
-                container.appendChild(contentElement);
-                container.style.position = 'absolute';
-                container.style.left = '-9999px';
-                document.body.appendChild(container);
-
-                await html2pdf()
-                    .set(opt)
-                    .from(contentElement)
-                    .toPdf()
-                    .get('pdf')
-                    .then((pdf) => {
-                        // Add page numbers if needed
-                        const totalPages = pdf.internal.getNumberOfPages();
-                        for(let i = 1; i <= totalPages; i++) {
-                            pdf.setPage(i);
-                            pdf.setFontSize(10);
-                            pdf.text(`Page ${i} of ${totalPages}`, 
-                                pdf.internal.pageSize.getWidth() - 1.5, 
-                                pdf.internal.pageSize.getHeight() - 0.5);
+                try {
+                    const opt = {
+                        margin: 0.5,
+                        filename: filename,
+                        enableLinks: true,
+                        pagebreak: {
+                            mode: ['avoid-all', 'css', 'legacy'],
+                            before: '.page-break-before',
+                            after: '.page-break-after'
+                        },
+                        // image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: {
+                            scale: 2,
+                            useCORS: true,
+                            letterRendering: true,
+                            scrollX: 0,
+                            scrollY: 0,
+                            windowWidth: document.documentElement.offsetWidth,
+                            windowHeight: document.documentElement.offsetHeight
+                        },
+                        jsPDF: {
+                            unit: 'in',
+                            format: document.title == "MBTI Result" ? 'letter' : [14, 8.5],
+                            orientation: document.title == "Personality Type Test Result" ? 'portrait' : 'landscape',
+                            compress: true,
+                            precision: 2,
+                            putTotalPages: true
                         }
-                    })
-                    .save()
-                    .then(() => {   
-                        // Clean up
-                        document.body.removeChild(container);
-                    });
+                    };
+                    const contentElement = content.cloneNode(true);
 
-            } catch (error) {
-                console.error('Error:', error.message);
-            }
-        });
+                    // Ensure all content is visible before conversion
+                    contentElement.style.height = 'auto';
+                    contentElement.style.overflow = 'visible';
+
+                    // Create a temporary container
+                    const container = document.createElement('div');
+                    container.appendChild(contentElement);
+                    container.style.position = 'absolute';
+                    container.style.left = '-9999px';
+                    document.body.appendChild(container);
+
+                    await html2pdf()
+                        .set(opt)
+                        .from(contentElement)
+                        .toPdf()
+                        .get('pdf')
+                        .then((pdf) => {
+                            // Add page numbers if needed
+                            const totalPages = pdf.internal.getNumberOfPages();
+                            for (let i = 1; i <= totalPages; i++) {
+                                pdf.setPage(i);
+                                pdf.setFontSize(10);
+                                pdf.text(`Page ${i} of ${totalPages}`,
+                                    pdf.internal.pageSize.getWidth() - 1.5,
+                                    pdf.internal.pageSize.getHeight() - 0.5);
+                            }
+                        })
+                        .save()
+                        .then(() => {
+                            // Clean up
+                            document.body.removeChild(container);
+                        });
+
+                } catch (error) {
+                    console.error('Error:', error.message);
+                }
+            });
     } catch {
         console.log("handled");
     }
