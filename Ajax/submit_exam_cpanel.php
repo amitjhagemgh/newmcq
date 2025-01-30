@@ -113,7 +113,7 @@ if(count($inputData["questions"]) == 0) {
                 'question_id' => $question_id,
                 'selected' => $selected_options_int,
                 'correct' => $correct_options,
-                'is_correct' => $is_mathing
+                'is_correct' => $is_matching
             ];
         }
     }
