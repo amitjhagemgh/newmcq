@@ -19,6 +19,7 @@
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST["add_question"])) {
+            array_output_die($_POST);
             $check_sql_question = "SELECT * FROM questions WHERE questions = '" . get_safe_value($conn, $_POST['question']) . "'";
             $check_result_question = mysqli_query($conn, $check_sql_question);
 
@@ -67,6 +68,7 @@
                     // Combine Options and Correct Status in Single Array
                     $options = $_POST['options'];
                     $correct_options = $_POST['correct_options'];
+                    $marking = $_POST['marking'];
     
                     // Insert into Database
                     $sql = "INSERT INTO questions (questions, question_image, question_type, question_id, exam_id, topic_id, main_group_id, sub_group_id, no_of_times_correctly_attempted, no_of_times_attempted, status) 
@@ -81,8 +83,8 @@
                         
                         for ($i = 0; $i < count($options); $i++) {
                             $is_correct = ($correct_options[$i] == "correct") ? 1 : 0;
-                            $option_sql = "INSERT INTO options (question_id, answers, is_correct, status) VALUES 
-                            ('$question_id', '" . get_safe_value($conn, $options[$i]) . "', '" . $is_correct . "', 1)";
+                            $option_sql = "INSERT INTO options (question_id, answers, marking, is_correct, status) VALUES 
+                            ('$question_id', '" . get_safe_value($conn, $options[$i]) . "', '" . $marking[$i] . "', '" . $is_correct . "', 1)";
                             // echo $option_sql;
                             // die;
                             $option_result = mysqli_query($conn, $option_sql);

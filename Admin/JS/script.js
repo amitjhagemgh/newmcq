@@ -214,7 +214,24 @@ function mcqQuestions() {
         
             e.addEventListener("change", () => {
                 let currentElement = e.closest(".add-question-type-box").nextElementSibling;
-        
+                
+                if(e.value !== "weighted") {
+                    e.parentElement.parentElement.querySelectorAll(".toggle-correct").forEach((toggle) => {
+                        if(toggle.classList.contains("d-none")) {
+                            toggle.classList.remove("d-none");
+                        }
+                    });
+                    let invisibleCorrectIncorrectEement = e.parentElement.parentElement.querySelectorAll(".invisible");
+                    let toggleCorrectElement = e.parentElement.parentElement.querySelectorAll(".toggle-correct");
+                    for (let i = 0; i < invisibleCorrectIncorrectEement.length; i++) {
+                        if(!toggleCorrectElement[i].classList.include("text-success")) {
+                            if(invisibleCorrectIncorrectEement[i].value == "correct") {
+                                invisibleCorrectIncorrectEement[i].value = "incorrect";
+                            }
+                        }
+                    }
+
+                }
                 if (e.value === "title") {
                     while (currentElement) {
                         let next = currentElement.nextElementSibling;
@@ -226,7 +243,11 @@ function mcqQuestions() {
                     }
                 } else if (e.value == "weighted") {
                     e.parentElement.parentElement.querySelectorAll(".toggle-correct").forEach((toggle) => {
-                        toggle.style.display = "none";
+                        toggle.classList.add("d-none");
+                    });
+                    let invisibleCorrectIncorrectEement = e.parentElement.parentElement.querySelectorAll(".invisible");
+                    Array.from(invisibleCorrectIncorrectEement).forEach(e => {
+                        e.value = "correct";
                     });
         
                     let optionContainers = e.parentElement.parentElement.querySelectorAll(".option-container");
@@ -235,9 +256,14 @@ function mcqQuestions() {
                         if (!option.querySelector(".marking-field")) {
                             let markingFieldElement = document.createElement("input");
                             let markingLabelElement = document.createElement("label");
+                            let spacingElement = document.createElement("div");
+
+                            spacingElement.classList.add("mb-3");
         
                             markingLabelElement.innerText = String.fromCharCode(65 + index) + " Mark"; // Fix charAt issue
+                            markingLabelElement.setAttribute("for", "marking-" + String.fromCharCode(65 + index).toLowerCase());
                             markingFieldElement.setAttribute("type", "text");
+                            markingFieldElement.setAttribute("id", "marking-" + String.fromCharCode(65 + index).toLowerCase());
                             markingFieldElement.setAttribute("min", "0");
                             markingFieldElement.setAttribute("oninput", "this.value = this.value.split('').filter(e => !isNaN(e) && e != ' ').join('');");
                             markingFieldElement.setAttribute("maxlength", "3");
@@ -249,6 +275,7 @@ function mcqQuestions() {
                             markingLabelElement.classList.add("marking-label");
                             markingLabelElement.classList.add("form-label");
         
+                            option.appendChild(spacingElement);
                             option.appendChild(markingLabelElement);
                             option.appendChild(markingFieldElement);
         
@@ -291,7 +318,10 @@ function mcqQuestions() {
             let removedElements = [];
 
             e.addEventListener("change", () => {
-                let currentElement = e.closest(".edit-question-type-box").nextElementSibling;
+                let currentElement;
+                try {
+                    currentElement = e.closest(".edit-question-type-box").nextElementSibling;
+                } catch(error){}
 
                 if (e.value === "title") {
                     // Remove all siblings with the class "option-container"
@@ -331,8 +361,8 @@ function mcqQuestions() {
         //         isAnyEmptyField = false;
         //     }
         // });
-        console.log(addQuestion.parentElement.parentElement);
-        if (correctOption == 0 && addQuestion.parentElement.parentElement.querySelectorAll(".option-container").length > 0) {
+        console.log(addQuestion.parentElement.parentElement.querySelector(".question-type"));
+        if (correctOption == 0 && addQuestion.parentElement.parentElement.querySelectorAll(".option-container").length > 0 && addQuestion.parentElement.parentElement.querySelector(".question-type") === "weighted") {
             alert("Please select correct option");
         } else {
             submitQuestion.click();
@@ -375,8 +405,9 @@ function mcqQuestions() {
     
             // ✅ Generate marking input field if "weighted" is selected
             let markingFieldHTML = isWeighted
-                ? `<label class="marking-label form-label">${nextOption.toUpperCase()} Mark</label>
-                   <input type="text" class="marking-field form-control" oninput="this.value = this.value.split('').filter(e => !isNaN(e) && e != ' ').join('');" value="1" min="0" name="marking[]" maxlength="3" required>`
+                ? `<div class="mb-3"></div>
+                <label for="marking-${nextOption}" class="marking-label form-label">${nextOption.toUpperCase()} Mark</label>
+                   <input type="text" id="marking-${nextOption}" class="marking-field form-control" oninput="this.value = this.value.split('').filter(e => !isNaN(e) && e != ' ').join('');" value="1" min="0" name="marking[]" maxlength="3" required>`
                 : "";
             console.log(markingFieldHTML);
             console.log(isWeighted);
