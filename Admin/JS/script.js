@@ -239,6 +239,10 @@ function mcqQuestions() {
                             markingLabelElement.innerText = String.fromCharCode(65 + index) + " Mark"; // Fix charAt issue
                             markingFieldElement.setAttribute("type", "text");
                             markingFieldElement.setAttribute("min", "0");
+                            markingFieldElement.setAttribute("oninput", "this.value = this.value.split('').filter(e => !isNaN(e) && e != ' ').join('');");
+                            markingFieldElement.setAttribute("maxlength", "3");
+                            markingFieldElement.setAttribute("name", "marking[]");
+                            markingFieldElement.setAttribute("required", "true");
                             markingFieldElement.value = "1"; // Default marks
                             markingFieldElement.classList.add("marking-field");
                             markingFieldElement.classList.add("form-control");
@@ -249,9 +253,9 @@ function mcqQuestions() {
                             option.appendChild(markingFieldElement);
         
                             // Allow only numeric input
-                            markingFieldElement.addEventListener("input", () => {
-                                markingFieldElement.value = markingFieldElement.value.replace(/\D/g, ""); // Remove non-numeric chars
-                            });
+                            // markingFieldElement.addEventListener("input", () => {
+                            //     markingFieldElement.value = markingFieldElement.value.replace(/\D/g, ""); // Remove non-numeric chars
+                            // });
                         }
                     });
                 } else {
@@ -372,7 +376,7 @@ function mcqQuestions() {
             // ✅ Generate marking input field if "weighted" is selected
             let markingFieldHTML = isWeighted
                 ? `<label class="marking-label form-label">${nextOption.toUpperCase()} Mark</label>
-                   <input type="text" class="marking-field form-control" value="1" min="0" required>`
+                   <input type="text" class="marking-field form-control" oninput="this.value = this.value.split('').filter(e => !isNaN(e) && e != ' ').join('');" value="1" min="0" name="marking[]" maxlength="3" required>`
                 : "";
             console.log(markingFieldHTML);
             console.log(isWeighted);
@@ -385,7 +389,7 @@ function mcqQuestions() {
             if (e.classList.contains("add-question-add-option")) {
                 newElement = `<div class="mb-3 option-container">
                                 <label for="opt_${nextOption}" class="form-label">Option ${nextOption.toUpperCase()}</label>
-                                <i class="fa-regular fa-circle toggle-correct"></i>
+                                <i class="fa-regular fa-circle toggle-correct ${isWeighted ? "d-none" : ""}"></i>
                                 <input type="text" class="form-control d-inline-block add-questions-options" id="opt_${nextOption}" name="options[]" required>
                                 <input type="hidden" class="form-control invisible add-questions-options" id="correct_opt_${nextOption}" name="correct_options[]">
                                 <i class="fa-solid fa-xmark remove-option" style="cursor: pointer;"></i>
@@ -396,7 +400,7 @@ function mcqQuestions() {
             else if (e.classList.contains("edit-question-add-option")) {
                 newElement = `<div class="mb-3 option-container">
                                 <label for="edit_options_${nextOption}" class="form-label">Option ${nextOption.toUpperCase()}</label>
-                                <i class="fa-regular fa-circle toggle-correct"></i>
+                                <i class="fa-regular fa-circle toggle-correct ${isWeighted ? "d-none" : ""}"></i>
                                 <input type="text" class="form-control d-inline-block add-questions-options" id="edit_options_${nextOption}" name="options[]" required>
                                 <input type="hidden" class="form-control invisible add-questions-options" id="correct_opt_${nextOption}" name="correct_options[]">
                                 <i class="fa-solid fa-xmark remove-option" style="cursor: pointer;"></i>
@@ -686,10 +690,6 @@ function questionBank() {
             }
         }
     });
-
-    examDurationInputElement.addEventListener("input", (event) => {
-        event.target.value = event.target.value.split("").filter(e => !isNaN(e) && e != " ").join("");
-    })
 
     Array.from(addToQuiz).forEach(e => {
         e.addEventListener("click", function () {

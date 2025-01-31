@@ -245,10 +245,15 @@
                         array_push($questions_unique_ids, $value);
                     }
                 }
-                array_output($questions_unique_ids);
+                // array_output_die($questions_unique_ids);
                 if(!empty($_POST["select_quiz"])) {
-                    $sql = "UPDATE questions SET exam_id = $_POST[select_quiz] WHERE question_id IN (" . join(", ", $questions_unique_ids) . ")";
-                    $result = mysqli_query($conn, $sql);
+                    foreach($questions_unique_ids as $key => $value) {
+                        $exam_id = get_safe_value($conn, $_POST["select_quiz"]);
+                        $question = get_safe_value($conn, mysqli_fetch_assoc(mysqli_query($conn, "SELECT questions FROM questions WHERE question_id = $value"))["questions"]);
+                        $sql = "INSERT INTO question_exam_mapping (questions, question_id, exam_id, status) VALUES ('$question', $value, $exam_id, 1)";
+                        echo $sql;
+                        $result = mysqli_query($conn, $sql);
+                    }
                     if($result) {
                         $alert_message = '<div class="alert alert-success alert-dismissible fade show" role="alert">Successfully! All questions are added to the quizes.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
                     }
@@ -259,8 +264,11 @@
                     $sql = "SELECT id FROM exam_portal WHERE exam_name = '$new_quiz'";
                     $result = mysqli_query($conn, $sql);
                     $exam_id = mysqli_fetch_assoc($result)["id"];
-                    $sql = "UPDATE questions SET exam_id = $exam_id WHERE question_id IN (" . join(", ", $questions_unique_ids) . ")";
-                    $result = mysqli_query($conn, $sql);
+                    foreach($questions_unique_ids as $key => $value) {
+                        $question = mysqli_fetch_assoc(mysqli_query($conn, "SELECT questions FROM questions WHERE question_id = $value"))["questions"];
+                        $sql = "INSERT INTO question_exam_mapping (questions, question_id, exam_id, status) VALUES ($question, $value, $exam_id, 1)";
+                        $result = mysqli_query($conn, $sql);
+                    }
                     if($result) {
                         $alert_message = '<div class="alert alert-success alert-dismissible fade show" role="alert">Successfully! All questions are added to the quizes.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
                     }
