@@ -6,3 +6,12 @@
     font-size: 25px;
     font-weight: 200;
 }
+
+.p-relative {
+    position: relative;
+}
+
+.p-right {
+    position: absolute;
+    right: 10px;
+}

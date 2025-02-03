@@ -19,7 +19,7 @@
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST["add_question"])) {
-            array_output_die($_POST);
+            // array_output_die($_POST);
             $check_sql_question = "SELECT * FROM questions WHERE questions = '" . get_safe_value($conn, $_POST['question']) . "'";
             $check_result_question = mysqli_query($conn, $check_sql_question);
 
@@ -83,8 +83,8 @@
                         
                         for ($i = 0; $i < count($options); $i++) {
                             $is_correct = ($correct_options[$i] == "correct") ? 1 : 0;
-                            $option_sql = "INSERT INTO options (question_id, answers, marking, is_correct, status) VALUES 
-                            ('$question_id', '" . get_safe_value($conn, $options[$i]) . "', '" . $marking[$i] . "', '" . $is_correct . "', 1)";
+                            $option_sql = "INSERT INTO options (question_id, answers, marking, option_edit_series, is_correct, status) VALUES 
+                            ('$question_id', '" . get_safe_value($conn, $options[$i]) . "', '" . $marking[$i] . "', 1, '" . $is_correct . "', 1)";
                             // echo $option_sql;
                             // die;
                             $option_result = mysqli_query($conn, $option_sql);
@@ -261,18 +261,24 @@
                     }
                 } else {
                     $new_quiz = $_POST["new_quiz"];
-                    $sql = "INSERT INTO exam_portal (exam_name, duration, status) VALUES ('$new_quiz', $_POST[exam_duration], 1)";
+                    $sql = "SELECT * FROM exam_portal WHERE exam_name = '$new_quiz'";
                     $result = mysqli_query($conn, $sql);
-                    $sql = "SELECT id FROM exam_portal WHERE exam_name = '$new_quiz'";
-                    $result = mysqli_query($conn, $sql);
-                    $exam_id = mysqli_fetch_assoc($result)["id"];
-                    foreach($questions_unique_ids as $key => $value) {
-                        $question = mysqli_fetch_assoc(mysqli_query($conn, "SELECT questions FROM questions WHERE question_id = $value"))["questions"];
-                        $sql = "INSERT INTO question_exam_mapping (questions, question_id, exam_id, status) VALUES ($question, $value, $exam_id, 1)";
+                    if(mysqli_num_rows($result) > 0) {
+                        $alert_message = '<div class="alert alert-warning alert-dismissible fade show" role="alert">Quiz already exists!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+                    } else {
+                        $sql = "INSERT INTO exam_portal (exam_name, duration, status) VALUES ('$new_quiz', $_POST[exam_duration], 1)";
                         $result = mysqli_query($conn, $sql);
-                    }
-                    if($result) {
-                        $alert_message = '<div class="alert alert-success alert-dismissible fade show" role="alert">Successfully! All questions are added to the quizes.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+                        $sql = "SELECT id FROM exam_portal WHERE exam_name = '$new_quiz'";
+                        $result = mysqli_query($conn, $sql);
+                        $exam_id = mysqli_fetch_assoc($result)["id"];
+                        foreach($questions_unique_ids as $key => $value) {
+                            $question = get_safe_value($conn, mysqli_fetch_assoc(mysqli_query($conn, "SELECT questions FROM questions WHERE question_id = $value"))["questions"]);
+                            $sql = "INSERT INTO question_exam_mapping (questions, question_id, exam_id, status) VALUES ('$question', $value, $exam_id, 1)";
+                            $result = mysqli_query($conn, $sql);
+                        }
+                        if($result) {
+                            $alert_message = '<div class="alert alert-success alert-dismissible fade show" role="alert">Successfully! All questions are added to the quizes.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+                        }
                     }
                 }
             }
@@ -632,7 +638,7 @@
                                     while($row2 = mysqli_fetch_assoc($option_result)) { ?>
                                             <div class="d-flex">
                                             <input type="checkbox" name="options[]" id="options-<?php echo $sr_no; ?>" class="" <?php if($row2["is_correct"] == "1") {echo "checked";}?>>
-                                            <label for="options-<?php echo $sr_no; ?>" class="d-inline-block w-100 ms-2" data-question-id="<?= $question_id; ?>" data-option="<?= $row2["answers"]; ?>"><?= chr($char_sr_no) . ". " . $row2["answers"];?></label>
+                                            <label for="options-<?php echo $sr_no; ?>" class="p-relative w-100 ms-2" data-question-id="<?= $question_id; ?>" data-option="<?= $row2["answers"]; ?>" data-question-type="<?= $row["question_type"];?>"><?php echo chr($char_sr_no) . ". <span>" . $row2["answers"] . "</span>"; if($row["question_type"] == "weighted"){ echo "<span class='p-right'>$row2[marking] Mark"; echo ($row2["marking"] > 1 ? "s":"") . "</span>";}?></label>
                                         </div>
                                     <?php $sr_no++;$char_sr_no++;}
                                 }

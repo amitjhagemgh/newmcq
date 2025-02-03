@@ -422,7 +422,7 @@ function mcqQuestions() {
                                 <label for="opt_${nextOption}" class="form-label">Option ${nextOption.toUpperCase()}</label>
                                 <i class="fa-regular fa-circle toggle-correct ${isWeighted ? "d-none" : ""}"></i>
                                 <input type="text" class="form-control d-inline-block add-questions-options" id="opt_${nextOption}" name="options[]" required>
-                                <input type="hidden" class="form-control invisible add-questions-options" id="correct_opt_${nextOption}" name="correct_options[]">
+                                <input type="hidden" value="${isWeighted?"correct":"incorrect"}" class="form-control invisible add-questions-options" id="correct_opt_${nextOption}" name="correct_options[]">
                                 <i class="fa-solid fa-xmark remove-option" style="cursor: pointer;"></i>
                                 ${markingFieldHTML}
                             </div>`;
@@ -433,7 +433,7 @@ function mcqQuestions() {
                                 <label for="edit_options_${nextOption}" class="form-label">Option ${nextOption.toUpperCase()}</label>
                                 <i class="fa-regular fa-circle toggle-correct ${isWeighted ? "d-none" : ""}"></i>
                                 <input type="text" class="form-control d-inline-block add-questions-options" id="edit_options_${nextOption}" name="options[]" required>
-                                <input type="hidden" class="form-control invisible add-questions-options" id="correct_opt_${nextOption}" name="correct_options[]">
+                                <input type="hidden" value="${isWeighted?"correct":"incorrect"}" class="form-control invisible add-questions-options" id="correct_opt_${nextOption}" name="correct_options[]">
                                 <i class="fa-solid fa-xmark remove-option" style="cursor: pointer;"></i>
                                 ${markingFieldHTML}
                             </div>`;
@@ -591,11 +591,13 @@ function mcqQuestions() {
             // $("input[type='checkbox'][data-question-id][data-option]").not(this).prop("checked", false);
             // debugger;
             e.preventDefault();
-            Array.from(e.target.parentElement.parentElement.querySelectorAll("input[type='checkbox']:checked:has(+[data-question-id][data-option])")).forEach((elem) => {
-                elem.checked = false;
-            })
+            if(e.target.nextElementSibling.dataset.questionType == "single") {
+                Array.from(e.target.parentElement.parentElement.querySelectorAll("input[type='checkbox']:checked:has(+[data-question-id][data-option])")).forEach((elem) => {
+                    elem.checked = false;
+                })
+                e.target.checked = true;
+            }
             // console.log(e);
-            e.target.checked = true;
             let questionId = $(this).next().data("question-id");
             let option = $(this).next().data("option");
             let srNo = $(this).parent().parent().prev().text();
