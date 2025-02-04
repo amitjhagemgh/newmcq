@@ -9,9 +9,11 @@
         $option = $_POST["option"];
         $question_id = get_safe_value($conn, $_POST["questionId"]);
         $is_correct = get_safe_value($conn, $_POST["isCorrect"])=="correct"?1:0;
-        $reset_sql = "UPDATE options SET is_correct = '0' WHERE question_id = '$question_id'";
-        // echo $reset_sql . "<br />";
-        $reset_result = mysqli_query($conn, $reset_sql);
+        if($_POST["questionType"] == "single") {
+            $reset_sql = "UPDATE options SET is_correct = '0' WHERE question_id = '$question_id'";
+            // echo $reset_sql . "<br />";
+            $reset_result = mysqli_query($conn, $reset_sql);
+        }
         $sql = "UPDATE options SET is_correct = '$is_correct' WHERE question_id = '$question_id' AND answers = '$option'";
         // echo $sql;
         // die;

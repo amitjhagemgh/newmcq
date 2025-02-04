@@ -68,7 +68,6 @@
                     // Combine Options and Correct Status in Single Array
                     $options = $_POST['options'];
                     $correct_options = $_POST['correct_options'];
-                    $marking = $_POST['marking'];
     
                     // Insert into Database
                     $sql = "INSERT INTO questions (questions, question_image, question_type, question_id, exam_id, topic_id, main_group_id, sub_group_id, no_of_times_correctly_attempted, no_of_times_attempted, status) 
@@ -83,8 +82,8 @@
                         
                         for ($i = 0; $i < count($options); $i++) {
                             $is_correct = ($correct_options[$i] == "correct") ? 1 : 0;
-                            $option_sql = "INSERT INTO options (question_id, answers, marking, option_edit_series, is_correct, status) VALUES 
-                            ('$question_id', '" . get_safe_value($conn, $options[$i]) . "', '" . $marking[$i] . "', 1, '" . $is_correct . "', 1)";
+                            $option_sql = "INSERT INTO options (question_id, answers, option_edit_series, is_correct, status) VALUES 
+                            ('$question_id', '" . get_safe_value($conn, $options[$i]) . "', 1, '" . $is_correct . "', 1)";
                             // echo $option_sql;
                             // die;
                             $option_result = mysqli_query($conn, $option_sql);
@@ -458,7 +457,6 @@
                                 <option value="title">Title</option>
                                 <option value="single">Single Answer</option>
                                 <option value="multiple">Multiple Answer</option>
-                                <option value="weighted">Marks per Option</option>
                             </select>
                         </div>
                         <div class="mb-3 option-container">
@@ -638,7 +636,7 @@
                                     while($row2 = mysqli_fetch_assoc($option_result)) { ?>
                                             <div class="d-flex">
                                             <input type="checkbox" name="options[]" id="options-<?php echo $sr_no; ?>" class="" <?php if($row2["is_correct"] == "1") {echo "checked";}?>>
-                                            <label for="options-<?php echo $sr_no; ?>" class="p-relative w-100 ms-2" data-question-id="<?= $question_id; ?>" data-option="<?= $row2["answers"]; ?>" data-question-type="<?= $row["question_type"];?>"><?php echo chr($char_sr_no) . ". <span>" . $row2["answers"] . "</span>"; if($row["question_type"] == "weighted"){ echo "<span class='p-right'>$row2[marking] Mark"; echo ($row2["marking"] > 1 ? "s":"") . "</span>";}?></label>
+                                            <label for="options-<?php echo $sr_no; ?>" class="w-100 ms-2" data-question-id="<?= $question_id; ?>" data-option="<?= $row2["answers"]; ?>" data-question-type="<?= $row["question_type"];?>"><?php echo chr($char_sr_no) . ". <span>" . $row2["answers"] . "</span>";?></label>
                                         </div>
                                     <?php $sr_no++;$char_sr_no++;}
                                 }

@@ -83,3 +83,13 @@ table, th, tr, td {
 #exam-duration {
     width: 50%;
 }
+
+.eit-options-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.eit-options-container span:last-child {
+    padding-left: 10px;
+    white-space: nowrap;
+}

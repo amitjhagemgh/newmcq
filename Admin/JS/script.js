@@ -600,6 +600,7 @@ function mcqQuestions() {
             // console.log(e);
             let questionId = $(this).next().data("question-id");
             let option = $(this).next().data("option");
+            let questionType = $(this).next().data("question-type");
             let srNo = $(this).parent().parent().prev().text();
             if ($(this).is(":checked")) {
                 isCorrect = "correct";
@@ -613,7 +614,8 @@ function mcqQuestions() {
                 data: {
                     questionId: questionId,
                     option: option,
-                    isCorrect: isCorrect
+                    isCorrect: isCorrect,
+                    questionType: questionType
                 },
                 dataType: 'text',
                 success: function (response) {

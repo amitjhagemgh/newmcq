@@ -100,7 +100,7 @@ foreach ($data as $row) {
                     <a href="<?php if($row["exam_name"]!=="Four Axis Personality Type Test") {echo "take_exam";}else {echo "take_opinion_exam";}?>.php?exam=<?= urlencode($row["exam_name"]); ?>" class="btn btn-primary">Attend</a> -->
                     <?php } ?>
                     <p class="card-text">Status: Pending to Attend</p>
-                    <a href="<?php if($row["exam_name"]!=="Four Axis Personality Type Test") {echo "take_exam";}else {echo "take_opinion_exam";}?>.php?exam=<?= urlencode($row["exam_name"]); ?>" class="btn btn-primary">Attend</a>
+                    <a href="<?php if($row["exam_name"]=="Four Axis Personality Type Test") {echo "take_opinion_exam";} elseif($row["exam_name"]=="Emotional Intelligence Test") {echo "take_eit_exam";}else {echo "take_exam";}?>.php?exam=<?= urlencode($row["exam_name"]); ?>" class="btn btn-primary">Attend</a>
             </div>
         </div>
     </div>

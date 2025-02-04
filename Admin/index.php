@@ -24,7 +24,7 @@
                                 <p class="card-text mb-0 status">Status: <?php if($row["status"] == 0) {?>Deactivated<?php } else {?>Activated<?php }?></p>
                                 <p class="card-text mb-0 exam-name">Exam Name: <span><?= $row["exam_name"];?></span></p>
                                 <p class="card-text duration">Duration: <span><?= $row["duration"] . " minutes";?></span></p>
-                                <a href="<?php if($row["exam_name"]=="Four Axis Personality Type Test") {echo "questions";} else {echo "mcq_questions";}?>.php?exam=<?= $row["exam_name"]; ?>" class="btn btn-primary">Questions</a>
+                                <a href="<?php if($row["exam_name"]=="Four Axis Personality Type Test") {echo "questions";} elseif($row["exam_name"]=="Emotional Intelligence Test") {echo "eit_questions";} else {echo "mcq_questions";}?>.php?exam=<?= $row["exam_name"]; ?>" class="btn btn-primary">Questions</a>
                                 <button class="btn <?php if($row["status"] == 0) {?>btn-success<?php } else {?>btn-danger<?php }?> toggle-status" data-value="<?= $row["status"];?>" data-id="<?= $row["id"];?>"><?php if($row["status"] == 0) {?>Activate<?php } else {?>Deactivate<?php }?></button>
                                 <!-- <form action="Questions/questions.php" method="POST" class="d-inline">
                                     <input type="hidden" name="exam_name" value="<?= $row["id"];?>">
