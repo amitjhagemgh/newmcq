@@ -16,24 +16,26 @@
                 $user_id_row = mysqli_fetch_assoc($user_id_result);
                 $user_id = $user_id_row["id"];
                 $exam_name = get_safe_value($conn, $_POST['delete_exam_name']);
-                $exam_attended_time = get_safe_value($conn, $_POST['delete_exam_attended_time']);
+                $test_series = get_safe_value($conn, $_POST['delete_test_series']);
                 $get_exam_id_sql = "SELECT id FROM exam_portal WHERE exam_name = '$exam_name'";
                 $exam_id_result = mysqli_query($conn, $get_exam_id_sql);
                 $exam_id_row = mysqli_fetch_assoc($exam_id_result);
                 $exam_id = $exam_id_row["id"];
                 // Fetching result ID for deleting the answer_attempts records accordingly result_id
-                $result_id = mysqli_fetch_assoc(mysqli_query($conn, "SELECT id FROM result WHERE user_id = '$user_id' AND exam_id = '$exam_id' AND exam_attended_time = '$exam_attended_time'"))["id"];
-                $sql = "DELETE FROM answer_attempts WHERE result_id = '$result_id'";
+                // $result_id = mysqli_fetch_assoc(mysqli_query($conn, "SELECT id FROM result WHERE user_id = '$user_id' AND exam_id = '$exam_id' AND test_series = '$test_series'"))["id"];
+                $sql = "DELETE FROM eit_result WHERE user_id = '$user_id' AND test_series = '$test_series'";
                 $result = mysqli_query($conn, $sql);
-                $sql = "DELETE r
-                        FROM result AS r
-                        JOIN users AS u ON r.user_id = u.id
-                        JOIN exam_portal AS ep ON ep.id = r.exam_id
-                        WHERE r.exam_id = '$exam_id' AND r.user_id = '$user_id';";
+                $sql = "DELETE FROM self_awareness_result WHERE user_id = '$user_id' AND series = '$test_series'";
+                $result = mysqli_query($conn, $sql);
+                $sql = "DELETE FROM managing_emotions_result WHERE user_id = '$user_id' AND series = '$test_series'";
+                $result = mysqli_query($conn, $sql);
+                $sql = "DELETE FROM motivating_oneself_result WHERE user_id = '$user_id' AND series = '$test_series'";
+                $result = mysqli_query($conn, $sql);
+                $sql = "DELETE FROM empathy_result WHERE user_id = '$user_id' AND series = '$test_series'";
+                $result = mysqli_query($conn, $sql);
+                $sql = "DELETE FROM handling_relationships_result WHERE user_id = '$user_id' AND series = '$test_series'";
                 $result = mysqli_query($conn, $sql);
                 if($result) {
-                    $sql = "DELETE FROM answer_attempts WHERE result_id = '$result_id'";
-                    $result = mysqli_query($conn, $sql);
                     echo "<script>alert('Result deleted successfully.');</script>";
                 }   
             }
@@ -42,10 +44,10 @@
     <div class="container mt-5">
         <h2 class="text-center">Result Management</h2>
     </div>
-    <div class="container table-responsive">
+    <div class="container mb-5 table-responsive min-height-100-vh">
 
         <!-- User Table -->
-        <table class="table table-bordered mt-4" id="result-table">
+        <table class="table table-bordered mt-4" id="eit-result-table">
             <thead>
                 <tr>
                     <th>Sr. No.</th>
@@ -177,12 +179,15 @@ GROUP BY result.user_id, result.exam_id, result.test_series;";
           WHERE all_users.user_id = " . $row["user_id"] . " 
           AND all_users.series = " . $row["test_series"];
                                     $total_score_result = mysqli_query($conn, $total_score_sql);
+                                    $total_marks_sql = "SELECT COUNT(*) FROM eit_questions";
+                                    $total_marks_result = mysqli_query($conn, $total_marks_sql);
+                                    $total_marks_row = mysqli_fetch_assoc($total_marks_result);
                                     if(mysqli_num_rows($total_score_result) > 0) {
                                         $total_score_row = mysqli_fetch_assoc($total_score_result);
-                                        $total_marks_sql = "SELECT COUNT(*) FROM eit_questions";
-                                        $total_marks_result = mysqli_query($conn, $total_marks_sql);
-                                        $total_marks_row = mysqli_fetch_assoc($total_marks_result);
+                                        // array_output($row);
                                         echo $total_score_row["total_score"] . "/" . $total_marks_row["COUNT(*)"] * 5;
+                                    } else {
+                                        echo 0 . "/" . $total_marks_row["COUNT(*)"] * 5;
                                     }
                                 ?>
                             </td>
@@ -204,11 +209,11 @@ GROUP BY result.user_id, result.exam_id, result.test_series;";
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                    <form action="all_results.php" method="POST" id="deleteResultForm">
+                                    <form action="all_eit_results.php" method="POST" id="deleteResultForm">
                                         <div class="modal-body">
                                             <input type="hidden" id="delete_email_id" name="delete_email_id" value="<?= $row['email_id']; ?>">
                                             <input type="hidden" id="delete_exam_name" name="delete_exam_name" value="<?= $row['exam_name']; ?>">
-                                            <input type="hidden" id="delete_exam_attended_time" name="delete_exam_attended_time" value="<?= $row['exam_attended_time']; ?>">
+                                            <input type="hidden" id="delete_test_series" name="delete_test_series" value="<?= $row['test_series']; ?>">
                                             <div class="form-group">
                                                 <p>Are you sure you want to delete?</p>
                                             </div>
@@ -227,7 +232,7 @@ GROUP BY result.user_id, result.exam_id, result.test_series;";
                     }
                 } else { ?>
                     <tr>
-                        <td colspan="11" class="text-center">No results found.</td>
+                        <td colspan="12" class="text-center">No results found.</td>
                     </tr>
                 <?php }
                 // mysqli_close($conn);

@@ -60,8 +60,8 @@
             $sql .= "('$user_id', '$keys[$i]', '" . get_safe_value($conn, $values[$i]) . "', '$exam_id', '$new_test_series'),";
         }
         $sql = substr($sql, 0, -1);
-        if(sizeof($values) == 1) {
-            $sql .= "('$row[2]', '', '', '$exam_id');";
+        if(sizeof($values) == 0) {
+            $sql .= "('$user_id', '', '', '$exam_id', '$new_test_series');";
         }
         // echo $sql;
         // die;
