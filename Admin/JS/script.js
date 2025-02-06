@@ -224,7 +224,7 @@ function mcqQuestions() {
                     let invisibleCorrectIncorrectEement = e.parentElement.parentElement.querySelectorAll(".invisible");
                     let toggleCorrectElement = e.parentElement.parentElement.querySelectorAll(".toggle-correct");
                     for (let i = 0; i < invisibleCorrectIncorrectEement.length; i++) {
-                        if(!toggleCorrectElement[i].classList.include("text-success")) {
+                        if(!toggleCorrectElement[i].classList.contains("text-success")) {
                             if(invisibleCorrectIncorrectEement[i].value == "correct") {
                                 invisibleCorrectIncorrectEement[i].value = "incorrect";
                             }
