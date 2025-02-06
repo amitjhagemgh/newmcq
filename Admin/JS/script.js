@@ -814,7 +814,7 @@ window.onload = function () {
                         },
                         jsPDF: {
                             unit: 'in',
-                            format: document.title == "MBTI Result" ? 'letter' : [14, 8.5],
+                            format: document.title == "Personality Type Test Result" ? 'letter' : [14, 8.5],
                             orientation: document.title == "Personality Type Test Result" ? 'portrait' : 'landscape',
                             compress: true,
                             precision: 2,
