@@ -80,7 +80,7 @@
                 $chars = ["a", "b", "c", "d", "e"];
                 for($j=0;$j<count($chars);$j++) {
                     $score_calculation_sql = "SELECT * FROM eit_questions WHERE id = $question_ids[$iteration] AND opt_$chars[$j] = '$values[$iteration]' AND domain_id = $domain_id;";
-                    echo $score_calculation_sql . "<br />";
+                    // echo $score_calculation_sql . "<br />";
                     $score_calculation_result = mysqli_query($conn, $score_calculation_sql);
                     if(mysqli_num_rows($score_calculation_result) > 0) {
                         $score += (int)mysqli_fetch_assoc($score_calculation_result)["marks_$chars[$j]"];
@@ -124,11 +124,11 @@
                 //     $self_awareness_score += mysqli_num_rows($score_calculation_result)["marks_e"];
                 // }
             }
-            echo "Self Awareness Score: " . $self_awareness_score . "<br />";
-            echo "Managing Emotions Score: " . $managing_emotions_score . "<br />";
-            echo "Motivating Oneself Score: " . $motivating_oneself_score . "<br />";
-            echo "Empathy Score: " . $empathy_score . "<br />";
-            echo "Handling Relationships Score: " . $handling_relationships_score . "<br />";
+            // echo "Self Awareness Score: " . $self_awareness_score . "<br />";
+            // echo "Managing Emotions Score: " . $managing_emotions_score . "<br />";
+            // echo "Motivating Oneself Score: " . $motivating_oneself_score . "<br />";
+            // echo "Empathy Score: " . $empathy_score . "<br />";
+            // echo "Handling Relationships Score: " . $handling_relationships_score . "<br />";
 
             // Self Awareness
             $self_awareness_series_sql = "SELECT series FROM self_awareness_result ORDER BY series DESC";
@@ -147,7 +147,7 @@
             // Motivating Oneself
             $motivating_oneself_series_sql = "SELECT series FROM motivating_oneself_result ORDER BY series DESC";
             $motivating_oneself_result = mysqli_query($conn, $motivating_oneself_series_sql);
-            $managing_emotions_series = (mysqli_num_rows($motivating_oneself_result) > 0)?((int)mysqli_fetch_assoc($motivating_oneself_result)["series"] + 1):1;
+            $motivating_oneself_series = (mysqli_num_rows($motivating_oneself_result) > 0)?((int)mysqli_fetch_assoc($motivating_oneself_result)["series"] + 1):1;
             $insert_motivating_oneself_score_sql = "INSERT INTO motivating_oneself_result (user_id, score, series) VALUES ($user_id, $motivating_oneself_score, $motivating_oneself_series)";
             $insert_motivating_oneself_score_result = mysqli_query($conn, $insert_motivating_oneself_score_sql);
 
@@ -164,6 +164,8 @@
             $handling_relationships_series = (mysqli_num_rows($handling_relationships_result) > 0)?((int)mysqli_fetch_assoc($handling_relationships_result)["series"] + 1):1;
             $insert_handling_relationships_score_sql = "INSERT INTO handling_relationships_result (user_id, score, series) VALUES ($user_id, $handling_relationships_score, $handling_relationships_series)";
             $insert_handling_relationships_score_result = mysqli_query($conn, $insert_handling_relationships_score_sql);
+
+            header("location: all_quizes.php");
         }
     }
 ?>

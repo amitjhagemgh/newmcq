@@ -52,6 +52,9 @@
                     <li class="nav-item">
                         <a class="nav-link <?php if(PAGE == "All Personality Type Test Results") {echo "active";}?>" href="all_opinion_results.php">Personality Type Test Results</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?php if(PAGE == "All EIT Results") {echo "active";}?>" href="all_eit_results.php">EIT Results</a>
+                    </li>
                     <?php if(PAGE == "Result" || PAGE == "All Results" || PAGE == "Personality Type Test Result") {?>
                     <li class="nav-item">
                         <button class="btn btn-danger" id="download_Btn">Download as PDF</button>
