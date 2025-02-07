@@ -86,7 +86,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="domain" class="form-label">Domain</label>
-                            <select name="domain" id="domain" class="form-select">
+                            <select name="domain" id="domain" class="form-select" required>
                                 <option value="">Select Domain</option>
                                 <?php
                                     $domain_sql = "SELECT * FROM domain";

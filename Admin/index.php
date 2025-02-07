@@ -70,13 +70,5 @@
     </div>
 </div>
 <?php
-$sql = "SHOW CREATE TABLE eit_questions";
-$result = mysqli_query($conn, $sql);
-if($result) {
-    $row = mysqli_fetch_assoc($result);
-    echo $row["Create Table"];
-}
-?>
-<?php
     include "Includes/footer.php";
 ?>

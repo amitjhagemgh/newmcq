@@ -3,6 +3,7 @@
     include "Connection/conn.inc.php";
     include "Includes/header.php";
     include "Includes/functions.inc.php";
+    header('Content-type: text/html; charset=ASCII');
 
     if (!isset($_SESSION["is_login"])) {
         header("location: Authentication/login.php");
@@ -250,8 +251,10 @@
                 if(!empty($_POST["select_quiz"])) {
                     foreach($questions_unique_ids as $key => $value) {
                         $exam_id = get_safe_value($conn, $_POST["select_quiz"]);
-                        $question = get_safe_value($conn, mysqli_fetch_assoc(mysqli_query($conn, "SELECT questions FROM questions WHERE question_id = $value"))["questions"]);
-                        $sql = "INSERT INTO question_exam_mapping (questions, question_id, exam_id, status) VALUES ('$question', $value, $exam_id, 1)";
+                        $question_table = mysqli_fetch_assoc(mysqli_query($conn, "SELECT id, questions FROM questions WHERE question_id = $value"));
+                        $question = get_safe_value($conn, $question_table["questions"]);
+                        $question_id = get_safe_value($conn, $question_table["id"]);
+                        $sql = "INSERT INTO question_exam_mapping (questions, question_id, exam_id, status) VALUES ('$question', $question_id, $exam_id, 1)";
                         echo $sql;
                         $result = mysqli_query($conn, $sql);
                     }
@@ -628,7 +631,7 @@
                             echo $get_question;
                             ?>
                             </div>
-                            <img src="IMG/Questions/<?php echo $row["question_image"]; ?>" alt="<?php echo $row["question_image"]; ?>" class="question-image <?php if($row["question_image"] == "") { echo "d-none"; }?>"/>
+                            <img src="IMG/Questions/<?php echo $row["question_image"]; ?>" alt="<?php echo $row["question_image"]; ?>" class="question-image <?php if($row["question_image"] == "") { echo "d-none"; }?> mb-2"/>
                             <?php
                                 $sql = "SELECT * FROM options WHERE question_id = '" . $question_id . "'";
                                 $option_result = mysqli_query($conn, $sql);
