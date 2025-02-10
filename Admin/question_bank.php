@@ -236,13 +236,13 @@
             if($question_selected == false) {
                 $alert_message = '<div class="alert alert-warning alert-dismissible fade show" role="alert">Please select the questions to add in quizes.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
             } else {
-                array_output($_POST);
+                // array_output($_POST);
                 $questions_unique_ids = array();
                 // for($i = 1; $i < count($_POST) - 1; $i++) {
                 //     array_push($questions_unique_ids, array_values($_POST)[$i]);
                 // }
                 foreach($_POST as $key => $value) {
-                    echo $key . ": " . $value . "<br />";
+                    // echo $key . ": " . $value . "<br />";
                     if(str_contains($key, 'unique-question-id')) {
                         array_push($questions_unique_ids, $value);
                     }
@@ -255,7 +255,7 @@
                         $question = get_safe_value($conn, $question_table["questions"]);
                         $question_id = get_safe_value($conn, $question_table["id"]);
                         $sql = "INSERT INTO question_exam_mapping (questions, question_id, exam_id, status) VALUES ('$question', $question_id, $exam_id, 1)";
-                        echo $sql;
+                        // echo $sql;
                         $result = mysqli_query($conn, $sql);
                     }
                     if($result) {
@@ -275,6 +275,11 @@
                         $exam_id = mysqli_fetch_assoc($result)["id"];
                         foreach($questions_unique_ids as $key => $value) {
                             $question = get_safe_value($conn, mysqli_fetch_assoc(mysqli_query($conn, "SELECT questions FROM questions WHERE question_id = $value"))["questions"]);
+                            $check_sql = "SELECT * FROM question_exam_mapping WHERE questions = '$question' AND question_id = $value AND exam_id = $exam_id";
+                            $check_result = mysqli_query($conn, $check_sql);
+                            if(mysqli_num_rows($check_result) > 0) {
+                                continue;
+                            }
                             $sql = "INSERT INTO question_exam_mapping (questions, question_id, exam_id, status) VALUES ('$question', $value, $exam_id, 1)";
                             $result = mysqli_query($conn, $sql);
                         }
@@ -694,7 +699,11 @@
                                 }
                             ?>
                             <td <?php if($row["question_type"] == "title") {?> class="d-none" <?php } ?>><?php echo $row["no_of_times_attempted"] == 0 ? "N/A" : $difficulty_level;?></td>
-                            <td><input type="checkbox" class="add-to-quiz" id="add-to-quiz-<?php echo $row["id"];?>" name="add-to-quiz-<?php echo $row["id"];?>"></td>
+                            <td>
+                                <input type="checkbox" class="add-to-quiz d-none" id="add-to-quiz-<?php echo $row["id"];?>" name="add-to-quiz-<?php echo $row["id"];?>">
+                                <label for="add-to-quiz-<?php echo $row["id"];?>" class="w-100"><i class="fa-regular fa-circle"></i></label>
+                                <label for="add-to-quiz-<?php echo $row["id"];?>" class="w-100"><i class="fa-regular fa-circle-check text-success"></i></label>
+                            </td>
                             <td>
                                 <button type="button" class="btn btn-primary individual-edit-question" data-bs-toggle="modal"
                                     data-bs-target="#questionEditModal<?php echo $edit_and_delete_sr_no; ?>">Edit</button>

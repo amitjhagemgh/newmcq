@@ -60,9 +60,10 @@
                 // Fetch users from the database
                 // Right before the query
                 $query = "SELECT 
-    result.user_id AS user_id,
-    result.exam_id AS exam_id,
+    result.user_id,
+    result.exam_id,
     MAX(result.score) AS score,
+    MAX(result.total_marks) AS total_marks,
     exam_portal.exam_name,
     users.email_id AS email_id,
     MAX(result.exam_attended_time) AS exam_attended_time,
@@ -85,9 +86,7 @@ GROUP BY result.user_id, result.exam_id, exam_portal.exam_name, users.email_id;"
                             <td><?= $row['exam_name']; ?></td>
                             <td>
                             <?php
-                                $total_marks_sql = "SELECT * FROM questions WHERE exam_id = $row[exam_id] AND question_type != 'title'";
-                                $total_marks = mysqli_num_rows(mysqli_query($conn, $total_marks_sql));
-                                echo $row['score'] . "/" . $total_marks;
+                                echo $row['score'] . "/" . $row['total_marks'];
                             ?>
                             </td>
                             <td><?= $row['exam_attended_time']; ?></td>

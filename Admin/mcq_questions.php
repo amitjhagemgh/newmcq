@@ -256,8 +256,8 @@
                 $exam_id_sql = "SELECT id FROM exam_portal WHERE exam_name = '$exam_name'";
                 $exam_id_sql_result = mysqli_query($conn, $exam_id_sql);
                 $exam_id = mysqli_fetch_assoc($exam_id_sql_result)["id"];
-                $sql = "SELECT * FROM questions AS q JOIN question_exam_mapping AS qem ON qem.question_id = q.id WHERE qem.exam_id = '$exam_id' AND q.status = 1 ORDER BY q.id ASC";
-                echo $sql;
+                $sql = "SELECT q.id, q.question_id, q.questions, q.topic_id, q.main_group_id, q.sub_group_id, q.no_of_times_attempted, q.no_of_times_correctly_attempted, q.question_type, q.question_image FROM questions AS q JOIN question_exam_mapping AS qem ON qem.question_id = q.id WHERE qem.exam_id = '$exam_id' AND q.status = 1 ORDER BY q.id ASC";
+                // echo $sql;
                 $result = mysqli_query($conn, $sql);
                 $sr_no = 1;
                 $show_series = 0;

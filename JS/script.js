@@ -235,7 +235,7 @@ if(document.querySelector("#user-result-table")) {
                 // Send data via AJAX
                 if(document.querySelector("form[method]").baseURI.includes("Personality") !== true) {
                     $.ajax({
-                        url: "Ajax/submit_exam_cpanel.php",
+                        url: "Ajax/submit_exam.php",
                         type: "POST",
                         contentType: "application/json",
                         data: JSON.stringify({ questions: selectedQuestionIds }),

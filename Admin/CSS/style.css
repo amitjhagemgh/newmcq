@@ -93,3 +93,24 @@ table, th, tr, td {
     padding-left: 10px;
     white-space: nowrap;
 }
+
+.add-to-quiz + label[for^="add-to-quiz"] {
+    display: inline-block;
+    font-size: 20px;
+    margin: 0 !important;
+}
+.add-to-quiz:checked + label[for^="add-to-quiz"] {
+    display: none;
+    font-size: 20px;
+    margin: 0 !important;
+}
+.add-to-quiz ~ label[for^="add-to-quiz"]:has(.text-success) {
+    display: none;
+    font-size: 20px;
+    margin: 0 !important;
+}
+.add-to-quiz:checked ~ label[for^="add-to-quiz"]:has(.text-success) {
+    display: inline-block;
+    font-size: 20px;
+    margin: 0 !important;
+}

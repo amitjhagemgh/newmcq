@@ -88,25 +88,33 @@
                 <div id="question-container">
                     <?php
                     $sql_display_questions = "WITH TitleQuestions AS (
-                        SELECT q.id, q.questions, q.question_image, q.question_type,
-                               CASE 
-                                   WHEN q.question_type = 'title' THEN @title_num := COALESCE(@title_num, 0) + 1
-                                   ELSE @title_num
-                               END as title_group
-                        FROM questions AS q 
-                        JOIN exam_portal AS ep ON q.exam_id = ep.id 
-                        CROSS JOIN (SELECT @title_num := 0) AS vars
-                        WHERE ep.id = '$exam_id' AND q.status = 1
-                        ORDER BY q.id
-                    )
-                    SELECT * FROM TitleQuestions
-                    ORDER BY 
-                        title_group,
-                        CASE 
-                            WHEN question_type = 'title' THEN 0
-                            ELSE RAND()
-                        END";
-
+    SELECT 
+        q.id, 
+        q.questions, 
+        q.question_image, 
+        q.question_type,
+        CASE 
+            WHEN q.question_type = 'title' THEN @title_num := COALESCE(@title_num, 0) + 1
+            ELSE @title_num
+        END as title_group
+    FROM questions AS q 
+    JOIN question_exam_mapping AS qem ON q.id = qem.question_id
+    JOIN exam_portal AS ep ON qem.exam_id = ep.id 
+    CROSS JOIN (SELECT @title_num := 0) AS vars
+    WHERE ep.id = '$exam_id' 
+    AND q.status = 1
+    ORDER BY q.id
+)
+SELECT * FROM TitleQuestions
+ORDER BY 
+    title_group,
+    CASE 
+        WHEN question_type = 'title' THEN 0
+        ELSE RAND()
+    END";
+                    // echo "<pre>";
+                    // echo $sql_display_questions;
+                    // echo "</pre>";
                     $result_display_questions = mysqli_query($conn, $sql_display_questions);
 
                     $total_questions = 0;
@@ -144,12 +152,12 @@
                                         while ($option = mysqli_fetch_assoc($option_result)) {
                                             ?>
                                             <div class="form-check">
-                                                <input type="radio" 
+                                                <input type="<?= $row["question_type"]=="multiple"?"checkbox":"radio"; ?>" 
                                                        data-question-id="<?= $row["id"] ?>"
                                                        data-question="<?= $row["questions"] ?>"
                                                        class="options option-question-<?= $row["id"] ?>"
                                                        value="<?= $option["id"] ?>" 
-                                                       name="question_<?= $row["id"] ?>"
+                                                       name="question_<?= $row["id"] ?><?= $row["question_type"]=="multiple"?"[]":""; ?>"
                                                        id="opt_<?= chr($option_char + 32) ?>_question_<?= $row["id"] ?>">
                                                 <label for="opt_<?= chr($option_char + 32) ?>_question_<?= $row["id"] ?>">
                                                     <?= chr($option_char) ?>. 

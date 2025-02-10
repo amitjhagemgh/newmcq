@@ -25,10 +25,12 @@ $inputData = json_decode(file_get_contents('php://input'), true);
 $user_id = $_SESSION["user_id"] ?? null;
 $exam_id = $_SESSION["exam_id"] ?? null;
 
+$get_total_marks_sql = "SELECT * FROM question_exam_mapping WHERE exam_id = '$exam_id'";
+$total_marks = mysqli_num_rows(mysqli_query($conn, $get_total_marks_sql));
 if (empty($inputData) || !isset($inputData["questions"])) {
     if ($user_id && $exam_id) {
-        $sql = "INSERT INTO result(user_id, score, exam_id, questions_attempted_id, correctly_questions_attempted_id) 
-                VALUES ('$user_id', '0', '$exam_id', '0', '0')";
+        $sql = "INSERT INTO result(user_id, score, total_marks, exam_id, questions_attempted_id, correctly_questions_attempted_id) 
+                VALUES ('$user_id', '0', '$total_marks', '$exam_id', '0', '0')";
         $result = mysqli_query($conn, $sql);
 
         if ($result) {
@@ -51,8 +53,8 @@ $sql = "DELETE FROM user_exam_mapping WHERE user_id = '$user_id' AND exam_id = '
 $result = mysqli_query($conn, $sql);
 
 if(count($inputData["questions"]) == 0) {
-    $sql = "INSERT INTO result (user_id, score, exam_id, questions_attempted_id, correctly_questions_attempted_id)
-            VALUES ('$user_id', '0', '$exam_id', '0', '0')";
+    $sql = "INSERT INTO result (user_id, score, total_marks, exam_id, questions_attempted_id, correctly_questions_attempted_id)
+            VALUES ('$user_id', '0', '$total_marks', '$exam_id', '0', '0')";
     $result = mysqli_query($conn, $sql);
     if (!$result) {
         http_response_code(500);
@@ -110,8 +112,8 @@ if(count($inputData["questions"]) == 0) {
         $update_num_times_result = mysqli_query($conn, $update_no_times_sql);
 
         // Insert result
-        $sql = "INSERT INTO result(user_id, score, exam_id, questions_attempted_id, correctly_questions_attempted_id) 
-                VALUES ('$user_id', '$score', '$exam_id', '$question_id', '$is_correct')";
+        $sql = "INSERT INTO result(user_id, score, total_marks, exam_id, questions_attempted_id, correctly_questions_attempted_id) 
+                VALUES ('$user_id', '$score', '$total_marks', '$exam_id', '$question_id', '$is_correct')";
         $result = mysqli_query($conn, $sql);
         if($result) {
             $sql = "SELECT id FROM result WHERE user_id = '$user_id' AND exam_id = '$exam_id'";
@@ -124,6 +126,7 @@ if(count($inputData["questions"]) == 0) {
                 $option_value[] = $answer_value;
             }
             $sql = "INSERT INTO answer_attempts (result_id, question_id, selected_option_id, selected_options) VALUES ('$result_id', '$question_id', '" . get_safe_value($conn,join(",", $selected_options)) . "', '" . get_safe_value($conn, join(",", $option_value)) . "')";
+            // echo $sql;
             $result = mysqli_query($conn, $sql);
         }
         if (!$result) {
