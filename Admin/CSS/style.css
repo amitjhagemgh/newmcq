@@ -2,6 +2,10 @@ body {
     min-height: 100vh;
 }
 
+[for="dt-length-0"] {
+    margin: 10px;
+}
+
 .dashboard-container {
     min-height: calc(100vh - 112px);
 }

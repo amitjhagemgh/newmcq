@@ -106,7 +106,7 @@ foreach ($data as $row) {
     </div>
 <?php }
 if(count($data) == 0) {
-    echo "Currently any Exam is not assigned for you!";
+    echo "Currently, no exam is assigned for you!";
 } ?>
     </div>
 </div>
