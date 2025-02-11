@@ -60,7 +60,7 @@
                         <button class="btn btn-danger" id="download_Btn">Download as PDF</button>
                     </li>
                     <?php }?>
-                    <?php if(PAGE == "Result" || PAGE == "All Results" || PAGE == "MCQ Questions" || PAGE == "Personality Type Test Result") {?>
+                    <?php if(PAGE == "Result" || PAGE == "All Results" || PAGE == "MCQ Questions" || PAGE == "Personality Type Test Result" || PAGE == "All EIT Results") {?>
                     <li class="nav-item">
                     <button class="btn btn-success ms-3" onclick="generateExcel()">Download as Excel</button>
                     </li>

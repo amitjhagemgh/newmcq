@@ -129,6 +129,9 @@ async function generateExcel() {
     if (document.getElementById('question-table')) {
         addTableToSheet('question-table', startRow, startColumn);
     }
+    if(document.getElementById('eit-result-table')) {
+        addTableToSheet('eit-result-table', startRow, startColumn);
+    }
 
     // Add data for Table 2 (Exams) starting after a gap in the same column
     // addTableToSheet('result-values-1', startRow + 13, startColumn + 1); // Start after a gap of 13 rows and 1 columns
