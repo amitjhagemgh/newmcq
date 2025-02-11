@@ -40,7 +40,7 @@
         }
     ?>
     <div class="container my-5">
-        <h2 class="text-center">Result Management</h2>
+        <h2 class="text-center">Results</h2>
 
         <!-- User Table -->
         <table class="table table-bordered mt-4" id="result-table">

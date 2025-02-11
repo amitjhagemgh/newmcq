@@ -42,7 +42,7 @@
         }
     ?>
     <div class="container mt-5">
-        <h2 class="text-center">Result Management</h2>
+        <h2 class="text-center">EIT Results</h2>
     </div>
     <div class="container mb-5 table-responsive min-height-100-vh">
 
