@@ -33,7 +33,10 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="<?php if(PAGE == "Home Page") {echo "#";} else {echo "index.php";}?>">Home</a>
+                        <a class="nav-link <?php if(PAGE == "Home Page") {echo "active";}?>" aria-current="page" href="<?php if(PAGE == "Home Page") {echo "#";} else {echo "index.php";}?>">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?php if(PAGE == "EIT Results") {echo "active";}?>" aria-current="page" href="<?php if(PAGE == "EIT Results") {echo "#";} else {echo "eit_results.php";}?>">EIT Results</a>
                     </li>
                     <?php if(PAGE == "MCQ Exam Result" || PAGE == "Personality Type Test Result") {?>
                     <li class="nav-item">
