@@ -18,12 +18,20 @@
     // echo "<pre>";
     // print_r($_SESSION);
     // echo "</pre>";
-    // if(isset($_SESSION["exam_id"]) && isset($_SESSION["user_id"])) {
-    //     $sql = "DELETE FROM user_exam_mapping WHERE user_id = '$_SESSION[user_id]' AND exam_id = '$_SESSION[exam_id]'";
-    //     $result = mysqli_query($conn, $sql);
-    //     header("location: Authentication/logout.php");
-    //     die;
-    // }
+    if(!isset($_SESSION["exam_submited"])) {
+        if(isset($_SESSION["exam_id"]) && isset($_SESSION["user_id"])) {
+            $sql = "DELETE FROM user_exam_mapping WHERE user_id = '$_SESSION[user_id]' AND exam_id = '$_SESSION[exam_id]'";
+            $result = mysqli_query($conn, $sql);
+            header("location: Authentication/logout.php");
+            die;
+        }
+    }
+    if(isset($_SESSION["exam_submited"])) {
+        if($_SESSION["exam_submited"] && isset($_SESSION["exam_id"]) && isset($_SESSION["user_id"])) {
+            $sql = "DELETE FROM user_exam_mapping WHERE user_id = '$_SESSION[user_id]' AND exam_id = '$_SESSION[exam_id]'";
+            $result = mysqli_query($conn, $sql);
+        }
+    }
     // SQL query
     $sql = "SELECT 
     users.id AS user_id,

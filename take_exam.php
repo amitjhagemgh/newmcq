@@ -15,12 +15,12 @@
         die;
     }
 
-    // if(isset($_SESSION["exam_id"]) && isset($_SESSION["user_id"])) {
-    //     $sql = "DELETE FROM user_exam_mapping WHERE user_id = '$_SESSION[user_id]' AND exam_id = '$_SESSION[exam_id]'";
-    //     $result = mysqli_query($conn, $sql);
-    //     header("location: Authentication/logout.php");
-    //     die;
-    // }
+    if(isset($_SESSION["exam_id"]) && isset($_SESSION["user_id"])) {
+        $sql = "DELETE FROM user_exam_mapping WHERE user_id = '$_SESSION[user_id]' AND exam_id = '$_SESSION[exam_id]'";
+        $result = mysqli_query($conn, $sql);
+        header("location: Authentication/logout.php");
+        die;
+    }
 
     $exam_data_sql = "SELECT * FROM exam_portal WHERE exam_name = '$_GET[exam]'";
     $exam_data_result = mysqli_query($conn, $exam_data_sql);

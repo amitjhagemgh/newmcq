@@ -15,6 +15,15 @@
         die;
     }
 
+    if(isset($_SESSION["exam_id"]) && isset($_SESSION["user_id"])) {
+        if($_SERVER["REQUEST_METHOD"] !== "POST") {
+            $sql = "DELETE FROM user_exam_mapping WHERE user_id = '$_SESSION[user_id]' AND exam_id = '$_SESSION[exam_id]'";
+            $result = mysqli_query($conn, $sql);
+            header("location: Authentication/logout.php");
+            die;
+        }
+    }
+
     $exam_data_sql = "SELECT * FROM exam_portal WHERE exam_name = '$_GET[exam]'";
     $exam_data_result = mysqli_query($conn, $exam_data_sql);
 
@@ -22,7 +31,7 @@
         $row = mysqli_fetch_assoc($exam_data_result);
         $exam_id = $row["id"];
         $duration = $row["duration"];
-        // $_SESSION["exam_id"] = $exam_id;
+        $_SESSION["exam_id"] = $exam_id;
     }
 
     $user_id_sql = "SELECT * FROM users WHERE email_id = '$_SESSION[email_id]'";
@@ -30,7 +39,7 @@
 
     if (mysqli_num_rows($user_id_result) > 0) {
         $user_id = mysqli_fetch_assoc($user_id_result)["id"];
-        // $_SESSION["user_id"] = $user_id;
+        $_SESSION["user_id"] = $user_id;
     }
 
     $check_assigned = "SELECT * FROM user_exam_mapping WHERE user_id = '$user_id' AND exam_id = '$exam_id'";
@@ -42,6 +51,7 @@
     }
 
     if($_SERVER["REQUEST_METHOD"] == "POST") {
+        $_SESSION["exam_submited"] = true;
         // array_output($question_ids);
         // pre_post();
         $keys = array_keys($_POST);

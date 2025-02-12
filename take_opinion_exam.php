@@ -14,6 +14,14 @@
         header("location: index.php");
         exit;
     }
+    if(isset($_SESSION["exam_id"]) && isset($_SESSION["user_id"])) {
+        if(!isset($_SESSION["exam_submited"])) {
+            $sql = "DELETE FROM user_exam_mapping WHERE user_id = '$_SESSION[user_id]' AND exam_id = '$_SESSION[exam_id]'";
+            $result = mysqli_query($conn, $sql);
+            header("location: Authentication/logout.php");
+            die;
+        }
+    }
 
     // Get exam details
     $exam_name = $_GET['exam'];
@@ -50,6 +58,7 @@
     }
 
     if($_SERVER["REQUEST_METHOD"] == "POST") {
+        $_SESSION["exam_submited"] = true;
         $keys = array_keys($_POST);
         $values = array_values($_POST);
         // pre_post();

@@ -24,6 +24,7 @@ $inputData = json_decode(file_get_contents('php://input'), true);
 // Check if POST data is empty
 $user_id = $_SESSION["user_id"] ?? null;
 $exam_id = $_SESSION["exam_id"] ?? null;
+$_SESSION["exam_submited"] = true;
 
 $get_total_marks_sql = "SELECT * FROM question_exam_mapping WHERE exam_id = '$exam_id'";
 $total_marks = mysqli_num_rows(mysqli_query($conn, $get_total_marks_sql));
