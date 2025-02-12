@@ -107,7 +107,7 @@ foreach ($data as $row) {
 <?php }
 if(count($data) == 0) {
     echo '<div class="alert alert-success" role="alert">
-  <b>You have not pending exams. You can logout.</b>
+  <b>You have no pending exams. You can log out.</b>
 </div>';
 } ?>
     </div>
