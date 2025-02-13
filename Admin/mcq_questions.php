@@ -3,6 +3,7 @@
     include "Connection/conn.inc.php";
     include "Includes/header.php";
     include "Includes/functions.inc.php";
+    header('Content-type: text/html; charset=ASCII');
 
     if (!isset($_SESSION["is_login"])) {
         header("location: Authentication/login.php");
@@ -275,7 +276,7 @@
                         $char_sr_no = 65;
                         ?>
                         <tr>
-                                <th scope='row'><?php echo ++$show_series; ?></th>
+                            <th scope='row'><?php echo ++$show_series; ?></th>
                                 <td><?= $question_unique_id; ?></td>
                                 <td>
                                 <?php
