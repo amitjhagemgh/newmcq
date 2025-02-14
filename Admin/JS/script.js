@@ -10,6 +10,21 @@ if (document.querySelector("#result-table")) {
     if (!document.querySelector("#result-table").innerHTML.includes("No results found.")) {
         var table = $('#result-table').DataTable({
             pageLength: 500, // Set default number of rows to display
+            scrollX: true,
+                initComplete: function() {
+                    // Check if table needs scroll
+                    var scrollCheck = function() {
+                        var scrollWidth = $('.dataTables_scroll')[0];
+                        var width = $('.dataTables_scroll').width();
+                        $('.dataTables_scroll').toggleClass('has-scroll', scrollWidth > width);
+                    };
+                    
+                    // Initial check
+                    scrollCheck();
+                    
+                    // Check on window resize
+                    $(window).on('resize', scrollCheck);
+                },
             lengthMenu: [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
             columns: [
                 null, // For Sr. No. (auto-detected)
@@ -27,6 +42,21 @@ if (document.querySelector("#opinion-result")) {
     if (!document.querySelector("#opinion-result").innerHTML.includes("No results found.")) {
         var table = $('#opinion-result').DataTable({
             pageLength: 500, // Set default number of rows to display
+            scrollX: true,
+                initComplete: function() {
+                    // Check if table needs scroll
+                    var scrollCheck = function() {
+                        var scrollWidth = $('.dataTables_scroll')[0];
+                        var width = $('.dataTables_scroll').width();
+                        $('.dataTables_scroll').toggleClass('has-scroll', scrollWidth > width);
+                    };
+                    
+                    // Initial check
+                    scrollCheck();
+                    
+                    // Check on window resize
+                    $(window).on('resize', scrollCheck);
+                },
             lengthMenu: [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
             columns: [
                 null, // For Sr. No. (auto-detected)
@@ -45,6 +75,21 @@ if (document.querySelector("#question-bank-table")) {
     if (!document.querySelector("#question-bank-table").innerHTML.includes("No results found.")) {
         var table = $('#question-bank-table').DataTable({
             pageLength: 500, // Set default number of rows to display
+            scrollX: true,
+                initComplete: function() {
+                    // Check if table needs scroll
+                    var scrollCheck = function() {
+                        var scrollWidth = $('.dataTables_scroll')[0];
+                        var width = $('.dataTables_scroll').width();
+                        $('.dataTables_scroll').toggleClass('has-scroll', scrollWidth > width);
+                    };
+                    
+                    // Initial check
+                    scrollCheck();
+                    
+                    // Check on window resize
+                    $(window).on('resize', scrollCheck);
+                },
             lengthMenu: [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
             columns: [
                 null, // For Sr. No. (auto-detected)
