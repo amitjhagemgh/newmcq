@@ -23,17 +23,17 @@
                 $exam_id = $exam_id_row["id"];
                 // Fetching result ID for deleting the answer_attempts records accordingly result_id
                 $result_id = mysqli_fetch_assoc(mysqli_query($conn, "SELECT id FROM result WHERE user_id = '$user_id' AND exam_id = '$exam_id' AND exam_attended_time = '$exam_attended_time'"))["id"];
-                $sql = "DELETE FROM answer_attempts WHERE result_id = '$result_id'";
-                $result = mysqli_query($conn, $sql);
-                $sql = "DELETE r
-                        FROM result AS r
+                // $sql = "DELETE FROM answer_attempts WHERE result_id = '$result_id'";
+                // $result = mysqli_query($conn, $sql);
+                $sql = "UPDATE result AS r
                         JOIN users AS u ON r.user_id = u.id
                         JOIN exam_portal AS ep ON ep.id = r.exam_id
+                        SET r.status = 0
                         WHERE r.exam_id = '$exam_id' AND r.user_id = '$user_id';";
                 $result = mysqli_query($conn, $sql);
                 if($result) {
-                    $sql = "DELETE FROM answer_attempts WHERE result_id = '$result_id'";
-                    $result = mysqli_query($conn, $sql);
+                    // $sql = "DELETE FROM answer_attempts WHERE result_id = '$result_id'";
+                    // $result = mysqli_query($conn, $sql);
                     echo "<script>alert('Result deleted successfully.');</script>";
                 }   
             }
@@ -71,6 +71,7 @@
 FROM result 
 INNER JOIN users ON result.user_id = users.id 
 INNER JOIN exam_portal ON result.exam_id = exam_portal.id 
+WHERE result.status = 1
 GROUP BY result.user_id, result.exam_id, exam_portal.exam_name, users.email_id;";
                         // echo $query;
                 $result = mysqli_query($conn, $query);
