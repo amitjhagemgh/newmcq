@@ -154,6 +154,7 @@ GROUP BY result.user_id, result.exam_id, exam_portal.exam_name, users.email_id;"
                     $query = "SELECT 
         result.user_id AS user_id,
         result.exam_id AS exam_id,
+        MAX(result.total_marks) AS total_marks,
         MAX(result.score) AS score,
         exam_portal.exam_name,
         users.email_id AS email_id,
@@ -161,7 +162,8 @@ GROUP BY result.user_id, result.exam_id, exam_portal.exam_name, users.email_id;"
         GROUP_CONCAT(DISTINCT users.name) AS name 
     FROM result 
     INNER JOIN users ON result.user_id = users.id 
-    INNER JOIN exam_portal ON result.exam_id = exam_portal.id 
+    INNER JOIN exam_portal ON result.exam_id = exam_portal.id
+    WHERE result.status = 1
     GROUP BY result.user_id, result.exam_id, exam_portal.exam_name, users.email_id;
     ";
                             // echo $query;
@@ -184,7 +186,7 @@ GROUP BY result.user_id, result.exam_id, exam_portal.exam_name, users.email_id;"
                                     // echo $row["exam_id"];
                                     // echo $total_marks_sql;
                                     $total_marks = mysqli_num_rows(mysqli_query($conn, $total_marks_sql));
-                                    echo $row['score'] . "/" . $total_marks;
+                                    echo $row['score'] . "/" . $row["total_marks"];
                                 ?></td>
                                 <td><?= $row['exam_attended_time']; ?></td>
                                 <?php
