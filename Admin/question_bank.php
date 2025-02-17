@@ -552,6 +552,7 @@
     </div>
 </div>
 
+<h2 class="text-center">Question Bank</h2>
 <div class="container min-height-100-vh table-responsive">
     <table class="table table-bordered" id="question-bank-table" style="width: 1500px;">
         <thead>

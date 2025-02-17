@@ -6,6 +6,7 @@
         header("location: Authentication/login.php");
     }
 ?>
+<h2 class="text-center mt-4">Quizzes</h2>
 <div class="container dashboard-container mb-4">
     <div class="row">
         <?php

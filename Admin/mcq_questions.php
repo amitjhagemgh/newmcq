@@ -233,7 +233,7 @@
         </div>
     </div>
 </div>
-
+<h2 class="text-center">Exam Name: <?= $_GET["exam"];?></h2>
 <div class="container min-height-100-vh">
     <table class="table table-bordered" id="question-table">
         <thead>
