@@ -50,6 +50,7 @@
         }
     }
 ?>
+<h2 class="text-center">Exam Name: <?= $_GET["exam"];?></h2>
 <div class="container my-2 d-flex justify-content-end">
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#questionModal">Add
         Questions</button>
