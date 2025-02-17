@@ -61,17 +61,17 @@
         $test_series = (mysqli_num_rows($test_series_result) > 0)?mysqli_fetch_assoc($test_series_result)["test_series"]:0;
         $new_test_series = (int)$test_series + 1;
         // pre_post();
-        $sql = "INSERT INTO eit_result(user_id, question, answer, exam_id, test_series) VALUES ";
+        $sql = "INSERT INTO eit_result(user_id, question, answer, exam_id, test_series, status) VALUES ";
         for($i = 0; $i < count($keys); $i++) {
             if($keys[$i] == "exam-submit") {
                 continue;
             }
     // $user_id = $row["id"];
-            $sql .= "('$user_id', '$keys[$i]', '" . get_safe_value($conn, $values[$i]) . "', '$exam_id', '$new_test_series'),";
+            $sql .= "('$user_id', '$keys[$i]', '" . get_safe_value($conn, $values[$i]) . "', '$exam_id', '$new_test_series', 1),";
         }
         $sql = substr($sql, 0, -1);
         if(sizeof($values) == 0) {
-            $sql .= "('$user_id', '', '', '$exam_id', '$new_test_series');";
+            $sql .= "('$user_id', '', '', '$exam_id', '$new_test_series', 1);";
         }
         // echo $sql;
         // die;
@@ -144,38 +144,39 @@
             $self_awareness_series_sql = "SELECT series FROM self_awareness_result ORDER BY series DESC";
             $self_awareness_result = mysqli_query($conn, $self_awareness_series_sql);
             $self_awareness_series = (mysqli_num_rows($self_awareness_result) > 0)?((int)mysqli_fetch_assoc($self_awareness_result)["series"] + 1):1;
-            $insert_self_awareness_score_sql = "INSERT INTO self_awareness_result (user_id, score, series) VALUES ($user_id, $self_awareness_score, $self_awareness_series)";
+            $insert_self_awareness_score_sql = "INSERT INTO self_awareness_result (user_id, score, series, status) VALUES ($user_id, $self_awareness_score, $self_awareness_series, 1)";
             $insert_self_awareness_score_result = mysqli_query($conn, $insert_self_awareness_score_sql);
 
             // Managing Emotions
             $managing_emotions_series_sql = "SELECT series FROM managing_emotions_result ORDER BY series DESC";
             $managing_emotions_result = mysqli_query($conn, $managing_emotions_series_sql);
             $managing_emotions_series = (mysqli_num_rows($managing_emotions_result) > 0)?((int)mysqli_fetch_assoc($managing_emotions_result)["series"] + 1):1;
-            $insert_managing_emotions_score_sql = "INSERT INTO managing_emotions_result (user_id, score, series) VALUES ($user_id, $managing_emotions_score, $managing_emotions_series)";
+            $insert_managing_emotions_score_sql = "INSERT INTO managing_emotions_result (user_id, score, series, status) VALUES ($user_id, $managing_emotions_score, $managing_emotions_series, 1)";
             $insert_managing_emotions_score_result = mysqli_query($conn, $insert_managing_emotions_score_sql);
 
             // Motivating Oneself
             $motivating_oneself_series_sql = "SELECT series FROM motivating_oneself_result ORDER BY series DESC";
             $motivating_oneself_result = mysqli_query($conn, $motivating_oneself_series_sql);
             $motivating_oneself_series = (mysqli_num_rows($motivating_oneself_result) > 0)?((int)mysqli_fetch_assoc($motivating_oneself_result)["series"] + 1):1;
-            $insert_motivating_oneself_score_sql = "INSERT INTO motivating_oneself_result (user_id, score, series) VALUES ($user_id, $motivating_oneself_score, $motivating_oneself_series)";
+            $insert_motivating_oneself_score_sql = "INSERT INTO motivating_oneself_result (user_id, score, series, status) VALUES ($user_id, $motivating_oneself_score, $motivating_oneself_series, 1)";
             $insert_motivating_oneself_score_result = mysqli_query($conn, $insert_motivating_oneself_score_sql);
 
             // Empathy
             $empathy_series_sql = "SELECT series FROM empathy_result ORDER BY series DESC";
             $empathy_result = mysqli_query($conn, $empathy_series_sql);
             $empathy_series = (mysqli_num_rows($empathy_result) > 0)?((int)mysqli_fetch_assoc($empathy_result)["series"] + 1):1;
-            $insert_empathy_score_sql = "INSERT INTO empathy_result (user_id, score, series) VALUES ($user_id, $empathy_score, $empathy_series)";
+            $insert_empathy_score_sql = "INSERT INTO empathy_result (user_id, score, series, status) VALUES ($user_id, $empathy_score, $empathy_series, 1)";
             $insert_empathy_score_result = mysqli_query($conn, $insert_empathy_score_sql);
             
             // Handling Relationships
             $handling_relationships_series_sql = "SELECT series FROM handling_relationships_result ORDER BY series DESC";
             $handling_relationships_result = mysqli_query($conn, $handling_relationships_series_sql);
             $handling_relationships_series = (mysqli_num_rows($handling_relationships_result) > 0)?((int)mysqli_fetch_assoc($handling_relationships_result)["series"] + 1):1;
-            $insert_handling_relationships_score_sql = "INSERT INTO handling_relationships_result (user_id, score, series) VALUES ($user_id, $handling_relationships_score, $handling_relationships_series)";
+            $insert_handling_relationships_score_sql = "INSERT INTO handling_relationships_result (user_id, score, series, status) VALUES ($user_id, $handling_relationships_score, $handling_relationships_series, 1)";
             $insert_handling_relationships_score_result = mysqli_query($conn, $insert_handling_relationships_score_sql);
 
             header("location: all_quizes.php");
+            die;
         }
     }
 ?>

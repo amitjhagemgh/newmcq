@@ -31,18 +31,19 @@
 <?php
                 // Fetch users from the database
                 $query = "SELECT exam_attended_time,
-                            Min(opinion_result.id)      AS id,
-                            Min(opinion_result.user_id) AS user_id,
-                            Min(users.email_id)         AS email_id,
-                            Min(users.name)             AS name,
-                            Min(exam_portal.exam_name)  AS exam_name,
+                            MIN(opinion_result.id)      AS id,
+                            MIN(opinion_result.user_id) AS user_id,
+                            MIN(opinion_result.status) AS status,
+                            MIN(users.email_id)         AS email_id,
+                            MIN(users.name)             AS name,
+                            MIN(exam_portal.exam_name)  AS exam_name,
                             MIN(opinion_result.test_series) AS test_series
                         FROM   opinion_result
                             JOIN users
                                 ON opinion_result.user_id = users.id
                             JOIN exam_portal
                                 ON opinion_result.exam_id = exam_portal.id
-                        WHERE  users.id = $user_id
+                        WHERE  users.id = $user_id AND opinion_result.status = 1
                         GROUP  BY exam_attended_time; ";
                 $result = mysqli_query($conn, $query);
                 $i=0;

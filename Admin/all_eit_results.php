@@ -23,18 +23,18 @@
                 $exam_id = $exam_id_row["id"];
                 // Fetching result ID for deleting the answer_attempts records accordingly result_id
                 // $result_id = mysqli_fetch_assoc(mysqli_query($conn, "SELECT id FROM result WHERE user_id = '$user_id' AND exam_id = '$exam_id' AND test_series = '$test_series'"))["id"];
-                $sql = "DELETE FROM eit_result WHERE user_id = '$user_id' AND test_series = '$test_series'";
+                $sql = "UPDATE eit_result SET status = 0 WHERE user_id = '$user_id' AND test_series = '$test_series'";
                 $result = mysqli_query($conn, $sql);
-                $sql = "DELETE FROM self_awareness_result WHERE user_id = '$user_id' AND series = '$test_series'";
-                $result = mysqli_query($conn, $sql);
-                $sql = "DELETE FROM managing_emotions_result WHERE user_id = '$user_id' AND series = '$test_series'";
-                $result = mysqli_query($conn, $sql);
-                $sql = "DELETE FROM motivating_oneself_result WHERE user_id = '$user_id' AND series = '$test_series'";
-                $result = mysqli_query($conn, $sql);
-                $sql = "DELETE FROM empathy_result WHERE user_id = '$user_id' AND series = '$test_series'";
-                $result = mysqli_query($conn, $sql);
-                $sql = "DELETE FROM handling_relationships_result WHERE user_id = '$user_id' AND series = '$test_series'";
-                $result = mysqli_query($conn, $sql);
+                // $sql = "DELETE FROM self_awareness_result WHERE user_id = '$user_id' AND series = '$test_series'";
+                // $result = mysqli_query($conn, $sql);
+                // $sql = "DELETE FROM managing_emotions_result WHERE user_id = '$user_id' AND series = '$test_series'";
+                // $result = mysqli_query($conn, $sql);
+                // $sql = "DELETE FROM motivating_oneself_result WHERE user_id = '$user_id' AND series = '$test_series'";
+                // $result = mysqli_query($conn, $sql);
+                // $sql = "DELETE FROM empathy_result WHERE user_id = '$user_id' AND series = '$test_series'";
+                // $result = mysqli_query($conn, $sql);
+                // $sql = "DELETE FROM handling_relationships_result WHERE user_id = '$user_id' AND series = '$test_series'";
+                // $result = mysqli_query($conn, $sql);
                 if($result) {
                     echo "<script>alert('Result deleted successfully.');</script>";
                 }   
@@ -78,7 +78,7 @@
 FROM eit_result AS result
 INNER JOIN users ON result.user_id = users.id 
 INNER JOIN exam_portal ON result.exam_id = exam_portal.id 
-WHERE exam_portal.exam_name = 'Emotional Intelligence Test'
+WHERE exam_portal.exam_name = 'Emotional Intelligence Test' AND result.status = 1
 GROUP BY result.user_id, result.exam_id, result.test_series;";
                         // echo $query;
                 $result = mysqli_query($conn, $query);

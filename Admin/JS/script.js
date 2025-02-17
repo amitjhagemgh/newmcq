@@ -6,6 +6,37 @@ function resultPage() {
     });
 
 }
+if (document.querySelector("#all-user-table")) {
+    if (!document.querySelector("#all-user-table").innerHTML.includes("No users found.")) {
+        var table = $('#all-user-table').DataTable({
+            pageLength: 500, // Set default number of rows to display
+            scrollX: true,
+                initComplete: function() {
+                    // Check if table needs scroll
+                    var scrollCheck = function() {
+                        var scrollWidth = $('.dataTables_scroll')[0];
+                        var width = $('.dataTables_scroll').width();
+                        $('.dataTables_scroll').toggleClass('has-scroll', scrollWidth > width);
+                    };
+                    
+                    // Initial check
+                    scrollCheck();
+                    
+                    // Check on window resize
+                    $(window).on('resize', scrollCheck);
+                },
+            lengthMenu: [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
+            columns: [
+                null, // For Sr. No. (auto-detected)
+                { "data": "name" }, // Name
+                { "data": "email_id" }, // Email ID
+                { "data": "assign_quizzes" }, // Exam Name
+                null,  // For Edit button (auto-detected)
+                null  // For Delete button (auto-detected)
+            ]
+        });
+    }
+}
 if (document.querySelector("#result-table")) {
     if (!document.querySelector("#result-table").innerHTML.includes("No results found.")) {
         var table = $('#result-table').DataTable({
@@ -109,7 +140,7 @@ if (document.querySelector("#question-bank-table")) {
         });
     }
 }
-console.log(table);
+// console.log(table);
 
 // $('#result-table').DataTable({
 //     "columns": [

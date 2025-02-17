@@ -21,7 +21,7 @@
                 $user_id = mysqli_fetch_assoc(mysqli_query($conn, $user_id_sql))["id"];
                 $exam_id_sql = "SELECT id FROM exam_portal WHERE exam_name = '$exam_name'";
                 $exam_id = mysqli_fetch_assoc(mysqli_query($conn, $exam_id_sql))["id"];
-                $sql = "DELETE FROM opinion_result WHERE user_id='$user_id' AND exam_id='$exam_id' AND test_series='$test_series'";
+                $sql = "UPDATE opinion_result SET status = 0 WHERE user_id='$user_id' AND exam_id='$exam_id' AND test_series='$test_series'";
                 $result = mysqli_query($conn, $sql);
                 if($result) {
                     echo "<script>alert('Result deleted successfully.');</script>";
@@ -29,7 +29,7 @@
             }
         }
     ?>
-    <div class="container my-5">
+    <div class="container my-5 min-height-100-vh">
         <h2 class="text-center">Four Axis Personality Type Test Result</h2>
 
         <!-- User Table -->
@@ -51,6 +51,7 @@
                 $query = "SELECT 
     opinion_result.user_id,
     opinion_result.exam_id,
+    opinion_result.status,
     GROUP_CONCAT(DISTINCT users.name) AS name,
     GROUP_CONCAT(DISTINCT users.email_id) AS email_id,
     exam_portal.exam_name,
@@ -59,6 +60,7 @@
 FROM opinion_result 
 JOIN users ON opinion_result.user_id = users.id
 JOIN exam_portal ON opinion_result.exam_id = exam_portal.id 
+WHERE opinion_result.status = 1
 GROUP BY opinion_result.user_id, opinion_result.exam_id, exam_portal.exam_name, opinion_result.test_series;
 ";
                 $result = mysqli_query($conn, $query);

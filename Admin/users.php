@@ -68,7 +68,7 @@
     }
 ?>
     <div class="container my-5">
-        <h2 class="text-center">User Management</h2>
+        <h2 class="text-center">Users</h2>
         <?php
             $exam_portal_array = array();
             $exam_portal_sql = "SELECT * FROM exam_portal";
@@ -83,7 +83,7 @@
         ?>
 
         <!-- User Table -->
-        <table class="table table-bordered mt-4">
+        <table class="table table-bordered mt-4" id="all-user-table">
             <thead>
                 <tr>
                     <th>Sr. No.</th>

@@ -325,7 +325,7 @@
                                         while($row2 = mysqli_fetch_assoc($option_result)) { ?>
                                              <div class="d-flex">
                                                 <input type="checkbox" name="options[]" id="options-<?php echo $sr_no; ?>" class="" <?php if($row2["is_correct"] == "1") {echo "checked";}?>>
-                                                <label for="options-<?php echo $sr_no; ?>" class="d-inline-block w-100 ms-2" data-question-id="<?= $question_id; ?>" data-option="<?= $row2["answers"]; ?>"><?= chr($char_sr_no) . ". " . $row2["answers"];?></label>
+                                                <label for="options-<?php echo $sr_no; ?>" class="d-inline-block w-100 ms-2" data-question-id="<?= $question_id; ?>" data-option="<?= $row2["answers"]; ?>" data-question-type="<?= $row["question_type"]?>"><?= chr($char_sr_no) . ". " . $row2["answers"];?></label>
                                             </div>
                                         <?php $sr_no++;$char_sr_no++;}
                                     }
