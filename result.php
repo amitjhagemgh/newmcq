@@ -8,7 +8,15 @@
         header("location: Authentication/login.php");
     }
 ?>
-<div class="container my-3">
+<div class="container my-3 min-height-100-vh">
+<div class="container d-flex justify-content-end p-0">
+    <label class="">Search in: 
+        <select id="columnSelector">
+            <option value="all">All Columns</option>
+            <option value="3">Exam Name</option>
+        </select>
+    </label>
+</div>
     <table class="table" id="user-result-table">
     <thead>
         <tr>
@@ -32,7 +40,7 @@
             $email_id_sql = "SELECT user_id FROM result WHERE user_id = '$user_id' GROUP BY user_id";
             $email_id_sql_result = mysqli_query($conn, $email_id_sql);
             if(mysqli_num_rows($email_id_sql_result) > 0) {
-                $exam_name_sql = "SELECT DISTINCT user_id, exam_id, score, exam_attended_time FROM result WHERE user_id = '$user_id'";
+                $exam_name_sql = "SELECT DISTINCT user_id, exam_id, score, exam_attended_time FROM result WHERE user_id = '$user_id' AND status = 1";
                 $exam_name_sql_result = mysqli_query($conn, $exam_name_sql);
                     while($row = mysqli_fetch_assoc($exam_name_sql_result)) { ?>
                     <?php // array_output($row); ?>

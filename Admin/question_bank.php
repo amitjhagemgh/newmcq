@@ -249,14 +249,22 @@
                 }
                 // array_output_die($questions_unique_ids);
                 if(!empty($_POST["select_quiz"])) {
+                    $result = true;
                     foreach($questions_unique_ids as $key => $value) {
                         $exam_id = get_safe_value($conn, $_POST["select_quiz"]);
                         $question_table = mysqli_fetch_assoc(mysqli_query($conn, "SELECT id, questions FROM questions WHERE question_id = $value"));
                         $question = get_safe_value($conn, $question_table["questions"]);
                         $question_id = get_safe_value($conn, $question_table["id"]);
-                        $sql = "INSERT INTO question_exam_mapping (questions, question_id, exam_id, status) VALUES ('$question', $question_id, $exam_id, 1)";
-                        // echo $sql;
-                        $result = mysqli_query($conn, $sql);
+                        $question = get_safe_value($conn, mysqli_fetch_assoc(mysqli_query($conn, "SELECT questions FROM questions WHERE question_id = $value"))["questions"]);
+                        $check_sql = "SELECT * FROM question_exam_mapping WHERE question_id = $question_id AND exam_id = $exam_id";
+                        // echo $check_sql . "<br />";
+                        $check_result = mysqli_query($conn, $check_sql);
+                        // echo mysqli_num_rows($check_result);
+                        if(mysqli_num_rows($check_result) == 0) {
+                            $sql = "INSERT INTO question_exam_mapping (questions, question_id, exam_id, status) VALUES ('$question', $question_id, $exam_id, 1)";
+                            // echo $sql;
+                            $result = mysqli_query($conn, $sql);
+                        }
                     }
                     if($result) {
                         $alert_message = '<div class="alert alert-success alert-dismissible fade show" role="alert">Successfully! All questions are added to the quizes.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
@@ -275,13 +283,14 @@
                         $exam_id = mysqli_fetch_assoc($result)["id"];
                         foreach($questions_unique_ids as $key => $value) {
                             $question = get_safe_value($conn, mysqli_fetch_assoc(mysqli_query($conn, "SELECT questions FROM questions WHERE question_id = $value"))["questions"]);
-                            $check_sql = "SELECT * FROM question_exam_mapping WHERE questions = '$question' AND question_id = $value AND exam_id = $exam_id";
+                            $question_id = get_safe_value($conn, mysqli_fetch_assoc(mysqli_query($conn, "SELECT questions FROM questions WHERE question_id = $value"))["id"]);
+                            $check_sql = "SELECT * FROM question_exam_mapping WHERE question_id = $question_id AND exam_id = $exam_id";
+                            echo $check_sql . "<br />";
                             $check_result = mysqli_query($conn, $check_sql);
-                            if(mysqli_num_rows($check_result) > 0) {
-                                continue;
+                            if(mysqli_num_rows($check_result) == 0) {
+                                $sql = "INSERT INTO question_exam_mapping (questions, question_id, exam_id, status) VALUES ('$question', $question_id, $exam_id, 1)";
+                                $result = mysqli_query($conn, $sql);
                             }
-                            $sql = "INSERT INTO question_exam_mapping (questions, question_id, exam_id, status) VALUES ('$question', $value, $exam_id, 1)";
-                            $result = mysqli_query($conn, $sql);
                         }
                         if($result) {
                             $alert_message = '<div class="alert alert-success alert-dismissible fade show" role="alert">Successfully! All questions are added to the quizes.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
@@ -553,6 +562,18 @@
 </div>
 
 <h2 class="text-center">Question Bank</h2>
+<div class="container d-flex justify-content-end">
+    <label class="">Search in: 
+        <select id="columnSelector">
+            <option value="all">All Columns</option>
+            <option value="1">Question ID</option>
+            <option value="2">Topic</option>
+            <option value="3">Main Group</option>
+            <option value="4">Sub Group</option>
+            <option value="5">Questions</option>
+        </select>
+    </label>
+</div>
 <div class="container min-height-100-vh table-responsive">
     <table class="table table-bordered" id="question-bank-table" style="width: 1500px;">
         <thead>
@@ -722,6 +743,23 @@
                     <tr><td colspan='8' class="text-center">No questions found</td></tr>
                 <?php }
                 ?>
+                <tfoot>
+                    <tr>
+                        <th scope="col">Sr. no.</th>
+                        <th scope="col">Question ID</th>
+                        <th scope="col">Topic</th>
+                        <th scope="col">Main Group</th>
+                        <th scope="col">Sub Group</th>
+                        <th scope="col">Questions</th>
+                        <th scope="col">No. of Times Correctly Attempted</th>
+                        <th scope="col">No. of Times Attempted</th>
+                        <th scope="col">Percentage Correctly Attempted</th>
+                        <th scope="col">Difficulty Level</th>
+                        <th scope="col">Add to Quiz</th>
+                        <th scope="col">Edit</th>
+                        <th scope="col">Delete</th>
+                    </tr>
+                </tfoot>
         </tbody>
     </table>
 </div>

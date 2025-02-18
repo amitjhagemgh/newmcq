@@ -69,6 +69,15 @@
 ?>
     <div class="container my-5">
         <h2 class="text-center">Users</h2>
+        <div class="container d-flex justify-content-end p-0">
+            <label class="">Search in: 
+                <select id="columnSelector">
+                    <option value="all">All Columns</option>
+                    <option value="1">Name</option>
+                    <option value="2">Email ID</option>
+                </select>
+            </label>
+        </div>
         <?php
             $exam_portal_array = array();
             $exam_portal_sql = "SELECT * FROM exam_portal";

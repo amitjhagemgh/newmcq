@@ -11,20 +11,20 @@ if (document.querySelector("#all-user-table")) {
         var table = $('#all-user-table').DataTable({
             pageLength: 500, // Set default number of rows to display
             scrollX: true,
-                initComplete: function() {
-                    // Check if table needs scroll
-                    var scrollCheck = function() {
-                        var scrollWidth = $('.dataTables_scroll')[0];
-                        var width = $('.dataTables_scroll').width();
-                        $('.dataTables_scroll').toggleClass('has-scroll', scrollWidth > width);
-                    };
-                    
-                    // Initial check
-                    scrollCheck();
-                    
-                    // Check on window resize
-                    $(window).on('resize', scrollCheck);
-                },
+            initComplete: function () {
+                // Check if table needs scroll
+                var scrollCheck = function () {
+                    var scrollWidth = $('.dataTables_scroll')[0];
+                    var width = $('.dataTables_scroll').width();
+                    $('.dataTables_scroll').toggleClass('has-scroll', scrollWidth > width);
+                };
+
+                // Initial check
+                scrollCheck();
+
+                // Check on window resize
+                $(window).on('resize', scrollCheck);
+            },
             lengthMenu: [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
             columns: [
                 null, // For Sr. No. (auto-detected)
@@ -42,20 +42,20 @@ if (document.querySelector("#result-table")) {
         var table = $('#result-table').DataTable({
             pageLength: 500, // Set default number of rows to display
             scrollX: true,
-                initComplete: function() {
-                    // Check if table needs scroll
-                    var scrollCheck = function() {
-                        var scrollWidth = $('.dataTables_scroll')[0];
-                        var width = $('.dataTables_scroll').width();
-                        $('.dataTables_scroll').toggleClass('has-scroll', scrollWidth > width);
-                    };
-                    
-                    // Initial check
-                    scrollCheck();
-                    
-                    // Check on window resize
-                    $(window).on('resize', scrollCheck);
-                },
+            initComplete: function () {
+                // Check if table needs scroll
+                var scrollCheck = function () {
+                    var scrollWidth = $('.dataTables_scroll')[0];
+                    var width = $('.dataTables_scroll').width();
+                    $('.dataTables_scroll').toggleClass('has-scroll', scrollWidth > width);
+                };
+
+                // Initial check
+                scrollCheck();
+
+                // Check on window resize
+                $(window).on('resize', scrollCheck);
+            },
             lengthMenu: [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
             columns: [
                 null, // For Sr. No. (auto-detected)
@@ -74,20 +74,20 @@ if (document.querySelector("#opinion-result")) {
         var table = $('#opinion-result').DataTable({
             pageLength: 500, // Set default number of rows to display
             scrollX: true,
-                initComplete: function() {
-                    // Check if table needs scroll
-                    var scrollCheck = function() {
-                        var scrollWidth = $('.dataTables_scroll')[0];
-                        var width = $('.dataTables_scroll').width();
-                        $('.dataTables_scroll').toggleClass('has-scroll', scrollWidth > width);
-                    };
-                    
-                    // Initial check
-                    scrollCheck();
-                    
-                    // Check on window resize
-                    $(window).on('resize', scrollCheck);
-                },
+            initComplete: function () {
+                // Check if table needs scroll
+                var scrollCheck = function () {
+                    var scrollWidth = $('.dataTables_scroll')[0];
+                    var width = $('.dataTables_scroll').width();
+                    $('.dataTables_scroll').toggleClass('has-scroll', scrollWidth > width);
+                };
+
+                // Initial check
+                scrollCheck();
+
+                // Check on window resize
+                $(window).on('resize', scrollCheck);
+            },
             lengthMenu: [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
             columns: [
                 null, // For Sr. No. (auto-detected)
@@ -102,25 +102,69 @@ if (document.querySelector("#opinion-result")) {
         });
     }
 }
+if (document.querySelector("#eit-result-table")) {
+    if (!document.querySelector("#eit-result-table").innerHTML.includes("No results found.")) {
+        var table = $('#eit-result-table').DataTable({
+            pageLength: 500, // Set default number of rows to display
+            scrollX: true,
+            initComplete: function () {
+                // Check if table needs scroll
+                var scrollCheck = function () {
+                    var scrollWidth = $('.dataTables_scroll')[0];
+                    var width = $('.dataTables_scroll').width();
+                    $('.dataTables_scroll').toggleClass('has-scroll', scrollWidth > width);
+                };
+
+                // Initial check
+                scrollCheck();
+
+                // Check on window resize
+                $(window).on('resize', scrollCheck);
+            },
+            lengthMenu: [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
+            columns: [
+                null, // For Sr. No. (auto-detected)
+                { "data": "name" }, // Name
+                { "data": "email_id" }, // Email ID
+                { "data": "exam_name" }, // Exam Name
+                { "data": "self_awareness" }, // Self Awareness
+                { "data": "managing_emotions" }, // Managing Emotions
+                { "data": "motivating_oneself" }, // Motivating Oneself
+                { "data": "empathy" }, // Empathy
+                { "data": "handling_relationships" }, // Handling Relationships
+                { "data": "total" }, // Total
+                { "data": "exam_attended_time" }, // Exam Attended Time
+                { "data": "delete" }, // Delete
+                // null  // For View button (auto-detected)
+            ]
+        });
+    }
+}
 if (document.querySelector("#question-bank-table")) {
     if (!document.querySelector("#question-bank-table").innerHTML.includes("No results found.")) {
+        var selectedColumn = "all"; // Default: search in all columns
+        $('#columnSelector').on('change', function () {
+            selectedColumn = $(this).val();
+            table.draw(); // Refresh the table after selecting a column
+        });
         var table = $('#question-bank-table').DataTable({
             pageLength: 500, // Set default number of rows to display
             scrollX: true,
-                initComplete: function() {
-                    // Check if table needs scroll
-                    var scrollCheck = function() {
-                        var scrollWidth = $('.dataTables_scroll')[0];
-                        var width = $('.dataTables_scroll').width();
-                        $('.dataTables_scroll').toggleClass('has-scroll', scrollWidth > width);
-                    };
-                    
-                    // Initial check
-                    scrollCheck();
-                    
-                    // Check on window resize
-                    $(window).on('resize', scrollCheck);
-                },
+            initComplete: function () {
+
+                // Check if table needs scroll
+                var scrollCheck = function () {
+                    var scrollWidth = $('.dataTables_scroll')[0];
+                    var width = $('.dataTables_scroll').width();
+                    $('.dataTables_scroll').toggleClass('has-scroll', scrollWidth > width);
+                };
+
+                // Initial check
+                scrollCheck();
+
+                // Check on window resize
+                $(window).on('resize', scrollCheck);
+            },
             lengthMenu: [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
             columns: [
                 null, // For Sr. No. (auto-detected)
@@ -137,6 +181,98 @@ if (document.querySelector("#question-bank-table")) {
                 null,
                 null  // For View button (auto-detected)
             ]
+        });
+        var selectedColumn = "all"; // Default: search in all columns
+
+        $('#columnSelector').on('change', function () {
+            selectedColumn = $(this).val();
+            table.draw(); // Refresh the table after selecting a column
+        });
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var searchTerm = table.search().trim().toLowerCase();
+
+            if (!searchTerm) return true; // If no search term, show all
+
+            if (selectedColumn === "all") {
+                // Default behavior: search in all columns
+                return data.join(" ").toLowerCase().includes(searchTerm);
+            } else {
+                // Search only in the selected column
+                return data[selectedColumn].toLowerCase().includes(searchTerm);
+            }
+        });
+
+        // Redraw table on search input change
+        $('#example_filter input').on('keyup', function () {
+            table.draw();
+        });
+    }
+}
+if (document.querySelector("#question-table")) {
+    if (!document.querySelector("#question-table").innerHTML.includes("No results found.")) {
+        var selectedColumn = "all"; // Default: search in all columns
+        $('#columnSelector').on('change', function () {
+            selectedColumn = $(this).val();
+            table.draw(); // Refresh the table after selecting a column
+        });
+        var table = $('#question-table').DataTable({
+            pageLength: 500, // Set default number of rows to display
+            scrollX: true,
+            initComplete: function () {
+
+                // Check if table needs scroll
+                var scrollCheck = function () {
+                    var scrollWidth = $('.dataTables_scroll')[0];
+                    var width = $('.dataTables_scroll').width();
+                    $('.dataTables_scroll').toggleClass('has-scroll', scrollWidth > width);
+                };
+
+                // Initial check
+                scrollCheck();
+
+                // Check on window resize
+                $(window).on('resize', scrollCheck);
+            },
+            lengthMenu: [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
+            columns: [
+                null, // For Sr. No. (auto-detected)
+                { "data": "question_id" }, // Name
+                { "data": "topic" }, // Email ID
+                { "data": "main_group" }, // Exam Name
+                { "data": "sub_group" }, // Exam Name
+                { "data": "questions" }, // View
+                { "data": "no_of_correctly_attempted" },
+                { "data": "no_of_times_attempted" },
+                { "data": "percentage_correctly_attempted" },
+                { "data": "difficulty_level" },
+                null  // For View button (auto-detected)
+            ]
+        });
+        var selectedColumn = "all"; // Default: search in all columns
+
+        $('#columnSelector').on('change', function () {
+            selectedColumn = $(this).val();
+            table.draw(); // Refresh the table after selecting a column
+        });
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var searchTerm = table.search().trim().toLowerCase();
+
+            if (!searchTerm) return true; // If no search term, show all
+
+            if (selectedColumn === "all") {
+                // Default behavior: search in all columns
+                return data.join(" ").toLowerCase().includes(searchTerm);
+            } else {
+                // Search only in the selected column
+                return data[selectedColumn].toLowerCase().includes(searchTerm);
+            }
+        });
+
+        // Redraw table on search input change
+        $('#example_filter input').on('keyup', function () {
+            table.draw();
         });
     }
 }
@@ -205,7 +341,7 @@ async function generateExcel() {
     if (document.getElementById('question-table')) {
         addTableToSheet('question-table', startRow, startColumn);
     }
-    if(document.getElementById('eit-result-table')) {
+    if (document.getElementById('eit-result-table')) {
         addTableToSheet('eit-result-table', startRow, startColumn);
     }
 
@@ -251,7 +387,7 @@ function questionsPage() {
         e.addEventListener("click", () => {
             deleteQuestionSubmit[i].click();
         })
-    })
+    });
     addQuestion.addEventListener("click", () => {
         submitQuestion.click();
     });
@@ -276,6 +412,10 @@ function mcqQuestions() {
     let submitQuestion = document.getElementById("submit-question");
     let checkBoxElements = document.querySelectorAll("input[type='checkbox']:has(+[data-question-id][data-option])");
     let resetButtonElements = document.querySelectorAll("button[type='reset']");
+    let removeQuestion = document.querySelectorAll(".remove-question");
+    let removeQuestionSubmit = document.querySelectorAll(".remove_question_submit");
+    console.log(removeQuestion);
+    console.log(removeQuestionSubmit);
     // let btnCloseElements = document.querySelectorAll(".btn-close");
     // let closeModalBtnElements = document.querySelectorAll(".close-modal-btn");
     // console.log(resetButtonElements.length);
@@ -284,27 +424,32 @@ function mcqQuestions() {
     // console.log(resetButtonElements);
     let correctOption = 0;
     let editCorrectOption = 0;
+    Array.from(removeQuestion).forEach((e, i) => {
+        e.addEventListener("click", () => {
+            removeQuestionSubmit[i].click();
+        })
+    });
     document.addEventListener("DOMContentLoaded", () => {
         // Get all question type select elements for both add and edit forms
         const questionTypes = document.querySelectorAll(".question-type");
 
         Array.from(questionTypes).forEach((e) => {
             let removedElements = [];
-        
+
             e.addEventListener("change", () => {
                 let currentElement = e.closest(".add-question-type-box").nextElementSibling;
-                
-                if(e.value !== "weighted") {
+
+                if (e.value !== "weighted") {
                     e.parentElement.parentElement.querySelectorAll(".toggle-correct").forEach((toggle) => {
-                        if(toggle.classList.contains("d-none")) {
+                        if (toggle.classList.contains("d-none")) {
                             toggle.classList.remove("d-none");
                         }
                     });
                     let invisibleCorrectIncorrectEement = e.parentElement.parentElement.querySelectorAll(".invisible");
                     let toggleCorrectElement = e.parentElement.parentElement.querySelectorAll(".toggle-correct");
                     for (let i = 0; i < invisibleCorrectIncorrectEement.length; i++) {
-                        if(!toggleCorrectElement[i].classList.contains("text-success")) {
-                            if(invisibleCorrectIncorrectEement[i].value == "correct") {
+                        if (!toggleCorrectElement[i].classList.contains("text-success")) {
+                            if (invisibleCorrectIncorrectEement[i].value == "correct") {
                                 invisibleCorrectIncorrectEement[i].value = "incorrect";
                             }
                         }
@@ -328,7 +473,7 @@ function mcqQuestions() {
                     Array.from(invisibleCorrectIncorrectEement).forEach(e => {
                         e.value = "correct";
                     });
-        
+
                     let optionContainers = e.parentElement.parentElement.querySelectorAll(".option-container");
                     optionContainers.forEach((option, index) => {
                         // Check if already added to avoid duplication
@@ -338,7 +483,7 @@ function mcqQuestions() {
                             let spacingElement = document.createElement("div");
 
                             spacingElement.classList.add("mb-3");
-        
+
                             markingLabelElement.innerText = String.fromCharCode(65 + index) + " Mark"; // Fix charAt issue
                             markingLabelElement.setAttribute("for", "marking-" + String.fromCharCode(65 + index).toLowerCase());
                             markingFieldElement.setAttribute("type", "text");
@@ -353,11 +498,11 @@ function mcqQuestions() {
                             markingFieldElement.classList.add("form-control");
                             markingLabelElement.classList.add("marking-label");
                             markingLabelElement.classList.add("form-label");
-        
+
                             option.appendChild(spacingElement);
                             option.appendChild(markingLabelElement);
                             option.appendChild(markingFieldElement);
-        
+
                             // Allow only numeric input
                             // markingFieldElement.addEventListener("input", () => {
                             //     markingFieldElement.value = markingFieldElement.value.replace(/\D/g, ""); // Remove non-numeric chars
@@ -370,12 +515,12 @@ function mcqQuestions() {
                             toggle.removeAttribute("style");
                         }
                     });
-        
+
                     // Remove marking fields if not weighted
                     e.parentElement.parentElement.querySelectorAll(".option-container").forEach((option) => {
                         option.querySelectorAll(".marking-field, .marking-label").forEach((el) => el.remove());
                     });
-        
+
                     if (removedElements.length > 0) {
                         const parent = e.closest("form");
                         removedElements.forEach((el) => {
@@ -386,7 +531,7 @@ function mcqQuestions() {
                 }
             });
         });
-        
+
     });
     document.addEventListener("DOMContentLoaded", () => {
         // Get all question type select elements for both add and edit forms
@@ -400,7 +545,7 @@ function mcqQuestions() {
                 let currentElement;
                 try {
                     currentElement = e.closest(".edit-question-type-box").nextElementSibling;
-                } catch(error){}
+                } catch (error) { }
 
                 if (e.value === "title") {
                     // Remove all siblings with the class "option-container"
@@ -455,16 +600,16 @@ function mcqQuestions() {
     Array.from(addOption).forEach((e, i) => {
         e.addEventListener("click", () => {
             let addQuestionsOptionsElement;
-    
+
             // Check if it's Add Form or Edit Form
             if (e.classList.contains("add-question-add-option")) {
                 addQuestionsOptionsElement = e.previousElementSibling.querySelectorAll(".add-questions-options");
             } else if (e.classList.contains("edit-question-add-option")) {
                 addQuestionsOptionsElement = e.previousElementSibling.querySelectorAll(".add-questions-options");
             }
-    
+
             let option;
-    
+
             // Case 1: If no options exist, start with 'A'
             if (addQuestionsOptionsElement.length === 0) {
                 option = 'A';
@@ -473,15 +618,15 @@ function mcqQuestions() {
                 let lastAddQuestionsOptionsElement = addQuestionsOptionsElement[addQuestionsOptionsElement.length - 1];
                 option = lastAddQuestionsOptionsElement.getAttribute("id").slice(-1); // Get last option letter
             }
-    
+
             // Calculate next option letter (A -> B -> C -> D -> E...)
             let nextOption = String.fromCharCode(option.charCodeAt(0) + 1);
-    
+
             // ✅ Fix: Ensure form exists before checking "weighted" type
             let formElement = e.previousElementSibling;
             let questionTypeElement = formElement ? formElement.querySelector(".question-type") : null;
             let isWeighted = questionTypeElement && questionTypeElement.value === "weighted";
-    
+
             // ✅ Generate marking input field if "weighted" is selected
             let markingFieldHTML = isWeighted
                 ? `<div class="mb-3"></div>
@@ -494,14 +639,14 @@ function mcqQuestions() {
             console.log(formElement);
             console.log(e);
             let newElement;
-    
+
             // Case for Add Form
             if (e.classList.contains("add-question-add-option")) {
                 newElement = `<div class="mb-3 option-container">
                                 <label for="opt_${nextOption}" class="form-label">Option ${nextOption.toUpperCase()}</label>
                                 <i class="fa-regular fa-circle toggle-correct ${isWeighted ? "d-none" : ""}"></i>
                                 <input type="text" class="form-control d-inline-block add-questions-options" id="opt_${nextOption}" name="options[]" required>
-                                <input type="hidden" value="${isWeighted?"correct":"incorrect"}" class="form-control invisible add-questions-options" id="correct_opt_${nextOption}" name="correct_options[]">
+                                <input type="hidden" value="${isWeighted ? "correct" : "incorrect"}" class="form-control invisible add-questions-options" id="correct_opt_${nextOption}" name="correct_options[]">
                                 <i class="fa-solid fa-xmark remove-option" style="cursor: pointer;"></i>
                                 ${markingFieldHTML}
                             </div>`;
@@ -512,23 +657,23 @@ function mcqQuestions() {
                                 <label for="edit_options_${nextOption}" class="form-label">Option ${nextOption.toUpperCase()}</label>
                                 <i class="fa-regular fa-circle toggle-correct ${isWeighted ? "d-none" : ""}"></i>
                                 <input type="text" class="form-control d-inline-block add-questions-options" id="edit_options_${nextOption}" name="options[]" required>
-                                <input type="hidden" value="${isWeighted?"correct":"incorrect"}" class="form-control invisible add-questions-options" id="correct_opt_${nextOption}" name="correct_options[]">
+                                <input type="hidden" value="${isWeighted ? "correct" : "incorrect"}" class="form-control invisible add-questions-options" id="correct_opt_${nextOption}" name="correct_options[]">
                                 <i class="fa-solid fa-xmark remove-option" style="cursor: pointer;"></i>
                                 ${markingFieldHTML}
                             </div>`;
             }
-    
+
             // Insert the new option element after the last option, or if no options, after the add button
             if (addQuestionsOptionsElement.length === 0) {
                 e.nextElementSibling.insertAdjacentHTML('afterend', newElement);
             } else {
                 addQuestionsOptionsElement[addQuestionsOptionsElement.length - 1].parentElement.insertAdjacentHTML('afterend', newElement);
             }
-    
+
             // Add functionality to the newly added options (remove and toggle correct)
             addRemoveOptionEvent();
             toggleCorrect();
-    
+
             // ✅ Add event listener to new marking fields
             if (isWeighted) {
                 let newMarkingField = formElement.querySelector(".option-container:last-child .marking-field");
@@ -539,14 +684,14 @@ function mcqQuestions() {
                 }
             }
         });
-    
+
         // Add functionality to initially available options
         addRemoveOptionEvent();
         toggleCorrect();
     });
-    
-    
-    
+
+
+
 
     let editQuestion = document.querySelectorAll(".edit-question");
     let editQuestionSubmit = document.querySelectorAll(".edit_question_submit");
@@ -670,7 +815,7 @@ function mcqQuestions() {
             // $("input[type='checkbox'][data-question-id][data-option]").not(this).prop("checked", false);
             // debugger;
             e.preventDefault();
-            if(e.target.nextElementSibling.dataset.questionType == "single") {
+            if (e.target.nextElementSibling.dataset.questionType == "single") {
                 Array.from(e.target.parentElement.parentElement.querySelectorAll("input[type='checkbox']:checked:has(+[data-question-id][data-option])")).forEach((elem) => {
                     elem.checked = false;
                 })
@@ -1000,6 +1145,11 @@ function toggleExamStatus() {
 function usersPage() {
     let assignQizes = document.querySelectorAll(".assign-quizzes");
     let toggleQuizzesAssignment = document.querySelectorAll(".toggle-quizzes-assignment");
+    var selectedColumn = "all"; // Default: search in all columns
+    $('#columnSelector').on('change', function () {
+        selectedColumn = $(this).val();
+        table.draw(); // Refresh the table after selecting a column
+    });
     Array.from(assignQizes).forEach((e, i) => {
         e.addEventListener("click", () => {
             e.querySelector(".card").classList.contains("d-none") ? e.querySelector(".card").classList.remove("d-none") : e.querySelector(".card").classList.add("d-none");
@@ -1007,6 +1157,32 @@ function usersPage() {
         e.querySelector(".card").addEventListener("click", (e) => {
             e.stopPropagation();
         });
+    });
+
+    var selectedColumn = "all"; // Default: search in all columns
+
+    $('#columnSelector').on('change', function () {
+        selectedColumn = $(this).val();
+        table.draw(); // Refresh the table after selecting a column
+    });
+
+    $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+        var searchTerm = table.search().trim().toLowerCase();
+
+        if (!searchTerm) return true; // If no search term, show all
+
+        if (selectedColumn === "all") {
+            // Default behavior: search in all columns
+            return data.join(" ").toLowerCase().includes(searchTerm);
+        } else {
+            // Search only in the selected column
+            return data[selectedColumn].toLowerCase().includes(searchTerm);
+        }
+    });
+
+    // Redraw table on search input change
+    $('#example_filter input').on('keyup', function () {
+        table.draw();
     });
 
     $(document).ready(function () {
@@ -1117,3 +1293,34 @@ function usersPage() {
         })
     });
 }
+
+
+$('#columnSelector').on('change', function () {
+    selectedColumn = $(this).val();
+    table.draw(); // Refresh the table after selecting a column
+});
+var selectedColumn = "all"; // Default: search in all columns
+
+$('#columnSelector').on('change', function () {
+    selectedColumn = $(this).val();
+    table.draw(); // Refresh the table after selecting a column
+});
+
+$.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+    var searchTerm = table.search().trim().toLowerCase();
+
+    if (!searchTerm) return true; // If no search term, show all
+
+    if (selectedColumn === "all") {
+        // Default behavior: search in all columns
+        return data.join(" ").toLowerCase().includes(searchTerm);
+    } else {
+        // Search only in the selected column
+        return data[selectedColumn].toLowerCase().includes(searchTerm);
+    }
+});
+
+// Redraw table on search input change
+$('#example_filter input').on('keyup', function () {
+    table.draw();
+});

@@ -138,18 +138,25 @@
             $alert_message = $all_insertions_successful
                 ? '<div class="alert alert-success alert-dismissible fade show" role="alert">Question updated successfully!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
                 : '<div class="alert alert-danger alert-dismissible fade show" role="alert">Error updating question!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
-        } elseif (isset($_POST["delete_question"])) {
-            $id = get_safe_value($conn, $_POST["question_id"]);
-            if($_POST["question_type"] == "title"){
-                $delete_sql = "DELETE FROM questions WHERE id = $id;";
-            } else {
-                $delete_sql = "DELETE q, o FROM questions AS q JOIN options AS o ON q.id = o.question_id WHERE q.id = $id;";
-            }
-            $delete_result = mysqli_query($conn, $delete_sql);
+        // } elseif (isset($_POST["delete_question"])) {
+        //     $id = get_safe_value($conn, $_POST["question_id"]);
+        //     if($_POST["question_type"] == "title"){
+        //         $delete_sql = "DELETE FROM questions WHERE id = $id;";
+        //     } else {
+        //         $delete_sql = "DELETE q, o FROM questions AS q JOIN options AS o ON q.id = o.question_id WHERE q.id = $id;";
+        //     }
+        //     $delete_result = mysqli_query($conn, $delete_sql);
 
-            $alert_message = $delete_result
-                ? '<div class="alert alert-success alert-dismissible fade show" role="alert">Question deleted successfully!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
-                : '<div class="alert alert-danger alert-dismissible fade show" role="alert">Error deleting question!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+        //     $alert_message = $delete_result
+        //         ? '<div class="alert alert-success alert-dismissible fade show" role="alert">Question deleted successfully!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+        //         : '<div class="alert alert-danger alert-dismissible fade show" role="alert">Error deleting question!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+        } elseif(isset($_POST["remove_question"])) {
+            $question_id = $_POST["question_id"];
+            $remove_question_sql = "DELETE FROM question_exam_mapping WHERE exam_id = $exam_id AND question_id = $question_id";
+            // echo $remove_question_sql;
+            $remove_question_result = mysqli_query($conn, $remove_question_sql);
+            $alert_message = $remove_question_result ? '<div class="alert alert-success alert-dismissible fade show" role="alert">Question Removed from this quiz successfully!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+            : '<div class="alert alert-danger alert-dismissible fade show" role="alert">Error removing question!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
         }
     }
 
@@ -234,6 +241,18 @@
     </div>
 </div>
 <h2 class="text-center">Exam Name: <?= $_GET["exam"];?></h2>
+<div class="container d-flex justify-content-end">
+    <label class="">Search in: 
+        <select id="columnSelector">
+            <option value="all">All Columns</option>
+            <option value="1">Question ID</option>
+            <option value="2">Topic</option>
+            <option value="3">Main Group</option>
+            <option value="4">Sub Group</option>
+            <option value="5">Questions</option>
+        </select>
+    </label>
+</div>
 <div class="container min-height-100-vh">
     <table class="table table-bordered" id="question-table">
         <thead>
@@ -249,7 +268,7 @@
                 <th scope="col">Percentage Correctly Attempted</th>
                 <th scope="col">Difficulty Level</th>
                 <!-- <th scope="col">Edit</th> -->
-                <!-- <th scope="col">Delete</th> -->
+                <th scope="col">Remove</th>
             </tr>
         </thead>
         <tbody>
@@ -262,7 +281,7 @@
                 $result = mysqli_query($conn, $sql);
                 $sr_no = 1;
                 $show_series = 0;
-                $edit_and_delete_sr_no = 1;
+                $remove_sr_no = 1;
                 if(mysqli_num_rows($result) > 0) {
                     mysqli_set_charset($conn, "utf8mb4");
                     // echo array_output_die(mysqli_fetch_assoc($result));
@@ -382,19 +401,19 @@
                                 <td <?php if($row["question_type"] == "title") {?> class="d-none" <?php } ?>><?php echo $row["no_of_times_attempted"] == 0 ? "N/A" : $difficulty_level;?></td>
                                 <!-- <td>
                                     <button type="button" class="btn btn-primary individual-edit-question" data-bs-toggle="modal"
-                                        data-bs-target="#questionEditModal<?php echo $edit_and_delete_sr_no; ?>">Edit</button>
+                                        data-bs-target="#questionEditModal<?php echo $remove_sr_no; ?>">Edit</button>
                                 </td> -->
-                                <!-- <td>
+                                <td>
                                     <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#questionDeleteModal<?php echo $edit_and_delete_sr_no; ?>">Delete</button>
-                                    <?php $edit_and_delete_sr_no++;?>
-                                </td> -->
+                                    data-bs-target="#questionRemoveModal<?php echo $remove_sr_no; ?>">Remove</button>
+                                    <?php $remove_sr_no++;?>
+                                </td>
                             </tr>
                 <?php
                         $sr_no++;
                     }
                 } else { ?>
-                    <tr><td colspan='10' class="text-center">No questions found</td></tr>
+                    <tr><td colspan='11' class="text-center">No questions found</td></tr>
                 <?php }
                 ?>
         </tbody>
@@ -403,7 +422,8 @@
 
 
 <?php
-    $modal_sql = "SELECT * FROM questions WHERE exam_id = '$exam_id'";
+    $modal_sql = "SELECT *, q.id FROM questions AS q JOIN question_exam_mapping AS qem ON q.id = qem.question_id JOIN exam_portal AS ep ON qem.exam_id = ep.id WHERE ep.id = '$exam_id'";
+    // echo $modal_sql;
     $modal_result = mysqli_query($conn, $modal_sql);
     $sr_no = 1;
     if(mysqli_num_rows($modal_result) > 0) {
@@ -495,7 +515,7 @@
     </div>
 </div>
 <!-- Delete Modal -->
-<div class="modal fade" id="questionDeleteModal<?php echo $sr_no; ?>" tabindex="-1"
+<!-- <div class="modal fade" id="questionDeleteModal<?php echo $sr_no; ?>" tabindex="-1"
     aria-labelledby="questionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -515,6 +535,32 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger delete-question">Delete</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div> -->
+<!-- Remove Modal -->
+<div class="modal fade" id="questionRemoveModal<?php echo $sr_no; ?>" tabindex="-1"
+    aria-labelledby="questionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Remove Question</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure to remove this question from this exam?</p>
+                <form action="mcq_questions.php?exam=<?= $_GET["exam"]; ?>" method="POST">
+                    <input type="hidden" name="question_id" value="<?= $modal_row["id"]; ?>">
+                    <input type="hidden" name="question_type" value="<?= $modal_row["question_type"]; ?>">
+                    <button type="submit" class="btn btn-primary d-none remove_question_submit"
+                        id="remove_question<?php echo $sr_no; ?>" name="remove_question" value="<?= $modal_row["id"];?>">Submit</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger remove-question">Remove</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>

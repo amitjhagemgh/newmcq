@@ -44,6 +44,15 @@
     <div class="container mt-5">
         <h2 class="text-center">EIT Results</h2>
     </div>
+    <div class="container d-flex justify-content-end">
+        <label class="">Search in: 
+            <select id="columnSelector">
+                <option value="all">All Columns</option>
+                <option value="1">Name</option>
+                <option value="2">Email ID</option>
+            </select>
+        </label>
+    </div>
     <div class="container mb-5 table-responsive min-height-100-vh">
 
         <!-- User Table -->

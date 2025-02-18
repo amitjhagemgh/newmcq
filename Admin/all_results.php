@@ -41,6 +41,16 @@
     ?>
     <div class="container my-5">
         <h2 class="text-center">Results</h2>
+        <div class="container d-flex justify-content-end p-0">
+    <label class="">Search in: 
+        <select id="columnSelector">
+            <option value="all">All Columns</option>
+            <option value="1">Name</option>
+            <option value="2">Email ID</option>
+            <option value="3">Exam Name</option>
+        </select>
+    </label>
+</div>
 
         <!-- User Table -->
         <table class="table table-bordered mt-4" id="result-table">
