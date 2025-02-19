@@ -586,7 +586,7 @@ function mcqQuestions() {
         //     }
         // });
         console.log(addQuestion.parentElement.parentElement.querySelector(".question-type"));
-        if (correctOption == 0 && addQuestion.parentElement.parentElement.querySelectorAll(".option-container").length > 0 && addQuestion.parentElement.parentElement.querySelector(".question-type") === "weighted") {
+        if (correctOption == 0 && addQuestion.parentElement.parentElement.querySelectorAll(".option-container").length > 0) {
             alert("Please select correct option");
         } else {
             submitQuestion.click();
@@ -920,6 +920,59 @@ function questionBank() {
     let createQuizForm = document.getElementById("create-quiz-form");
     let addToQuiz = document.querySelectorAll(".add-to-quiz");
     let examDurationInputElement = document.getElementById("exam-duration");
+    $('#add_question_topic').select2({
+        theme: "bootstrap-5",
+        width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+        placeholder: $(this).data('placeholder'),
+        closeOnSelect: false,
+    });
+    $('#add_question_main_group').select2({
+        theme: "bootstrap-5",
+        width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+        placeholder: $(this).data('placeholder'),
+        closeOnSelect: false,
+    });
+    $('#add_question_sub_group').select2({
+        theme: "bootstrap-5",
+        width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+        placeholder: $(this).data('placeholder'),
+        closeOnSelect: false,
+    });
+    $('#edit_question_topic').select2({
+        theme: "bootstrap-5",
+        width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+        placeholder: $(this).data('placeholder'),
+        closeOnSelect: false,
+    });
+    $('#edit_question_main_group').select2({
+        theme: "bootstrap-5",
+        width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+        placeholder: $(this).data('placeholder'),
+        closeOnSelect: false,
+    });
+    // let addQuestionTopicInputElement = document.getElementById("add-question-topic");
+    // let topicsListElements = document.querySelectorAll(".topics-list");
+    // console.log(addQuestionTopicInputElement);
+    // console.log(topicsListElements);
+    // addQuestionTopicInputElement.addEventListener("input", (event) => {
+    //     // console.log(event.target.value);
+    //     Array.from(topicsListElements).forEach((e) => {
+    //         if(e.lastElementChild.innerText.toLowerCase().includes(event.target.value.toLowerCase())) {
+    //             if(e.classList.contains("d-none")) {
+    //                 e.classList.remove("d-none");
+    //             }
+    //         } else {
+    //             if(!e.classList.contains("d-none")) {
+    //                 e.classList.add("d-none");
+    //             }
+    //         }
+    //         if(event.target.value == "") {
+    //             if(!e.classList.contains("d-none")) {
+    //                 e.classList.add("d-none");
+    //             }
+    //         }
+    //     });
+    // });
     addTopicElement.addEventListener("click", () => {
         submitTopicElement.click();
     });

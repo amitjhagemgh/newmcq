@@ -20,7 +20,7 @@
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST["add_question"])) {
-            // array_output_die($_POST);
+            array_output_die($_POST);
             $check_sql_question = "SELECT * FROM questions WHERE questions = '" . get_safe_value($conn, $_POST['question']) . "'";
             $check_result_question = mysqli_query($conn, $check_sql_question);
 
@@ -33,9 +33,9 @@
                 // Sanitize inputs
                 $question = get_safe_value($conn, $_POST["question"]);
                 $question_type = get_safe_value($conn, $_POST["question-type"]);
-                $topic = get_safe_value($conn, $_POST["topic"]);
-                $main_group = get_safe_value($conn, $_POST["main_group"]);
-                $sub_group = get_safe_value($conn, $_POST["sub_group"]);
+                $topic = get_safe_value($conn, $_POST["add_question_topic"]);
+                $main_group = get_safe_value($conn, $_POST["add_question_main_group"]);
+                $sub_group = get_safe_value($conn, $_POST["add_question_sub_group"]);
                 // $sql = "SELECT * FROM questions ORDER BY question_id DESC LIMIT 1";
                 // $result = mysqli_query($conn, $sql);
                 // if(mysqli_num_rows($result)>0) {
@@ -56,8 +56,8 @@
                     move_uploaded_file($_FILES["question-image"]["tmp_name"], $uploadDir . $questionImage);
                 }
                 if($_POST["question-type"] == "title"){
-                    $sql = "INSERT INTO questions (questions, question_image, question_type, question_id, exam_id, topic_id, main_group_id, sub_group_id, no_of_times_correctly_attempted, no_of_times_attempted, status) 
-                                VALUES ('$question', '', 'title', $question_unique_id, 0, $topic, $main_group, $sub_group, 0, 0, 1)";
+                    $sql = "INSERT INTO questions (questions, question_image, question_type, question_id, no_of_times_correctly_attempted, no_of_times_attempted, status) 
+                                VALUES ('$question', '', 'title', $question_unique_id, 0, 0, 1)";
                     $result = mysqli_query($conn, $sql);
                     if($result) {
                         $alert_message = '<div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -71,8 +71,8 @@
                     $correct_options = $_POST['correct_options'];
     
                     // Insert into Database
-                    $sql = "INSERT INTO questions (questions, question_image, question_type, question_id, exam_id, topic_id, main_group_id, sub_group_id, no_of_times_correctly_attempted, no_of_times_attempted, status) 
-                                VALUES ('$question', '$questionImage', '$question_type', $question_unique_id, 0, $topic, $main_group, $sub_group, 0, 0, 1)";
+                    $sql = "INSERT INTO questions (questions, question_image, question_type, question_id, no_of_times_correctly_attempted, no_of_times_attempted, status) 
+                                VALUES ('$question', '$questionImage', '$question_type', $question_unique_id, 0, 0, 1)";
     
                     $result = mysqli_query($conn, $sql);
     
@@ -91,6 +91,33 @@
     
                             if (!$option_result) {
                                 die("Error inserting option: " . mysqli_error($conn));
+                            }
+                        }
+
+                        for($i = 0; $i < count($topic); $i++) {
+                            $topic_sql = "INSERT INTO question_topic_mapping (question_id, topic_id) VALUES ('$question_id', '$topic[$i]')";
+                            $topic_result = mysqli_query($conn, $topic_sql);
+    
+                            if (!$topic_result) {
+                                die("Error inserting topic: " . mysqli_error($conn));
+                            }
+                        }
+
+                        for($i = 0; $i < count($main_group); $i++) {
+                            $main_group_sql = "INSERT INTO question_main_group_mapping (question_id, main_group_id) VALUES ('$question_id', '$main_group[$i]')";
+                            $main_group_result = mysqli_query($conn, $main_group_sql);
+    
+                            if (!$main_group_result) {
+                                die("Error inserting main group: " . mysqli_error($conn));
+                            }
+                        }
+
+                        for($i = 0; $i < count($sub_group); $i++) {
+                            $sub_group_sql = "INSERT INTO question_sub_group_mapping (question_id, sub_group_id) VALUES ('$question_id', '$sub_group[$i]')";
+                            $sub_group_result = mysqli_query($conn, $sub_group_sql);
+    
+                            if (!$sub_group_result) {
+                                die("Error inserting sub group: " . mysqli_error($conn));
                             }
                         }
     
@@ -420,9 +447,9 @@
                             <input class="form-control" type="file" id="question-image" name="question-image" accept="image/*">
                         </div>
                         <div class="mb-3">
-                            <label for="topic" class="form-label">Topic</label>
-                            <select id="topic" name="topic" class="form-select">
-                                <option value="0" selected>Select Topic</option>
+                            <label for="add_question_topic" class="form-label">Topic</label>
+                            <select id="add_question_topic" name="add_question_topic[]" class="form-select" multiple>
+                                <option value="0">Select Topic</option>
                                 <?php
                                     $sql = "SELECT * FROM topic";
                                     $result = mysqli_query($conn, $sql);
@@ -436,9 +463,9 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="main_group" class="form-label">Main Group</label>
-                            <select id="main_group" name="main_group" class="form-select">
-                                <option value="0" selected>Select Main Group</option>
+                            <label for="add_question_main_group" class="form-label">Main Group</label>
+                            <select id="add_question_main_group" name="add_question_main_group[]" class="form-select" multiple>
+                                <option value="0">Select Main Group</option>
                                 <?php
                                     $sql = "SELECT * FROM main_group";
                                     $result = mysqli_query($conn, $sql);
@@ -452,9 +479,9 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="sub_group" class="form-label">Sub Group</label>
-                            <select id="sub_group" name="sub_group" class="form-select">
-                                <option value="0" selected>Select Sub Group</option>
+                            <label for="add_question_sub_group" class="form-label">Sub Group</label>
+                            <select id="add_question_sub_group" name="add_question_sub_group[]" class="form-select" multiple>
+                                <option value="0">Select Sub Group</option>
                                 <?php
                                     $sql = "SELECT * FROM sub_group";
                                     $result = mysqli_query($conn, $sql);
@@ -610,10 +637,34 @@
                     while($row = mysqli_fetch_assoc($result)) {
                         $question_id = $row["id"];
                         $get_question = $row["questions"];
-                        $exam_id = $row["exam_id"];
-                        $topic_id = $row["topic_id"];
-                        $main_group_id = $row["main_group_id"];
-                        $sub_group_id = $row["sub_group_id"];
+                        // $exam_id = $row["exam_id"];
+                        $topic_id_array = array();
+                        $main_group_id_array = array();
+                        $sub_group_id_array = array();
+                        $topic_ids_sql = "SELECT * FROM question_topic_mapping WHERE question_id = $question_id";
+                        $topic_ids_sql_result = mysqli_query($conn, $topic_ids_sql);
+                        if(mysqli_num_rows($topic_ids_sql_result) > 0) {
+                            while($topic_id_row = mysqli_fetch_assoc($topic_ids_sql_result)) {
+                                $topic_id_array[] = $topic_id_row["topic_id"];
+                            }
+                        }
+                        $main_group_ids_sql = "SELECT * FROM question_main_group_mapping WHERE question_id = $question_id";
+                        $main_group_ids_sql_result = mysqli_query($conn, $main_group_ids_sql);
+                        if(mysqli_num_rows($main_group_ids_sql_result) > 0) {
+                            while($main_group_id_row = mysqli_fetch_assoc($main_group_ids_sql_result)) {
+                                $main_group_id_array[] = $main_group_id_row["main_group_id"];
+                            }
+                        }
+                        $sub_group_ids_sql = "SELECT * FROM question_sub_group_mapping WHERE question_id = $question_id";
+                        $sub_group_ids_sql_result = mysqli_query($conn, $sub_group_ids_sql);
+                        if(mysqli_num_rows($sub_group_ids_sql_result) > 0) {
+                            while($sub_group_id_row = mysqli_fetch_assoc($sub_group_ids_sql_result)) {
+                                $sub_group_id_array[] = $sub_group_id_row["sub_group_id"];
+                            }
+                        }
+                        // $topic_id = $row["topic_id"];
+                        // $main_group_id = $row["main_group_id"];
+                        // $sub_group_id = $row["sub_group_id"];
                         $char_sr_no = 65;
                         ?>
                         <tr>
@@ -621,29 +672,39 @@
                             <td><?= $row["question_id"]; ?></td>
                             <td>
                                 <?php
-                                    $sql = "SELECT topic FROM topic WHERE id = $topic_id";
-                                    $topic_result = mysqli_query($conn, $sql);
-                                    if(mysqli_num_rows($topic_result) > 0) {
-                                        echo mysqli_fetch_assoc($topic_result)["topic"];
+                                    // array_output_die($topic_id_array);
+                                    if(count($topic_id_array) > 0) {
+                                        $sql = "SELECT topic FROM topic WHERE id IN (" . implode(",", $topic_id_array) . ") ORDER BY FIELD(id, " . implode(",", $topic_id_array) . ")";
+                                        echo $sql;
+                                        $topic_result = mysqli_query($conn, $sql);
+                                        if(mysqli_num_rows($topic_result) > 0) {
+                                            echo mysqli_fetch_assoc($topic_result)["topic"];
+                                        }
                                     }
                                 ?>
                             </td>
                             <td>
                                 <?php
-                                    $sql = "SELECT main_group FROM main_group WHERE id = $main_group_id";
-                                    $main_group_result = mysqli_query($conn, $sql);
-                                    if(mysqli_num_rows($main_group_result) > 0) {
-                                        echo mysqli_fetch_assoc($main_group_result)["main_group"];
+                                    // array_output_die($main_group_id_array);
+                                    if(count($main_group_id_array) > 0) {
+                                        $sql = "SELECT main_group FROM main_group WHERE id IN (" . implode(",", $main_group_id_array) . ") ORDER BY FIELD(id, " . implode(",", $main_group_id_array) . ")";
+                                        $main_group_result = mysqli_query($conn, $sql);
+                                        if(mysqli_num_rows($main_group_result) > 0) {
+                                            echo mysqli_fetch_assoc($main_group_result)["main_group"];
+                                        }
                                     }
                                 ?>
                             </td>
                             <!-- <td <?php if($row["question_type"] !== "title") {?> class="d-none" <?php } ?>></td> -->
                             <td>
-                                <?php 
-                                    $sql = "SELECT sub_group FROM sub_group WHERE id = $sub_group_id";
-                                    $sub_group_result = mysqli_query($conn, $sql);
-                                    if(mysqli_num_rows($sub_group_result) > 0) {
-                                        echo mysqli_fetch_assoc($sub_group_result)["sub_group"];
+                                <?php
+                                    // array_output_die($sub_group_id_array);
+                                    if(count($sub_group_id_array) > 0) {
+                                        $sql = "SELECT sub_group FROM sub_group WHERE id IN (" . implode(",", $sub_group_id_array) . ") ORDER BY FIELD(id, " . implode(",", $sub_group_id_array) . ")";
+                                        $sub_group_result = mysqli_query($conn, $sql);
+                                        if(mysqli_num_rows($sub_group_result) > 0) {
+                                            echo mysqli_fetch_assoc($sub_group_result)["sub_group"];
+                                        }
                                     }
                                 ?>
                             </td>
@@ -806,15 +867,29 @@
                         <input class="form-control" type="text" name="edit_question_id" value="<?php echo $modal_row["question_id"]; ?>" id="edit_question_id" readonly>
                     </div>
                     <div class="mb-3">
-                            <label for="topic" class="form-label">Topic</label>
-                            <select id="topic" name="topic" class="form-select">
-                                <option value="0" <?= $modal_row["topic_id"] == "0" ? "selected" : "" ;?>>Select Topic</option>
+                            <label for="edit_question_topic" class="form-label">Topic</label>
+                            <select id="edit_question_topic" name="edit_question_topic[]" class="form-select" multiple>
+                                <!-- <option value="0" <?php // echo $modal_row["topic_id"] == "0" ? "selected" : "" ;?>>Select Topic</option> -->
                                 <?php
                                     $sql = "SELECT * FROM topic";
                                     $result = mysqli_query($conn, $sql);
                                     if(mysqli_num_rows($result) > 0) {
-                                        while($row = mysqli_fetch_assoc($result)) {?>
-                                        <option value="<?= $row["id"];?>" <?= $modal_row["topic_id"] == $row["id"] ? "selected" : "" ;?>><?= $row["topic"];?></option>
+                                        while($row = mysqli_fetch_assoc($result)) {
+                                            $assigned_topic = array();
+                                            $all_assigned_topic_sql = "SELECT * FROM question_topic_mapping WHERE question_id = '$modal_row[id]'";
+                                            $all_assigned_topic_result = mysqli_query($conn, $all_assigned_topic_sql);
+                                            if(mysqli_num_rows($all_assigned_topic_result) > 0) {
+                                                while($all_assigned_topic_row = mysqli_fetch_assoc($all_assigned_topic_result)) {
+                                                    $assigned_topic[] = $all_assigned_topic_row["topic_id"];
+                                                }
+                                            }
+                                            if(in_array($modal_row["id"], $assigned_topic)) {
+                                                $selected = "selected";
+                                            } else {
+                                                $selected = "";
+                                            }
+                                            ?>
+                                        <option value="<?= $row["id"];?>" <?php echo $selected; // echo $modal_row["topic_id"] == $row["id"] ? "selected" : "" ;?>><?php echo $row["topic"];?></option>
                                         <?php
                                     }
                                 }
@@ -822,15 +897,29 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="main_group" class="form-label">Main Group</label>
-                            <select id="main_group" name="main_group" class="form-select">
-                                <option value="0" <?= $modal_row["main_group_id"] == "0" ? "selected" : "" ;?>>Select Main Group</option>
+                            <label for="edit_question_main_group" class="form-label">Main Group</label>
+                            <select id="edit_question_main_group" name="edit_question_main_group[]" class="form-select" multiple>
+                                <!-- <option value="0" <?php // echo $modal_row["main_group_id"] == "0" ? "selected" : "" ;?>>Select Main Group</option> -->
                                 <?php
                                     $sql = "SELECT * FROM main_group";
                                     $result = mysqli_query($conn, $sql);
                                     if(mysqli_num_rows($result) > 0) {
-                                        while($row = mysqli_fetch_assoc($result)) {?>
-                                        <option value="<?= $row["id"];?>" <?= $modal_row["main_group_id"] == $row["id"] ? "selected" : "" ;?>><?= $row["main_group"];?></option>
+                                        while($row = mysqli_fetch_assoc($result)) {
+                                            $assigned_main_group = array();
+                                            $all_assigned_main_group_sql = "SELECT * FROM question_main_group_mapping WHERE question_id = '$modal_row[id]'";
+                                            $all_assigned_main_group_result = mysqli_query($conn, $all_assigned_main_group_sql);
+                                            if(mysqli_num_rows($all_assigned_main_group_result) > 0) {
+                                                while($all_assigned_main_group_row = mysqli_fetch_assoc($all_assigned_main_group_result)) {
+                                                    $assigned_main_group[] = $all_assigned_main_group_row["main_group_id"];
+                                                }
+                                            }
+                                            if(in_array($modal_row["id"], $assigned_main_group)) {
+                                                $selected = "selected";
+                                            } else {
+                                                $selected = "";
+                                            }
+                                            ?>
+                                        <option value="<?= $row["id"];?>" <?php echo $selected; // echo $modal_row["main_group_id"] == $row["id"] ? "selected" : "" ;?>><?php echo $row["main_group"];?></option>
                                         <?php
                                     }
                                 }
@@ -840,13 +929,27 @@
                         <div class="mb-3">
                             <label for="sub_group" class="form-label">Sub Group</label>
                             <select id="sub_group" name="sub_group" class="form-select">
-                                <option value="0" <?= $modal_row["sub_group_id"] == "0" ? "selected" : "" ;?>>Select Sub Group</option>
+                                <!-- <option value="0" <?php // echo $modal_row["sub_group_id"] == "0" ? "selected" : "" ;?>>Select Sub Group</option> -->
                                 <?php
                                     $sql = "SELECT * FROM sub_group";
                                     $result = mysqli_query($conn, $sql);
                                     if(mysqli_num_rows($result) > 0) {
-                                        while($row = mysqli_fetch_assoc($result)) {?>
-                                        <option value="<?= $row["id"];?>" <?= $modal_row["sub_group_id"] == $row["id"] ? "selected" : "" ;?>><?= $row["sub_group"];?></option>
+                                        while($row = mysqli_fetch_assoc($result)) {
+                                            $assigned_sub_group = array();
+                                            $all_assigned_sub_group_sql = "SELECT * FROM question_sub_group_mapping WHERE question_id = '$modal_row[id]'";
+                                            $all_assigned_sub_group_result = mysqli_query($conn, $all_assigned_sub_group_sql);
+                                            if(mysqli_num_rows($all_assigned_sub_group_result) > 0) {
+                                                while($all_assigned_sub_group_row = mysqli_fetch_assoc($all_assigned_sub_group_result)) {
+                                                    $assigned_sub_group[] = $all_assigned_sub_group_row["sub_group_id"];
+                                                }
+                                            }
+                                            if(in_array($modal_row["id"], $assigned_sub_group)) {
+                                                $selected = "selected";
+                                            } else {
+                                                $selected = "";
+                                            }
+                                            ?>
+                                        <option value="<?= $row["id"];?>" <?php echo $selected; // echo $modal_row["sub_group_id"] == $row["id"] ? "selected" : "" ;?>><?php echo $row["sub_group"];?></option>
                                         <?php
                                     }
                                 }
