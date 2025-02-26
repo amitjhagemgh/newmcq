@@ -178,12 +178,9 @@
             mysqli_query($conn, $delete_existing_sql);
             $question_type = get_safe_value($conn, $_POST["edit-question-type"]);
             $edit_question_id = get_safe_value($conn, $_POST["edit_question_id"]);
-            $topic = get_safe_value($conn, $_POST["topic"]);
-            $main_group = get_safe_value($conn, $_POST["main_group"]);
-            $sub_group = get_safe_value($conn, $_POST["sub_group"]);
             $new_question_id = (int)mysqli_fetch_assoc(mysqli_query($conn, "SELECT unique_question_id FROM unique_question_id LIMIT 1"))["unique_question_id"] + 1;
             mysqli_query($conn, "UPDATE unique_question_id SET unique_question_id = '$new_question_id'");
-            mysqli_query($conn, "UPDATE questions SET questions = '$question', question_image = '$questionImage', question_type = '$question_type', question_id = '$edit_question_id', topic_id = '$topic', main_group_id = '$main_group', sub_group_id = '$sub_group', question_id = '$new_question_id' WHERE id = '$id'");
+            mysqli_query($conn, "UPDATE questions SET questions = '$question', question_image = '$questionImage', question_type = '$question_type', question_id = '$edit_question_id', question_id = '$new_question_id' WHERE id = '$id'");
             if($_POST["edit-question-type"] !== "title"){
                 // Insert new question and options
                 $options = $_POST['options'];
@@ -332,11 +329,11 @@
 ?>
 
 <div class="container my-2 d-flex justify-content-end">
-    <button type="button" class="btn btn-danger me-2" data-bs-toggle="modal" data-bs-target="#topicModal">Add Topic</button>
-    <button type="button" class="btn btn-warning me-2" data-bs-toggle="modal" data-bs-target="#mainModal">Add Main Group</button>
-    <button type="button" class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#subModal">Add Sub Group</button>
-    <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#questionModal">Add Questions</button>
-    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createQuizModal">Create Quiz</button>
+    <button type="button" class="btn btn-danger me-2 question-bank-top-buttons" data-bs-toggle="modal" data-bs-target="#topicModal">Add Topic</button>
+    <button type="button" class="btn btn-warning me-2 question-bank-top-buttons" data-bs-toggle="modal" data-bs-target="#mainModal">Add Main Group</button>
+    <button type="button" class="btn btn-success me-2 question-bank-top-buttons" data-bs-toggle="modal" data-bs-target="#subModal">Add Sub Group</button>
+    <button type="button" class="btn btn-primary me-2 question-bank-top-buttons" data-bs-toggle="modal" data-bs-target="#questionModal">Add Questions</button>
+    <button type="button" class="btn btn-success question-bank-top-buttons" data-bs-toggle="modal" data-bs-target="#createQuizModal">Create Quiz</button>
     <!-- Topic Modal -->
     <div class="modal fade" id="topicModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="topicModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable">
@@ -602,22 +599,22 @@
     </label>
 </div>
 <div class="container min-height-100-vh table-responsive">
-    <table class="table table-bordered" id="question-bank-table" style="width: 1500px;">
+    <table class="table table-bordered resizable" data-resizable-columns-id="question-bank-table" id="question-bank-table" style="width: 1500px;">
         <thead>
             <tr>
-                <th scope="col">Sr. no.</th>
-                <th scope="col">Question ID</th>
-                <th scope="col">Topic</th>
-                <th scope="col">Main Group</th>
-                <th scope="col">Sub Group</th>
-                <th scope="col">Questions</th>
-                <th scope="col">No. of Times Correctly Attempted</th>
-                <th scope="col">No. of Times Attempted</th>
-                <th scope="col">Percentage Correctly Attempted</th>
-                <th scope="col">Difficulty Level</th>
-                <th scope="col">Add to Quiz</th>
-                <th scope="col">Edit</th>
-                <th scope="col">Delete</th>
+                <th scope="col" data-resizable-column-id="sr_no">Sr. no.</th>
+                <th scope="col" data-resizable-column-id="edit">Edit</th>
+                <th scope="col" data-resizable-column-id="delete">Delete</th>
+                <th scope="col" data-resizable-column-id="add_to_quiz">Add to Quiz</th>
+                <th scope="col" data-resizable-column-id="question_id">Question ID</th>
+                <th scope="col" data-resizable-column-id="topic">Topic</th>
+                <th scope="col" data-resizable-column-id="main_group">Main Group</th>
+                <th scope="col" data-resizable-column-id="sub_group">Sub Group</th>
+                <th scope="col" data-resizable-column-id="questions">Questions</th>
+                <th scope="col" data-resizable-column-id="no_of_times_correctly_attempted">No. of Times Correctly Attempted</th>
+                <th scope="col" data-resizable-column-id="no_of_times_attempted">No. of Times Attempted</th>
+                <th scope="col" data-resizable-column-id="percentage_correctly_attempted">Percentage Correctly Attempted</th>
+                <th scope="col" data-resizable-column-id="difficulty_level">Difficulty Level</th>
             </tr>
         </thead>
         <tbody>
@@ -641,21 +638,21 @@
                         $topic_id_array = array();
                         $main_group_id_array = array();
                         $sub_group_id_array = array();
-                        $topic_ids_sql = "SELECT * FROM question_topic_mapping WHERE question_id = $question_id";
+                        $topic_ids_sql = "SELECT * FROM question_topic_mapping WHERE question_id = $question_id AND status = 1";
                         $topic_ids_sql_result = mysqli_query($conn, $topic_ids_sql);
                         if(mysqli_num_rows($topic_ids_sql_result) > 0) {
                             while($topic_id_row = mysqli_fetch_assoc($topic_ids_sql_result)) {
                                 $topic_id_array[] = $topic_id_row["topic_id"];
                             }
                         }
-                        $main_group_ids_sql = "SELECT * FROM question_main_group_mapping WHERE question_id = $question_id";
+                        $main_group_ids_sql = "SELECT * FROM question_main_group_mapping WHERE question_id = $question_id AND status = 1";
                         $main_group_ids_sql_result = mysqli_query($conn, $main_group_ids_sql);
                         if(mysqli_num_rows($main_group_ids_sql_result) > 0) {
                             while($main_group_id_row = mysqli_fetch_assoc($main_group_ids_sql_result)) {
                                 $main_group_id_array[] = $main_group_id_row["main_group_id"];
                             }
                         }
-                        $sub_group_ids_sql = "SELECT * FROM question_sub_group_mapping WHERE question_id = $question_id";
+                        $sub_group_ids_sql = "SELECT * FROM question_sub_group_mapping WHERE question_id = $question_id AND status = 1";
                         $sub_group_ids_sql_result = mysqli_query($conn, $sub_group_ids_sql);
                         if(mysqli_num_rows($sub_group_ids_sql_result) > 0) {
                             while($sub_group_id_row = mysqli_fetch_assoc($sub_group_ids_sql_result)) {
@@ -669,44 +666,113 @@
                         ?>
                         <tr>
                             <th scope='row'><?php echo ++$show_series; ?></th>
-                            <td><?= $row["question_id"]; ?></td>
                             <td>
+                                <button type="button" class="btn btn-primary individual-edit-question" data-bs-toggle="modal"
+                                data-bs-target="#questionEditModal<?php echo $edit_and_delete_sr_no; ?>">Edit</button>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                data-bs-target="#questionDeleteModal<?php echo $edit_and_delete_sr_no; ?>">Delete</button>
+                                <?php $edit_and_delete_sr_no++;?>
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" class="add-to-quiz d-none" id="add-to-quiz-<?php echo $row["id"];?>" name="add-to-quiz-<?php echo $row["id"];?>">
+                                <label for="add-to-quiz-<?php echo $row["id"];?>" class="w-100"><i class="fa-regular fa-circle"></i></label>
+                                <label for="add-to-quiz-<?php echo $row["id"];?>" class="w-100"><i class="fa-regular fa-circle-check text-success"></i></label>
+                            </td>
+                            <td><?= $row["question_id"]; ?></td>
+                            <td class="assign-topics">
                                 <?php
                                     // array_output_die($topic_id_array);
                                     if(count($topic_id_array) > 0) {
                                         $sql = "SELECT topic FROM topic WHERE id IN (" . implode(",", $topic_id_array) . ") ORDER BY FIELD(id, " . implode(",", $topic_id_array) . ")";
-                                        echo $sql;
+                                        // echo $sql;
                                         $topic_result = mysqli_query($conn, $sql);
                                         if(mysqli_num_rows($topic_result) > 0) {
-                                            echo mysqli_fetch_assoc($topic_result)["topic"];
+                                            while($topic_row = mysqli_fetch_assoc($topic_result)) {
+                                                echo "<div class='assigned-topic p-1'><button class='btn'>" . $topic_row["topic"] . "</button><span class='bg-danger rounded-circle text-white remove-exam'>X</span></div>";
+                                            }
                                         }
                                     }
                                 ?>
+                                <div class='card d-none' style='width: 18rem;'>
+                                    <div class='card-body'>
+                                        <?php
+                                            $topic_sql = "SELECT * FROM topic";
+                                            $topic_result = mysqli_query($conn, $topic_sql);
+                                            if($topic_result) {
+                                                while($topic_row = mysqli_fetch_assoc($topic_result)) {
+                                                    // if(in_array($row["exam_name"], $assigned_exam_array)) {
+                                                        $is_available = in_array($topic_row["id"], $topic_id_array) ? 1 : 0;
+                                                        echo "<div><input type='checkbox' class='form-check-input toggle-topic-assignment' data-id='" . $row["id"] . "' data-topic-id='" . $topic_row["id"] . "' data-topic-name='" . $topic_row["topic"] . "' data-value='0' " . ($is_available ? "checked" : "") . "><p class='card-title d-inline-block mx-2'>" . $topic_row["topic"] . "</p></div>";
+                                                    // }
+                                                }
+                                            }
+                                        ?>
+                                    </div>
+                                </div>
                             </td>
-                            <td>
+                            <td class="assign-main-groups">
                                 <?php
                                     // array_output_die($main_group_id_array);
                                     if(count($main_group_id_array) > 0) {
                                         $sql = "SELECT main_group FROM main_group WHERE id IN (" . implode(",", $main_group_id_array) . ") ORDER BY FIELD(id, " . implode(",", $main_group_id_array) . ")";
                                         $main_group_result = mysqli_query($conn, $sql);
                                         if(mysqli_num_rows($main_group_result) > 0) {
-                                            echo mysqli_fetch_assoc($main_group_result)["main_group"];
+                                            while($main_group_row = mysqli_fetch_assoc($main_group_result)) {
+                                                echo "<div class='assigned-main-group p-1'><button class='btn'>" . $main_group_row["main_group"] . "</button><span class='bg-danger rounded-circle text-white remove-exam'>X</span></div>";
+                                            }
                                         }
                                     }
                                 ?>
+                                <div class='card d-none' style='width: 18rem;'>
+                                    <div class='card-body'>
+                                        <?php
+                                            $main_group_sql = "SELECT * FROM main_group";
+                                            $main_group_result = mysqli_query($conn, $main_group_sql);
+                                            if(mysqli_num_rows($main_group_result) > 0) {
+                                                while($main_group_row = mysqli_fetch_assoc($main_group_result)) {
+                                                    // if(in_array($row["exam_name"], $assigned_exam_array)) {
+                                                        $is_available = in_array($main_group_row["id"], $main_group_id_array) ? 1 : 0;
+                                                        echo "<div><input type='checkbox' class='form-check-input toggle-main-group-assignment' data-id='" . $row["id"] . "' data-exam-id='" . $main_group_row["id"] . "' data-exam-name='" . $main_group_row["main_group"] . "' data-value='0' " . ($is_available ? "checked" : "") . "><p class='card-title d-inline-block mx-2'>" . $main_group_row["main_group"] . "</p></div>";
+                                                    // }
+                                                }
+                                            }
+                                        ?>
+                                    </div>
+                                </div>
                             </td>
                             <!-- <td <?php if($row["question_type"] !== "title") {?> class="d-none" <?php } ?>></td> -->
-                            <td>
+                            <td class="assign-sub-groups">
                                 <?php
                                     // array_output_die($sub_group_id_array);
                                     if(count($sub_group_id_array) > 0) {
                                         $sql = "SELECT sub_group FROM sub_group WHERE id IN (" . implode(",", $sub_group_id_array) . ") ORDER BY FIELD(id, " . implode(",", $sub_group_id_array) . ")";
                                         $sub_group_result = mysqli_query($conn, $sql);
                                         if(mysqli_num_rows($sub_group_result) > 0) {
-                                            echo mysqli_fetch_assoc($sub_group_result)["sub_group"];
+                                            while($sub_group_row = mysqli_fetch_assoc($sub_group_result)) {
+                                                echo "<div class='assigned-sub-group p-1'><button class='btn'>" . $sub_group_row["sub_group"] . "</button>
+                                                <span class='bg-danger rounded-circle text-white remove-exam'>X</span></div>";
+                                            }
                                         }
                                     }
                                 ?>
+                                <div class='card d-none' style='width: 18rem;'>
+                                    <div class='card-body'>
+                                        <?php
+                                            $sub_group_sql = "SELECT * FROM sub_group";
+                                            $sub_group_result = mysqli_query($conn, $sub_group_sql);
+                                            if($sub_group_result) {
+                                                while($sub_group_row = mysqli_fetch_assoc($sub_group_result)) {
+                                                    // if(in_array($row["exam_name"], $assigned_exam_array)) {
+                                                        $is_available = in_array($sub_group_row["id"], $sub_group_id_array) ? 1 : 0;
+                                                        echo "<div><input type='checkbox' class='form-check-input toggle-sub-group-assignment' data-id='" . $row["id"] . "' data-exam-id='" . $sub_group_row["id"] . "' data-exam-name='" . $sub_group_row["sub_group"] . "' data-value='0' " . ($is_available ? "checked" : "") . "><p class='card-title d-inline-block mx-2'>" . $sub_group_row["sub_group"] . "</p></div>";
+                                                    // }
+                                                }
+                                            }
+                                        ?>
+                                    </div>
+                                </div>
                             </td>
                             <td <?php if($row["question_type"] == "title") {?> colspan="5" <?php }
                             ?>>
@@ -782,7 +848,7 @@
                                 }
                             ?>
                             <td <?php if($row["question_type"] == "title") {?> class="d-none" <?php } ?>><?php echo $row["no_of_times_attempted"] == 0 ? "N/A" : $difficulty_level;?></td>
-                            <td>
+                            <!-- <td>
                                 <input type="checkbox" class="add-to-quiz d-none" id="add-to-quiz-<?php echo $row["id"];?>" name="add-to-quiz-<?php echo $row["id"];?>">
                                 <label for="add-to-quiz-<?php echo $row["id"];?>" class="w-100"><i class="fa-regular fa-circle"></i></label>
                                 <label for="add-to-quiz-<?php echo $row["id"];?>" class="w-100"><i class="fa-regular fa-circle-check text-success"></i></label>
@@ -795,7 +861,7 @@
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                                 data-bs-target="#questionDeleteModal<?php echo $edit_and_delete_sr_no; ?>">Delete</button>
                                 <?php $edit_and_delete_sr_no++;?>
-                            </td>
+                            </td> -->
                         </tr>
                 <?php
                         $sr_no++;
@@ -807,6 +873,9 @@
                 <tfoot>
                     <tr>
                         <th scope="col">Sr. no.</th>
+                        <th scope="col">Edit</th>
+                        <th scope="col">Delete</th>
+                        <th scope="col">Add to Quiz</th>
                         <th scope="col">Question ID</th>
                         <th scope="col">Topic</th>
                         <th scope="col">Main Group</th>
@@ -816,9 +885,6 @@
                         <th scope="col">No. of Times Attempted</th>
                         <th scope="col">Percentage Correctly Attempted</th>
                         <th scope="col">Difficulty Level</th>
-                        <th scope="col">Add to Quiz</th>
-                        <th scope="col">Edit</th>
-                        <th scope="col">Delete</th>
                     </tr>
                 </tfoot>
         </tbody>
@@ -866,96 +932,6 @@
                         <div class="form-label">Question ID</div>
                         <input class="form-control" type="text" name="edit_question_id" value="<?php echo $modal_row["question_id"]; ?>" id="edit_question_id" readonly>
                     </div>
-                    <div class="mb-3">
-                            <label for="edit_question_topic" class="form-label">Topic</label>
-                            <select id="edit_question_topic" name="edit_question_topic[]" class="form-select" multiple>
-                                <!-- <option value="0" <?php // echo $modal_row["topic_id"] == "0" ? "selected" : "" ;?>>Select Topic</option> -->
-                                <?php
-                                    $sql = "SELECT * FROM topic";
-                                    $result = mysqli_query($conn, $sql);
-                                    if(mysqli_num_rows($result) > 0) {
-                                        while($row = mysqli_fetch_assoc($result)) {
-                                            $assigned_topic = array();
-                                            $all_assigned_topic_sql = "SELECT * FROM question_topic_mapping WHERE question_id = '$modal_row[id]'";
-                                            $all_assigned_topic_result = mysqli_query($conn, $all_assigned_topic_sql);
-                                            if(mysqli_num_rows($all_assigned_topic_result) > 0) {
-                                                while($all_assigned_topic_row = mysqli_fetch_assoc($all_assigned_topic_result)) {
-                                                    $assigned_topic[] = $all_assigned_topic_row["topic_id"];
-                                                }
-                                            }
-                                            if(in_array($modal_row["id"], $assigned_topic)) {
-                                                $selected = "selected";
-                                            } else {
-                                                $selected = "";
-                                            }
-                                            ?>
-                                        <option value="<?= $row["id"];?>" <?php echo $selected; // echo $modal_row["topic_id"] == $row["id"] ? "selected" : "" ;?>><?php echo $row["topic"];?></option>
-                                        <?php
-                                    }
-                                }
-                                ?>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_question_main_group" class="form-label">Main Group</label>
-                            <select id="edit_question_main_group" name="edit_question_main_group[]" class="form-select" multiple>
-                                <!-- <option value="0" <?php // echo $modal_row["main_group_id"] == "0" ? "selected" : "" ;?>>Select Main Group</option> -->
-                                <?php
-                                    $sql = "SELECT * FROM main_group";
-                                    $result = mysqli_query($conn, $sql);
-                                    if(mysqli_num_rows($result) > 0) {
-                                        while($row = mysqli_fetch_assoc($result)) {
-                                            $assigned_main_group = array();
-                                            $all_assigned_main_group_sql = "SELECT * FROM question_main_group_mapping WHERE question_id = '$modal_row[id]'";
-                                            $all_assigned_main_group_result = mysqli_query($conn, $all_assigned_main_group_sql);
-                                            if(mysqli_num_rows($all_assigned_main_group_result) > 0) {
-                                                while($all_assigned_main_group_row = mysqli_fetch_assoc($all_assigned_main_group_result)) {
-                                                    $assigned_main_group[] = $all_assigned_main_group_row["main_group_id"];
-                                                }
-                                            }
-                                            if(in_array($modal_row["id"], $assigned_main_group)) {
-                                                $selected = "selected";
-                                            } else {
-                                                $selected = "";
-                                            }
-                                            ?>
-                                        <option value="<?= $row["id"];?>" <?php echo $selected; // echo $modal_row["main_group_id"] == $row["id"] ? "selected" : "" ;?>><?php echo $row["main_group"];?></option>
-                                        <?php
-                                    }
-                                }
-                                ?>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="sub_group" class="form-label">Sub Group</label>
-                            <select id="sub_group" name="sub_group" class="form-select">
-                                <!-- <option value="0" <?php // echo $modal_row["sub_group_id"] == "0" ? "selected" : "" ;?>>Select Sub Group</option> -->
-                                <?php
-                                    $sql = "SELECT * FROM sub_group";
-                                    $result = mysqli_query($conn, $sql);
-                                    if(mysqli_num_rows($result) > 0) {
-                                        while($row = mysqli_fetch_assoc($result)) {
-                                            $assigned_sub_group = array();
-                                            $all_assigned_sub_group_sql = "SELECT * FROM question_sub_group_mapping WHERE question_id = '$modal_row[id]'";
-                                            $all_assigned_sub_group_result = mysqli_query($conn, $all_assigned_sub_group_sql);
-                                            if(mysqli_num_rows($all_assigned_sub_group_result) > 0) {
-                                                while($all_assigned_sub_group_row = mysqli_fetch_assoc($all_assigned_sub_group_result)) {
-                                                    $assigned_sub_group[] = $all_assigned_sub_group_row["sub_group_id"];
-                                                }
-                                            }
-                                            if(in_array($modal_row["id"], $assigned_sub_group)) {
-                                                $selected = "selected";
-                                            } else {
-                                                $selected = "";
-                                            }
-                                            ?>
-                                        <option value="<?= $row["id"];?>" <?php echo $selected; // echo $modal_row["sub_group_id"] == $row["id"] ? "selected" : "" ;?>><?php echo $row["sub_group"];?></option>
-                                        <?php
-                                    }
-                                }
-                                ?>
-                            </select>
-                        </div>
                     <div class="mb-3 edit-question-type-box">
                         <label for="edit-question-type" class="form-label">Question Type</label>
                         <select class="form-select question-type" aria-label="Default select example" name="edit-question-type" id="edit-question-type" required>

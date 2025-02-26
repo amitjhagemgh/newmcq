@@ -20,6 +20,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
     <!-- Or for RTL support -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.rtl.min.css" />
+    <!-- colResize -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/datatables.net-colresize-unofficial@latest/jquery.dataTables.colResize.css"> -->
+    <!-- Drag and Resize HTML Table Columns - jQuery resizable-columns -->
+    <!-- <link rel="stylesheet" href="jQueryPlugins/drag-resize-columns/dist/jquery.resizableColumns.css" /> -->
     <link rel="stylesheet" href="CSS/style.css">
     <link rel="stylesheet" href="CSS/utils.css">
     <?php
@@ -33,7 +37,7 @@
 </head>
 
 <body>
-    <nav class="navbar nbg-dark navbar-expand-lg bg-body-tertiary position-sticky top-0 z-2" data-bs-theme="dark">
+    <nav class="navbar nbg-dark navbar-expand-lg bg-body-tertiary position-sticky top-0 z-2">
         <div class="container-fluid">
             <a class="navbar-brand" href="<?php if(PAGE == "Dashboard") {echo "#";} else {echo "index.php";}?>"><img src="IMG/logo.png" alt="GEM Engserv" width="34px"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"

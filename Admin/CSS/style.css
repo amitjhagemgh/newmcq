@@ -14,14 +14,14 @@ body {
     height: 100%;
 }
 
-.assigned-exams {
+.assigned-exams, .assigned-topic, .assigned-main-group, .assigned-sub-group {
     display: inline-block;
     /* justify-content: space-between; */
     position: relative;
     /* width: fit-content; */
 }
 
-.assigned-exams span {
+.assigned-exams span, .assigned-topic span, .assigned-main-group span, .assigned-sub-group span {
     position: absolute;
     aspect-ratio: 1 / 1;
     width: 12px;
@@ -31,13 +31,12 @@ body {
     text-align: center;
     right: 0px;
     bottom: 33px;
-    opacity: 0;
     cursor: pointer;
     transition: opacity 0.1s ease-in-out;
 }
 
-.assigned-exams:hover span {
-    opacity: 1;
+.assigned-exams button, .assigned-topic button, .assigned-main-group button, .assigned-sub-group button {
+    background-color: #f8f9fa !important;
 }
 
 .add-option {
@@ -122,3 +121,49 @@ table, th, tr, td {
 table.dataTable {
     margin-top: 0 !important;
 }
+
+.btn {
+    background-color: #d6d2d2 !important;
+    color: black !important;
+    border-color: #d6d2d2 !important;
+}
+
+.question-bank-top-buttons {
+    border-color: #d6d2d2 !important;
+    color: black !important;
+    background-color: transparent !important;
+    border-width: 1.5px !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* .rc-handle {
+    position: absolute;
+    width: 7px;
+    cursor: col-resize;
+    height: 100%;
+    z-index: 1;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.rc-handle:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.rc-table {
+    table-layout: fixed;
+}
+
+.rc-column-resizing {
+    cursor: col-resize;
+    user-select: none;
+} */

@@ -258,6 +258,7 @@
         <thead>
             <tr>
                 <th scope="col">Sr. no.</th>
+                <th scope="col">Remove</th>
                 <th scope="col">Question ID</th>
                 <th scope="col">Topic</th>
                 <th scope="col">Main Group</th>
@@ -268,7 +269,6 @@
                 <th scope="col">Percentage Correctly Attempted</th>
                 <th scope="col">Difficulty Level</th>
                 <!-- <th scope="col">Edit</th> -->
-                <th scope="col">Remove</th>
             </tr>
         </thead>
         <tbody>
@@ -276,7 +276,7 @@
                 $exam_id_sql = "SELECT id FROM exam_portal WHERE exam_name = '$exam_name'";
                 $exam_id_sql_result = mysqli_query($conn, $exam_id_sql);
                 $exam_id = mysqli_fetch_assoc($exam_id_sql_result)["id"];
-                $sql = "SELECT q.id, q.question_id, q.questions, q.topic_id, q.main_group_id, q.sub_group_id, q.no_of_times_attempted, q.no_of_times_correctly_attempted, q.question_type, q.question_image FROM questions AS q JOIN question_exam_mapping AS qem ON qem.question_id = q.id WHERE qem.exam_id = '$exam_id' AND q.status = 1 ORDER BY q.id ASC";
+                $sql = "SELECT q.id, q.question_id, q.questions, q.no_of_times_attempted, q.no_of_times_correctly_attempted, q.question_type, q.question_image FROM questions AS q JOIN question_exam_mapping AS qem ON qem.question_id = q.id WHERE qem.exam_id = '$exam_id' AND q.status = 1 ORDER BY q.id ASC";
                 // echo $sql;
                 $result = mysqli_query($conn, $sql);
                 $sr_no = 1;
@@ -289,39 +289,77 @@
                         $question_id = $row["id"];
                         $question_unique_id = $row["question_id"];
                         $get_question = $row["questions"];
-                        $topic_id = $row["topic_id"];
-                        $main_group_id = $row["main_group_id"];
-                        $sub_group_id = $row["sub_group_id"];
+                        $topic_id_array = array();
+                        $main_group_id_array = array();
+                        $sub_group_id_array = array();
+                        $topic_ids_sql = "SELECT * FROM question_topic_mapping WHERE question_id = $question_id";
+                        $topic_ids_sql_result = mysqli_query($conn, $topic_ids_sql);
+                        if(mysqli_num_rows($topic_ids_sql_result) > 0) {
+                            while($topic_id_row = mysqli_fetch_assoc($topic_ids_sql_result)) {
+                                $topic_id_array[] = $topic_id_row["topic_id"];
+                            }
+                        }
+                        $main_group_ids_sql = "SELECT * FROM question_main_group_mapping WHERE question_id = $question_id";
+                        $main_group_ids_sql_result = mysqli_query($conn, $main_group_ids_sql);
+                        if(mysqli_num_rows($main_group_ids_sql_result) > 0) {
+                            while($main_group_id_row = mysqli_fetch_assoc($main_group_ids_sql_result)) {
+                                $main_group_id_array[] = $main_group_id_row["main_group_id"];
+                            }
+                        }
+                        $sub_group_ids_sql = "SELECT * FROM question_sub_group_mapping WHERE question_id = $question_id";
+                        $sub_group_ids_sql_result = mysqli_query($conn, $sub_group_ids_sql);
+                        if(mysqli_num_rows($sub_group_ids_sql_result) > 0) {
+                            while($sub_group_id_row = mysqli_fetch_assoc($sub_group_ids_sql_result)) {
+                                $sub_group_id_array[] = $sub_group_id_row["sub_group_id"];
+                            }
+                        }
+                        // $topic_id = $row["topic_id"];
+                        // $main_group_id = $row["main_group_id"];
+                        // $sub_group_id = $row["sub_group_id"];
                         $char_sr_no = 65;
                         ?>
                         <tr>
                             <th scope='row'><?php echo ++$show_series; ?></th>
+                            <td>
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#questionRemoveModal<?php echo $remove_sr_no; ?>">Remove</button>
+                                    <?php $remove_sr_no++;?>
+                                </td>
                                 <td><?= $question_unique_id; ?></td>
                                 <td>
                                 <?php
-                                    $sql = "SELECT topic FROM topic WHERE id = $topic_id";
-                                    $topic_result = mysqli_query($conn, $sql);
-                                    if(mysqli_num_rows($topic_result) > 0) {
-                                        echo mysqli_fetch_assoc($topic_result)["topic"];
+                                    if(count($topic_id_array) > 0) {
+                                        $sql = "SELECT topic FROM topic WHERE id IN (" . implode(",", $topic_id_array) . ") ORDER BY FIELD(id, " . implode(",", $topic_id_array) . ")";
+                                        echo $sql;
+                                        $topic_result = mysqli_query($conn, $sql);
+                                        if(mysqli_num_rows($topic_result) > 0) {
+                                            echo mysqli_fetch_assoc($topic_result)["topic"];
+                                        }
                                     }
                                 ?>
                             </td>
                             <td>
                                 <?php
-                                    $sql = "SELECT main_group FROM main_group WHERE id = $main_group_id";
-                                    $main_group_result = mysqli_query($conn, $sql);
-                                    if(mysqli_num_rows($main_group_result) > 0) {
-                                        echo mysqli_fetch_assoc($main_group_result)["main_group"];
+                                    // array_output_die($main_group_id_array);
+                                    if(count($main_group_id_array) > 0) {
+                                        $sql = "SELECT main_group FROM main_group WHERE id IN (" . implode(",", $main_group_id_array) . ") ORDER BY FIELD(id, " . implode(",", $main_group_id_array) . ")";
+                                        $main_group_result = mysqli_query($conn, $sql);
+                                        if(mysqli_num_rows($main_group_result) > 0) {
+                                            echo mysqli_fetch_assoc($main_group_result)["main_group"];
+                                        }
                                     }
                                 ?>
                             </td>
                             <!-- <td <?php if($row["question_type"] !== "title") {?> class="d-none" <?php } ?>></td> -->
                             <td>
-                                <?php 
-                                    $sql = "SELECT sub_group FROM sub_group WHERE id = $sub_group_id";
-                                    $sub_group_result = mysqli_query($conn, $sql);
-                                    if(mysqli_num_rows($sub_group_result) > 0) {
-                                        echo mysqli_fetch_assoc($sub_group_result)["sub_group"];
+                            <?php
+                                    // array_output_die($sub_group_id_array);
+                                    if(count($sub_group_id_array) > 0) {
+                                        $sql = "SELECT sub_group FROM sub_group WHERE id IN (" . implode(",", $sub_group_id_array) . ") ORDER BY FIELD(id, " . implode(",", $sub_group_id_array) . ")";
+                                        $sub_group_result = mysqli_query($conn, $sql);
+                                        if(mysqli_num_rows($sub_group_result) > 0) {
+                                            echo mysqli_fetch_assoc($sub_group_result)["sub_group"];
+                                        }
                                     }
                                 ?>
                             </td>
@@ -403,11 +441,11 @@
                                     <button type="button" class="btn btn-primary individual-edit-question" data-bs-toggle="modal"
                                         data-bs-target="#questionEditModal<?php echo $remove_sr_no; ?>">Edit</button>
                                 </td> -->
-                                <td>
+                                <!-- <td>
                                     <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                                     data-bs-target="#questionRemoveModal<?php echo $remove_sr_no; ?>">Remove</button>
                                     <?php $remove_sr_no++;?>
-                                </td>
+                                </td> -->
                             </tr>
                 <?php
                         $sr_no++;

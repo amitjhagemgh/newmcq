@@ -207,6 +207,31 @@ if (document.querySelector("#question-bank-table")) {
         $('#example_filter input').on('keyup', function () {
             table.draw();
         });
+
+
+        // $(function () {
+        //     $("#question-bank-table").resizableColumns({
+        //         // optional
+        //         store: window.store,
+        //     });
+        // });
+        // table.on('init', function () {
+        //     $("#question-bank-table").resizableColumns({
+        //         selector: function($table) {
+        //             if ($table.find('thead').length) {
+        //                 return _constants.SELECTOR_TH;
+        //             }
+        //             return _constants.SELECTOR_TD;
+        //         },
+        //         syncHandlers: true,
+        //         resizeFromBody: true,
+        //         maxWidth: null,
+        //         minWidth: 0.01
+        //     });
+        // });
+        // $(function(){
+        //     $('table.resizable').resizableColumns();
+        //   })
     }
 }
 if (document.querySelector("#question-table")) {
@@ -902,7 +927,33 @@ function mcqQuestions() {
             });
             e.click();
         });
-    })
+    });
+    const _constants = {
+        SELECTOR_TH: 'th',
+        SELECTOR_TD: 'td'
+    };
+    // let questionBankTable = document.getElementById("question-bank-table");
+    // $(function () {
+    //     $("#question-bank-table").resizableColumns({
+    //         // optional
+    //         store: window.store,
+    //     });
+    // });
+    // questionBankTable.on('init', function () {
+    //     $("#question-bank-table").resizableColumns({
+    //         selector: function selector($table) {
+    //             if ($table.find('thead').length) {
+    //                 return _constants.SELECTOR_TH;
+    //             }
+    //             return _constants.SELECTOR_TD;
+    //         },
+    //         store: window.store,
+    //         syncHandlers: true,
+    //         resizeFromBody: true,
+    //         maxWidth: null,
+    //         minWidth: 0.01
+    //     });
+    // });
 }
 
 
@@ -920,6 +971,45 @@ function questionBank() {
     let createQuizForm = document.getElementById("create-quiz-form");
     let addToQuiz = document.querySelectorAll(".add-to-quiz");
     let examDurationInputElement = document.getElementById("exam-duration");
+    let assignTopics = document.querySelectorAll(".assign-topics");
+    let assignMainGroups = document.querySelectorAll(".assign-main-groups");
+    let assignSubGroups = document.querySelectorAll(".assign-sub-groups");
+    Array.from(assignTopics).forEach((e) => {
+        e.lastElementChild.addEventListener("click", function(event) {
+            event.stopPropagation();
+        });
+        e.addEventListener("click", () => {
+            if(e.lastElementChild.classList.contains("d-none")) {
+                e.lastElementChild.classList.remove("d-none");
+            } else {
+                e.lastElementChild.classList.add("d-none");
+            }
+        });
+    });
+    Array.from(assignMainGroups).forEach((e) => {
+        e.lastElementChild.addEventListener("click", function(event) {
+            event.stopPropagation();
+        });
+        e.addEventListener("click", () => {
+            if(e.lastElementChild.classList.contains("d-none")) {
+                e.lastElementChild.classList.remove("d-none");
+            } else {
+                e.lastElementChild.classList.add("d-none");
+            }
+        });
+    });
+    Array.from(assignSubGroups).forEach((e) => {
+        e.lastElementChild.addEventListener("click", function(event) {
+            event.stopPropagation();
+        });
+        e.addEventListener("click", () => {
+            if(e.lastElementChild.classList.contains("d-none")) {
+                e.lastElementChild.classList.remove("d-none");
+            } else {
+                e.lastElementChild.classList.add("d-none");
+            }
+        });
+    });
     $('#add_question_topic').select2({
         theme: "bootstrap-5",
         width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
@@ -938,18 +1028,63 @@ function questionBank() {
         placeholder: $(this).data('placeholder'),
         closeOnSelect: false,
     });
-    $('#edit_question_topic').select2({
-        theme: "bootstrap-5",
-        width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-        placeholder: $(this).data('placeholder'),
-        closeOnSelect: false,
-    });
-    $('#edit_question_main_group').select2({
-        theme: "bootstrap-5",
-        width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-        placeholder: $(this).data('placeholder'),
-        closeOnSelect: false,
-    });
+    // $('#edit_question_topic').select2({
+    //     theme: "bootstrap-5",
+    //     width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+    //     placeholder: $(this).data('placeholder'),
+    //     closeOnSelect: false,
+    // });
+    // $('#edit_question_main_group').select2({
+    //     theme: "bootstrap-5",
+    //     width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+    //     placeholder: $(this).data('placeholder'),
+    //     closeOnSelect: false,
+    // });
+    // $('#edit_question_sub_group').select2({
+    //     theme: "bootstrap-5",
+    //     width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+    //     placeholder: $(this).data('placeholder'),
+    //     closeOnSelect: false,
+    // });
+    // colResize = {
+    //     isEnabled: true,
+    //     saveState: false,
+    //     hoverClass: 'dt-colresizable-hover',
+    //     hasBoundCheck: true,
+    //     minBoundClass: 'dt-colresizable-bound-min',
+    //     maxBoundClass: 'dt-colresizable-bound-max',
+    //     isResizable: function (column) {
+    //         return true;
+    //     },
+    //     onResizeStart: function (column, columns) {
+    //     },
+    //     onResize: function (column) {
+    //     },
+    //     onResizeEnd: function (column, columns) {
+    //     },
+    //     getMinWidthOf: function ($thNode) {
+    //     },
+    //     stateSaveCallback: function (settings, data) {
+    //     },
+    //     stateLoadCallback: function (settings) {
+    //     }
+    // }
+    // let options = { ...colResize };
+    // Either:
+    // var table = $('#question-bank-table').DataTable({
+    // colResize: options
+    // });
+
+    // Or:
+    // var table = $('#question-bank-table').DataTable();
+    // new $.fn.dataTable.ColResize(table, options);
+
+    // Available methods:
+    // table.colResize.enable();  // enable plugin (i.e. when options was isEnabled: false)
+    // table.colResize.disable(); // remove all events
+    // table.colResize.reset();   // reset column.sWidth values
+    // table.colResize.save();    // save the current state (defaults to localstorage)
+    // table.colResize.restore(); // restore the state from storage (defaults to localstorage)
     // let addQuestionTopicInputElement = document.getElementById("add-question-topic");
     // let topicsListElements = document.querySelectorAll(".topics-list");
     // console.log(addQuestionTopicInputElement);
@@ -1023,7 +1158,7 @@ function questionBank() {
                 }
             }
         });
-    })
+    });
 }
 
 

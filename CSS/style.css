@@ -65,3 +65,9 @@ table, th, tr, td {
 .min-height-100-vh {
     min-height: 100vh;
 }
+
+.btn {
+    background-color: #d6d2d2 !important;
+    color: black !important;
+    border-color: #d6d2d2 !important;
+}
