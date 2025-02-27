@@ -26,7 +26,7 @@ $user_id = $_SESSION["user_id"] ?? null;
 $exam_id = $_SESSION["exam_id"] ?? null;
 $_SESSION["exam_submited"] = true;
 
-$test_series_sql = "SELECT * FROM eit_result WHERE user_id = '$user_id' AND exam_id = '$exam_id' ORDER BY test_series DESC";
+$test_series_sql = "SELECT * FROM result WHERE user_id = '$user_id' AND exam_id = '$exam_id' ORDER BY test_series DESC";
 $test_series_result = mysqli_query($conn, $test_series_sql);
 $test_series = (mysqli_num_rows($test_series_result) > 0)?((int)mysqli_fetch_assoc($test_series_result)["test_series"]):0;
 $remove_old_outcome_sql = "UPDATE result SET status = 0 WHERE user_id = '$user_id' AND exam_id = '$exam_id' AND test_series = '$test_series'";
