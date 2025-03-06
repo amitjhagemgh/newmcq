@@ -44,7 +44,7 @@
                             JOIN exam_portal
                                 ON opinion_result.exam_id = exam_portal.id
                         WHERE  users.id = $user_id AND opinion_result.status = 1
-                        GROUP  BY exam_attended_time; ";
+                        GROUP  BY exam_attended_time;";
                 $result = mysqli_query($conn, $query);
                 $i=0;
                 if(mysqli_num_rows($result) > 0) {
