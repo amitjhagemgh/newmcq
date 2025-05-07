@@ -1121,7 +1121,7 @@
                             <td>
                                 <button type="button" class="btn btn-primary individual-edit-question" data-bs-toggle="modal"
                                 data-bs-target="#questionEditModal">Edit</button>
-                                <span><?php
+                                <span class="d-none"><?php
                                     $edit_data_array = array();
                                     foreach ($row as $key => $value) {
                                         if($key == "status" || $key == "created_on" || $key == "no_of_times_attempted" || $key == "no_of_times_correctly_attempted" || $key == "question_order") continue;

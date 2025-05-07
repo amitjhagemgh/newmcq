@@ -882,6 +882,8 @@ function mcqQuestions() {
             // console.log(questionEditModalId);
             let questionEditModal = document.getElementById(questionEditModalId);
             let textSuccessElements = questionEditModal.querySelectorAll(".text-success");
+            let allOptions = questionEditModal.querySelectorAll(".option-container");
+            console.log(allOptions);
             editCorrectOption = textSuccessElements.length;
             console.log(editCorrectOption);
             // console.log(event.target.nextElementSibling.innerHTML);
@@ -929,6 +931,19 @@ function mcqQuestions() {
                     e.selected = true;
                 }
             });
+            Array.from(allOptions).forEach(options => {
+                options.parentElement.removeChild(options);
+            });
+            Array.from(e.nextElementSibling.querySelectorAll(".mb-2:has(.options)")).forEach(hiddenOptions => {
+                document.querySelector(".edit-question-add-option").click();
+                let optionContainers = questionEditModal.querySelector(".option-container:last-child");
+                if(hiddenOptions.firstElementChild.dataset.isCorrect == "1") {
+                    optionContainers.querySelector(".toggle-correct").classList.add("text-success");
+                    optionContainers.querySelector(".toggle-correct").classList.replace("fa-circle", "fa-circle-check");
+                    optionContainers.querySelector(".invisible").value = "correct";
+                }
+                optionContainers.querySelector(".form-control").value = hiddenOptions.lastElementChild.innerHTML.trim();
+            })
         });
     });
     let deleteQuestion = document.querySelectorAll(".delete-question");
