@@ -60,11 +60,11 @@ mysqli_close($conn);
             <form action="login.php" method="POST">
                 <div class="mb-3">
                   <label for="exampleInputEmail1" class="form-label">Email address</label>
-                  <input type="email" class="form-control" name="username" id="username" aria-describedby="emailHelp" required>
+                  <input type="email" class="form-control border border-dark" name="username" id="username" aria-describedby="emailHelp" required>
                 </div>
                 <div class="mb-3">
                   <label for="exampleInputPassword1" class="form-label">Password</label>
-                  <input type="password" class="form-control" name="password" id="password" required>
+                  <input type="password" class="form-control border border-dark" name="password" id="password" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Login</button>
                 <a href="../../Authentication/login.php" class="btn btn-warning">User Login</a>

@@ -87,31 +87,32 @@
             <form action="take_exam.php?exam=<?= $_GET["exam"] ?>" method="POST">
                 <div id="question-container">
                     <?php
-                    $sql_display_questions = "WITH TitleQuestions AS (
+                    $sql_display_questions = "SELECT * FROM (
     SELECT 
         q.id, 
         q.questions, 
         q.question_image, 
         q.question_type,
+        q.question_order,
         CASE 
-            WHEN q.question_type = 'title' THEN @title_num := COALESCE(@title_num, 0) + 1
+            WHEN q.question_type = 'title' THEN @title_num := @title_num + 1
             ELSE @title_num
-        END as title_group
-    FROM questions AS q 
-    JOIN question_exam_mapping AS qem ON q.id = qem.question_id
-    JOIN exam_portal AS ep ON qem.exam_id = ep.id 
+        END AS title_group
+    FROM (
+        SELECT q.*
+        FROM questions AS q 
+        JOIN question_exam_mapping AS qem ON q.id = qem.question_id
+        JOIN exam_portal AS ep ON qem.exam_id = ep.id 
+        WHERE ep.id = '$exam_id' 
+        AND q.status = 1
+        ORDER BY q.question_order ASC
+    ) AS q
     CROSS JOIN (SELECT @title_num := 0) AS vars
-    WHERE ep.id = '$exam_id' 
-    AND q.status = 1
-    ORDER BY q.id
-)
-SELECT * FROM TitleQuestions
+) AS TitleQuestions
 ORDER BY 
     title_group,
-    CASE 
-        WHEN question_type = 'title' THEN 0
-        ELSE RAND()
-    END";
+    question_order;
+    ";
                     // echo "<pre>";
                     // echo $sql_display_questions;
                     // echo "</pre>";
@@ -144,7 +145,7 @@ ORDER BY
                                         <?php
                                         $option_sql = "SELECT o.id AS id, o.answers AS options 
                                                      FROM options AS o 
-                                                     WHERE o.question_id = '{$row['id']}'
+                                                     WHERE o.question_id = '{$row['id']}' AND status = 1
                                                      ORDER BY o.id";
                                         $option_result = mysqli_query($conn, $option_sql);
 

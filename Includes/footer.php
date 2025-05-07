@@ -1,4 +1,4 @@
-<footer class="footer mt-auto py-3 bg-dark <?php if(PAGE=='payment success') {echo 'd-none';}?> text-white text-center" id="footer">
+<footer class="footer mt-auto py-3 bg-body-tertiary <?php if(PAGE=='payment success') {echo 'd-none';}?> text-white text-center" id="footer">
     <div class="container">Copyright © at
             <?php echo date("Y");?> as <a href="https://gemengserv.com" target="_blank" class="text-white">gemengserv.com</a> All rights reserved.
         <a href="<?php echo 'Admin/Authentication/login.php';?>" target="_blank" class="<?php if(isset($_SESSION['is_login'])) {echo " d-none";}?>"><small>Admin Login</small></a>

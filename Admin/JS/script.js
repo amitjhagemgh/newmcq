@@ -1,4 +1,55 @@
+let agreeToUpdate = true;
 // import { jsPDF } from "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.es.min.js";
+function dashboardSearchingFeature() {
+    let sectionSelectorElement = document.getElementById("section-selector");
+    let searchInputElement = document.getElementById("search");
+    let allCards = document.querySelectorAll(".card");
+    let searchIn = ""
+    sectionSelectorElement.addEventListener("change", () => {
+        searchIn = sectionSelectorElement.value;
+    });
+    searchInputElement.addEventListener("input", () => {
+        let searchValue = searchInputElement.value.toLowerCase();
+        if (searchValue === "") {
+            Array.from(allCards).forEach((e, i) => {
+                e.parentElement.classList.remove("d-none");
+                // if (e.querySelector(".status").textContent.toLowerCase().includes(searchValue)) {
+                //     e.parentElement.classList.remove("d-none");
+                // }
+                // if (e.querySelector(".exam-name").textContent.toLowerCase().includes(searchValue)) {
+                //     e.parentElement.classList.remove("d-none");
+                // }
+                // if (e.querySelector(".duration").textContent.toLowerCase().includes(searchValue)) {
+                //     e.parentElement.classList.remove("d-none");
+                // }
+            });
+        } else {
+            Array.from(allCards).forEach((e, i) => {
+                e.parentElement.classList.add("d-none");
+            });
+            if (searchIn !== "") {
+                Array.from(allCards).forEach((e, i) => {
+                    if (e.querySelector("." + searchIn).textContent.toLowerCase().includes(searchValue)) {
+                        e.parentElement.classList.remove("d-none");
+                    }
+                });
+            } else {
+                Array.from(allCards).forEach((e, i) => {
+                    e.parentElement.classList.add("d-none");
+                    if (e.querySelector(".status").textContent.toLowerCase().includes(searchValue)) {
+                        e.parentElement.classList.remove("d-none");
+                    }
+                    if (e.querySelector(".exam-name").textContent.toLowerCase().includes(searchValue)) {
+                        e.parentElement.classList.remove("d-none");
+                    }
+                    if (e.querySelector(".duration").textContent.toLowerCase().includes(searchValue)) {
+                        e.parentElement.classList.remove("d-none");
+                    }
+                });
+            }
+        }
+    });
+}
 function resultPage() {
     let srNo = document.querySelectorAll(".sr_no");
     Array.from(srNo).forEach((e, i) => {
@@ -9,8 +60,9 @@ function resultPage() {
 if (document.querySelector("#all-user-table")) {
     if (!document.querySelector("#all-user-table").innerHTML.includes("No users found.")) {
         var table = $('#all-user-table').DataTable({
-            pageLength: 500, // Set default number of rows to display
+            pageLength: 10, // Set default number of rows to display
             scrollX: true,
+            paging:false,
             initComplete: function () {
                 // Check if table needs scroll
                 var scrollCheck = function () {
@@ -40,7 +92,7 @@ if (document.querySelector("#all-user-table")) {
 if (document.querySelector("#result-table")) {
     if (!document.querySelector("#result-table").innerHTML.includes("No results found.")) {
         var table = $('#result-table').DataTable({
-            pageLength: 500, // Set default number of rows to display
+            pageLength: 10, // Set default number of rows to display
             scrollX: true,
             initComplete: function () {
                 // Check if table needs scroll
@@ -72,7 +124,7 @@ if (document.querySelector("#result-table")) {
 if (document.querySelector("#opinion-result")) {
     if (!document.querySelector("#opinion-result").innerHTML.includes("No results found.")) {
         var table = $('#opinion-result').DataTable({
-            pageLength: 500, // Set default number of rows to display
+            pageLength: 10, // Set default number of rows to display
             scrollX: true,
             initComplete: function () {
                 // Check if table needs scroll
@@ -105,7 +157,7 @@ if (document.querySelector("#opinion-result")) {
 if (document.querySelector("#eit-result-table")) {
     if (!document.querySelector("#eit-result-table").innerHTML.includes("No results found.")) {
         var table = $('#eit-result-table').DataTable({
-            pageLength: 500, // Set default number of rows to display
+            pageLength: 10, // Set default number of rows to display
             scrollX: true,
             initComplete: function () {
                 // Check if table needs scroll
@@ -141,14 +193,15 @@ if (document.querySelector("#eit-result-table")) {
     }
 }
 if (document.querySelector("#question-bank-table")) {
-    if (!document.querySelector("#question-bank-table").innerHTML.includes("No results found.")) {
+    if (!document.querySelector("#question-bank-table").innerHTML.includes("No questions found.")) {
         var selectedColumn = "all"; // Default: search in all columns
         $('#columnSelector').on('change', function () {
             selectedColumn = $(this).val();
             table.draw(); // Refresh the table after selecting a column
         });
         var table = $('#question-bank-table').DataTable({
-            pageLength: 500, // Set default number of rows to display
+            paging: false,
+            pageLength: 10, // Set default number of rows to display
             scrollX: true,
             initComplete: function () {
 
@@ -168,6 +221,9 @@ if (document.querySelector("#question-bank-table")) {
             lengthMenu: [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
             columns: [
                 null, // For Sr. No. (auto-detected)
+                null,
+                null,  // For View button (auto-detected)
+                { "data": "add_to_quiz" },
                 { "data": "question_id" }, // Name
                 { "data": "topic" }, // Email ID
                 { "data": "main_group" }, // Exam Name
@@ -176,10 +232,7 @@ if (document.querySelector("#question-bank-table")) {
                 { "data": "no_of_correctly_attempted" },
                 { "data": "no_of_times_attempted" },
                 { "data": "percentage_correctly_attempted" },
-                { "data": "difficulty_level" },
-                { "data": "add_to_quiz" },
-                null,
-                null  // For View button (auto-detected)
+                { "data": "difficulty_level" }
             ]
         });
         var selectedColumn = "all"; // Default: search in all columns
@@ -191,20 +244,36 @@ if (document.querySelector("#question-bank-table")) {
 
         $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
             var searchTerm = table.search().trim().toLowerCase();
+            if (!searchTerm) return true; // Agar search term nahi hai toh sab show karo
 
-            if (!searchTerm) return true; // If no search term, show all
+            function stripHtml(html) {
+                var tempElement = document.createElement("div");
+                tempElement.innerHTML = html;
+
+                // `.d-none` class wale elements ko remove karo
+                tempElement.querySelectorAll('.d-none').forEach(el => el.remove());
+
+                // console.log("Original HTML:", html);
+                // console.log("Extracted Text:", tempElement.textContent.trim());
+
+                return tempElement.textContent.trim() || "";
+            }
+
+
 
             if (selectedColumn === "all") {
-                // Default behavior: search in all columns
-                return data.join(" ").toLowerCase().includes(searchTerm);
+                var rowText = data.map(col => stripHtml(col)).join(" ").toLowerCase();
+                return rowText.includes(searchTerm);
             } else {
-                // Search only in the selected column
-                return data[selectedColumn].toLowerCase().includes(searchTerm);
+                var colIndex = parseInt(selectedColumn, 10);
+                var columnText = stripHtml(data[colIndex]).toLowerCase();
+                return columnText.includes(searchTerm);
             }
         });
 
+
         // Redraw table on search input change
-        $('#example_filter input').on('keyup', function () {
+        $('#example_filter input').on('input', function () {
             table.draw();
         });
 
@@ -234,46 +303,101 @@ if (document.querySelector("#question-bank-table")) {
         //   })
     }
 }
+// $.ajax({
+//     url: 'ajax/get_questions.php',
+//     type: 'POST',
+//     dataType: 'json',
+//     data: {
+//         draw: 1,
+//         start: 0,
+//         length: 10,
+//         search: { value: "" },
+//         order: [{ column: 0, dir: "asc" }]
+//     },
+//     success: function (response) {
+//         let html = "";
+//         console.log(response);
+//         console.log(JSON.stringify(response));
+//         // document.write(JSON.stringify(response));
+//         let srNo = 0
+//         for(let i = 0; i < response.data.length; i++) {
+//             console.log(response.data[i].questions);
+//             srNo++;
+//             html += `<tr>
+//                 <td>${srNo}</td>
+//                 <td><div>${response.data[i].questions}</div>`;
+//             for(let j = 0; j < response.data[i].options.length; j++) {
+//                 html += `<div class="d-flex">`;
+//                 html += `<input type="checkbox" name="options[]" id="options-${j + 1}" ${response.data[i].options[j].is_correct ? "checked" : ""}/>`;
+//                 html += `<label for="options-${j + 1}" class="w-100 ms-2" question-id="${response.data[i].question_id}" data-option="${response.data[i].options[j].text}">`;
+//                 html += `&#${65 + j}.
+//                     ${response.data[i].options[j].text} ${response.data[i].options[j].is_correct ? " (correct)" : ""}
+//                     <!--<td>${response.data[i].options[j].is_correct ? " (correct)" : ""}</td> -->
+//                     <!--<td>${response.data[i].options[j].text}</td>-->`;
+//                 html += `</label></div>`;
+//                 console.log(response.data[i].options[j].text + (response.data[i].options[j].is_correct ? " (correct)" : ""));
+//             }
+//         }
+//         html += `</tr>`;
+//         let questionBankTable = document.getElementById("question-bank-table");
+//         questionBankTable.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.innerHTML = html;
+//     },
+//     error: function (xhr, status, error) {
+//         console.error("AJAX Error: ", error);
+//     }
+// });
+
 if (document.querySelector("#question-table")) {
-    if (!document.querySelector("#question-table").innerHTML.includes("No results found.")) {
-        var selectedColumn = "all"; // Default: search in all columns
-        $('#columnSelector').on('change', function () {
-            selectedColumn = $(this).val();
-            table.draw(); // Refresh the table after selecting a column
-        });
-        var table = $('#question-table').DataTable({
-            pageLength: 500, // Set default number of rows to display
+    if (!document.querySelector("#question-table").innerHTML.includes("No questions found.")) {
+        var table = $('#question-bank-table').DataTable({
+            paging: false,
+            pageLength: 10,
+            lengthMenu: [[10,25,50,100],[10,25,50,100]],
             scrollX: true,
-            initComplete: function () {
-
-                // Check if table needs scroll
-                var scrollCheck = function () {
-                    var scrollWidth = $('.dataTables_scroll')[0];
-                    var width = $('.dataTables_scroll').width();
-                    $('.dataTables_scroll').toggleClass('has-scroll', scrollWidth > width);
-                };
-
-                // Initial check
-                scrollCheck();
-
-                // Check on window resize
-                $(window).on('resize', scrollCheck);
-            },
-            lengthMenu: [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
+            order: [[4, 'asc']],
+            searchDelay: 500,
+            stateSave: true,
+            rowId: 'question_id',
             columns: [
-                null, // For Sr. No. (auto-detected)
-                { "data": "question_id" }, // Name
-                { "data": "topic" }, // Email ID
-                { "data": "main_group" }, // Exam Name
-                { "data": "sub_group" }, // Exam Name
-                { "data": "questions" }, // View
-                { "data": "no_of_correctly_attempted" },
-                { "data": "no_of_times_attempted" },
-                { "data": "percentage_correctly_attempted" },
-                { "data": "difficulty_level" },
-                null  // For View button (auto-detected)
-            ]
-        });
+              { data: null,  orderable: false, searchable: false }, // Sr. no.
+              { data: null,  orderable: false, searchable: false }, // Edit
+              { data: null,  orderable: false, searchable: false }, // Delete
+              { data: 'add_to_quiz', orderable: false, searchable: false },
+              { data: 'question_id' },
+              { data: 'topic' },
+              { data: 'main_group' },
+              { data: 'sub_group' },
+              { data: 'questions' },
+              { data: 'no_of_correctly_attempted' },
+              { data: 'no_of_times_attempted' },
+              { data: 'percentage_correctly_attempted' },
+              { data: 'difficulty_level' }
+            ],
+            columnDefs: [
+              {
+                targets: 0,
+                render: function(data, type, row, meta) {
+                  return meta.row + meta.settings._iDisplayStart + 1;
+                }
+              },
+              {
+                targets: 1,
+                render: function(data, type, row) {
+                  return '<button class="btn btn-primary individual-edit-question" data-id="'+ row.question_id +'">Edit</button>';
+                }
+              },
+              {
+                targets: 2,
+                render: function(data, type, row) {
+                  return '<button class="btn btn-danger individual-delete-question" data-id="'+ row.question_id +'">Delete</button>';
+                }
+              }
+            ],
+            initComplete: function(settings, json) {
+              // Force the first AJAX fetch if it hasn't run
+              this.api().ajax.reload(null, false);
+            }
+          });
         var selectedColumn = "all"; // Default: search in all columns
 
         $('#columnSelector').on('change', function () {
@@ -322,7 +446,7 @@ async function generateExcel() {
     // Function to add table data to the worksheet in the same column with gaps
     function addTableToSheet(tableId, startRow, startColumn) {
         const table = document.getElementById(tableId);
-        console.log(table);
+        // console.log(table);
         const rows = table.rows;
         let currentRow = startRow;
 
@@ -333,7 +457,20 @@ async function generateExcel() {
 
             // Loop through cells of each row
             for (let j = 0; j < row.cells.length; j++) {
+                // console.log(row.cells[j].querySelectorAll("[class*='remove-']"));
+                if(row.cells[j].querySelectorAll("[class^='remove-']")) {
+                    Array.from(row.cells[j].querySelectorAll("[class*='remove-']")).forEach((e) => {
+                        // console.log(e);
+                        e.innerHTML = ",&nbsp;";
+                    });
+                }
                 rowData.push(row.cells[j].innerText); // Get cell data
+                if(row.cells[j].querySelectorAll("[class^='remove-']")) {
+                    Array.from(row.cells[j].querySelectorAll("[class*='remove-']")).forEach((e) => {
+                        // console.log(e);
+                        e.innerHTML = "X";
+                    });
+                }
             }
 
             // Add row data to the worksheet in the same column but different rows
@@ -368,6 +505,9 @@ async function generateExcel() {
     }
     if (document.getElementById('eit-result-table')) {
         addTableToSheet('eit-result-table', startRow, startColumn);
+    }
+    if (document.getElementById('question-bank-table')) {
+        addTableToSheet('question-bank-table', startRow, startColumn);
     }
 
     // Add data for Table 2 (Exams) starting after a gap in the same column
@@ -416,13 +556,7 @@ function questionsPage() {
     addQuestion.addEventListener("click", () => {
         submitQuestion.click();
     });
-    let editQuestion = document.querySelectorAll(".edit-question");
-    let editQuestionSubmit = document.querySelectorAll(".edit_question_submit");
-    Array.from(editQuestion).forEach((e, i) => {
-        e.addEventListener("click", () => {
-            editQuestionSubmit[i].click();
-        });
-    });
+
 }
 
 function mcqQuestions() {
@@ -439,8 +573,8 @@ function mcqQuestions() {
     let resetButtonElements = document.querySelectorAll("button[type='reset']");
     let removeQuestion = document.querySelectorAll(".remove-question");
     let removeQuestionSubmit = document.querySelectorAll(".remove_question_submit");
-    console.log(removeQuestion);
-    console.log(removeQuestionSubmit);
+    // console.log(removeQuestion);
+    // console.log(removeQuestionSubmit);
     // let btnCloseElements = document.querySelectorAll(".btn-close");
     // let closeModalBtnElements = document.querySelectorAll(".close-modal-btn");
     // console.log(resetButtonElements.length);
@@ -610,7 +744,7 @@ function mcqQuestions() {
         //         isAnyEmptyField = false;
         //     }
         // });
-        console.log(addQuestion.parentElement.parentElement.querySelector(".question-type"));
+        // console.log(addQuestion.parentElement.parentElement.querySelector(".question-type"));
         if (correctOption == 0 && addQuestion.parentElement.parentElement.querySelectorAll(".option-container").length > 0) {
             alert("Please select correct option");
         } else {
@@ -627,25 +761,27 @@ function mcqQuestions() {
             let addQuestionsOptionsElement;
 
             // Check if it's Add Form or Edit Form
-            if (e.classList.contains("add-question-add-option")) {
-                addQuestionsOptionsElement = e.previousElementSibling.querySelectorAll(".add-questions-options");
-            } else if (e.classList.contains("edit-question-add-option")) {
-                addQuestionsOptionsElement = e.previousElementSibling.querySelectorAll(".add-questions-options");
-            }
+            addQuestionsOptionsElement = e.previousElementSibling.querySelectorAll(".add-questions-options");
+            // if (e.classList.contains("add-question-add-option")) {
+                // addQuestionsOptionsElement = e.previousElementSibling.querySelectorAll(".add-questions-options");
+            // } else if (e.classList.contains("edit-question-add-option")) {
+                // addQuestionsOptionsElement = e.previousElementSibling.querySelectorAll(".add-questions-options");
+            // }
 
             let option;
+            let nextOption;
 
             // Case 1: If no options exist, start with 'A'
             if (addQuestionsOptionsElement.length === 0) {
-                option = 'A';
+                nextOption = 'A';
             } else {
                 // Case 2: If options exist, get the last option's ID and determine next option
                 let lastAddQuestionsOptionsElement = addQuestionsOptionsElement[addQuestionsOptionsElement.length - 1];
                 option = lastAddQuestionsOptionsElement.getAttribute("id").slice(-1); // Get last option letter
+                // Calculate next option letter (A -> B -> C -> D -> E...)
+                nextOption = String.fromCharCode(option.charCodeAt(0) + 1);
             }
 
-            // Calculate next option letter (A -> B -> C -> D -> E...)
-            let nextOption = String.fromCharCode(option.charCodeAt(0) + 1);
 
             // ✅ Fix: Ensure form exists before checking "weighted" type
             let formElement = e.previousElementSibling;
@@ -658,11 +794,11 @@ function mcqQuestions() {
                 <label for="marking-${nextOption}" class="marking-label form-label">${nextOption.toUpperCase()} Mark</label>
                    <input type="text" id="marking-${nextOption}" class="marking-field form-control" oninput="this.value = this.value.split('').filter(e => !isNaN(e) && e != ' ').join('');" value="1" min="0" name="marking[]" maxlength="3" required>`
                 : "";
-            console.log(markingFieldHTML);
-            console.log(isWeighted);
-            console.log(questionTypeElement);
-            console.log(formElement);
-            console.log(e);
+            // console.log(markingFieldHTML);
+            // console.log(isWeighted);
+            // console.log(questionTypeElement);
+            // console.log(formElement);
+            // console.log(e);
             let newElement;
 
             // Case for Add Form
@@ -670,7 +806,7 @@ function mcqQuestions() {
                 newElement = `<div class="mb-3 option-container">
                                 <label for="opt_${nextOption}" class="form-label">Option ${nextOption.toUpperCase()}</label>
                                 <i class="fa-regular fa-circle toggle-correct ${isWeighted ? "d-none" : ""}"></i>
-                                <input type="text" class="form-control d-inline-block add-questions-options" id="opt_${nextOption}" name="options[]" required>
+                                <input type="text" class="form-control d-inline-block border border-dark add-questions-options ${(e.classList.contains("deleted-question-add-option")) ? "deleted-questions-options" : ""}" id="opt_${nextOption}" name="options[]" required>
                                 <input type="hidden" value="${isWeighted ? "correct" : "incorrect"}" class="form-control invisible add-questions-options" id="correct_opt_${nextOption}" name="correct_options[]">
                                 <i class="fa-solid fa-xmark remove-option" style="cursor: pointer;"></i>
                                 ${markingFieldHTML}
@@ -681,7 +817,7 @@ function mcqQuestions() {
                 newElement = `<div class="mb-3 option-container">
                                 <label for="edit_options_${nextOption}" class="form-label">Option ${nextOption.toUpperCase()}</label>
                                 <i class="fa-regular fa-circle toggle-correct ${isWeighted ? "d-none" : ""}"></i>
-                                <input type="text" class="form-control d-inline-block add-questions-options" id="edit_options_${nextOption}" name="options[]" required>
+                                <input type="text" class="form-control d-inline-block border border-dark add-questions-options ${(e.classList.contains("deleted-question-add-option")) ? "deleted-questions-options" : ""}" id="edit_options_${nextOption}" name="options[]" required>
                                 <input type="hidden" value="${isWeighted ? "correct" : "incorrect"}" class="form-control invisible add-questions-options" id="correct_opt_${nextOption}" name="correct_options[]">
                                 <i class="fa-solid fa-xmark remove-option" style="cursor: pointer;"></i>
                                 ${markingFieldHTML}
@@ -690,7 +826,14 @@ function mcqQuestions() {
 
             // Insert the new option element after the last option, or if no options, after the add button
             if (addQuestionsOptionsElement.length === 0) {
-                e.nextElementSibling.insertAdjacentHTML('afterend', newElement);
+                console.log(e);
+                console.log(newElement);
+                // newElement = `<div class="wrapper">${newElement}</div>`;
+                // let notRequiredElement = document.createElement("div");
+                // notRequiredElement.innerHTML = newElement;
+                // let newElementWrapper = notRequiredElement.querySelector(".wrapper");
+                // console.log(newElementWrapper);
+                e.previousElementSibling.insertAdjacentHTML('beforeend', newElement);
             } else {
                 addQuestionsOptionsElement[addQuestionsOptionsElement.length - 1].parentElement.insertAdjacentHTML('afterend', newElement);
             }
@@ -722,7 +865,7 @@ function mcqQuestions() {
     let editQuestionSubmit = document.querySelectorAll(".edit_question_submit");
     Array.from(editQuestion).forEach((e, i) => {
         e.addEventListener("click", () => {
-            console.log(editQuestion);
+            // console.log(editQuestion);
             if (editCorrectOption == 0 && e.parentElement.parentElement.querySelectorAll(".option-container").length > 0) {
                 alert("Please select correct option");
             } else {
@@ -731,7 +874,7 @@ function mcqQuestions() {
             }
         });
     });
-    Array.from(individualEditQuestion).forEach((e, i) => {
+    Array.from(individualEditQuestion).forEach(e => {
         e.addEventListener("click", (event) => {
             editCorrectOption = 0;
             // console.log(e.dataset.bsTarget);
@@ -741,8 +884,53 @@ function mcqQuestions() {
             let textSuccessElements = questionEditModal.querySelectorAll(".text-success");
             editCorrectOption = textSuccessElements.length;
             console.log(editCorrectOption);
-        })
-    })
+            // console.log(event.target.nextElementSibling.innerHTML);
+            // event.target.nextElementSibling.innerHTML = event.target.nextElementSibling.innerHTML.replace(/class\s*=\s*"(font-size-20)"/g, "class='$1'");
+            console.log(event.target.nextElementSibling.innerHTML);
+            // console.log(JSON.parse(event.target.nextElementSibling.innerHTML.replace(/class\s*=\s*"(font-size-20)"/g, "class='$1'")));
+            let questionData = event.target.nextElementSibling.children;
+            let editIdElement = document.getElementById("edit_id");
+            let editQuestionIdElement = document.getElementById("edit_question_id");
+            let editQuestionElement = document.getElementById("edit_question");
+            let oldQuestionElement = document.getElementById("old_question");
+            let editQuestionTypeElement = document.getElementById("edit-question-type");
+            console.log(questionData);
+            editIdElement.value = questionData[0].children[1].innerHTML;
+            editQuestionIdElement.value = questionData[4].children[1].innerHTML;
+            oldQuestionElement.value = questionData[1].children[1].innerHTML;
+            editQuestionElement.value = questionData[1].children[1].innerHTML;
+            console.log(editQuestionTypeElement);
+            Array.from(editQuestionTypeElement.children).forEach(e => {
+                if(questionData[3].children[1].innerHTML == "single" || questionData[3].children[1].innerHTML == "multiple") {
+                    if(e.value == "single" || e.value == "multiple") {
+                        if(e.disabled == true) {
+                            e.disabled = false;
+                        }
+                    }
+                    if(e.value == "title") {
+                        if(e.disabled == false) {
+                            e.disabled = true;
+                        }
+                    }
+                }
+                if(questionData[3].children[1].innerHTML == "title") {
+                    if(e.value == "title") {
+                        if(e.disabled == true) {
+                            e.disabled = false;
+                        }
+                    }
+                    if(e.value == "single" || e.value == "multiple") {
+                        if(e.disabled == false) {
+                            e.disabled = true;
+                        }
+                    }
+                }
+                if (e.value == questionData[3].children[1].innerHTML) {
+                    e.selected = true;
+                }
+            });
+        });
+    });
     let deleteQuestion = document.querySelectorAll(".delete-question");
     let deleteQuestionSubmit = document.querySelectorAll(".delete_question_submit");
     Array.from(deleteQuestion).forEach((e, i) => {
@@ -792,7 +980,7 @@ function mcqQuestions() {
                 editCorrectOption++;
             }
         }
-        console.log(event.target.nextElementSibling.id.includes("edit"));
+        // console.log(event.target.nextElementSibling.id.includes("edit"));
     }
 
     // Function to add remove option functionality
@@ -821,7 +1009,7 @@ function mcqQuestions() {
 
         // Shift values upwards
         for (let i = clickedIndex; i < allOptions.length - 1; i++) {
-            console.log(allOptions[i]);
+            // console.log(allOptions[i]);
             let currentInput = allOptions[i].querySelector("input");
             let nextInput = allOptions[i + 1].querySelector("input");
 
@@ -974,36 +1162,442 @@ function questionBank() {
     let assignTopics = document.querySelectorAll(".assign-topics");
     let assignMainGroups = document.querySelectorAll(".assign-main-groups");
     let assignSubGroups = document.querySelectorAll(".assign-sub-groups");
+    let searchTopicElement = document.querySelectorAll(".search-topic");
+    let searchMainGroupElement = document.querySelectorAll(".search-main-group");
+    let searchSubGroupElement = document.querySelectorAll(".search-sub-group");
+    // let editDeletedQuestionElement = document.getElementById("edit_deleted_question");
+    // let editDeletedQuestionImageElement = document.getElementById("edit-deleted-question-image");
+    // let editDeletedQuestionTypeElement = document.getElementById("edit-deleted-question-type");
+    // let editQuestionElement = document.querySelectorAll("edit-question");
+
+    Array.from(searchTopicElement).forEach((e, i) => {
+        e.addEventListener("input", (event) => {
+            // event.stopPropagation();
+            let topicContainer = e.nextElementSibling;
+            // console.log(topicContainer.firstElementChild.innerText);
+            Array.from(topicContainer.children).forEach((child, index) => {
+                // console.log(child.innerText);
+                if(child.innerText.toLowerCase().includes(event.target.value.toLowerCase())) {
+                    if(child.classList.contains("d-none")) {
+                        child.classList.remove("d-none");
+                    }
+                } else {
+                    if(!child.classList.contains("d-none")) {
+                        child.classList.add("d-none");
+                    }
+                }
+            })
+        });
+    });
+    Array.from(searchMainGroupElement).forEach((e, i) => {
+        e.addEventListener("input", (event) => {
+            // event.stopPropagation();
+            let mainGroupContainer = e.nextElementSibling;
+            // console.log(mainGroupContainer.firstElementChild.innerText);
+            Array.from(mainGroupContainer.children).forEach((child, index) => {
+                // console.log(child.innerText);
+                if(child.innerText.toLowerCase().includes(event.target.value.toLowerCase())) {
+                    if(child.classList.contains("d-none")) {
+                        child.classList.remove("d-none");
+                    }
+                } else {
+                    if(!child.classList.contains("d-none")) {
+                        child.classList.add("d-none");
+                    }
+                }
+            })
+        });
+    });
+    Array.from(searchSubGroupElement).forEach((e, i) => {
+        e.addEventListener("input", (event) => {
+            // event.stopPropagation();
+            let subGroupContainer = e.nextElementSibling;
+            // console.log(mainGroupContainer.firstElementChild.innerText);
+            Array.from(subGroupContainer.children).forEach((child, index) => {
+                // console.log(child.innerText);
+                if(child.innerText.toLowerCase().includes(event.target.value.toLowerCase())) {
+                    if(child.classList.contains("d-none")) {
+                        child.classList.remove("d-none");
+                    }
+                } else {
+                    if(!child.classList.contains("d-none")) {
+                        child.classList.add("d-none");
+                    }
+                }
+            })
+        });
+    });
+    // console.log($);
+    $(document).ready(function () {
+        // Input event: AJAX call karke already exists flag set karo
+        $(".edit_question").on("input", async function () {
+            let $this = $(this);
+            try {
+                let response = await $.ajax({
+                    url: 'Ajax/is_already_exists.php',
+                    type: 'POST',
+                    data: {
+                        question: $this.val(),
+                        question_id: $this.data("question-id")
+                    },
+                    dataType: 'text'
+                });
+                
+                let alreadyExists = Boolean(parseInt(response));
+                // Flag store kar rahe hain; isse later submit event me use karenge
+                $this.data("alreadyExists", alreadyExists);
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        });
+        
+        // Submit button click event: yahan confirmation dialog dikhega
+        $(".edit_question_submit").on("click", function (e) {
+            // Assume corresponding .edit_question ka index same order me hai
+            let index = $(".edit_question_submit").index(this);
+            let $input = $(".edit_question").eq(index);
+            let exists = $input.data("alreadyExists");
+            
+            // Agar question already exist karta hai, toh confirmation dialog dikhao
+            if (exists) {
+                let agreeToUpdate = confirm("This question is already available. Do you want to continue?");
+                if (!agreeToUpdate) {
+                    // Agar user cancel karta hai, toh submission cancel karo
+                    e.preventDefault();
+                    // console.log("Submission cancelled by user.");
+                    return false;
+                }
+            }
+        });
+    });
+    
+    
+    
+    // let previousEditDeletedQuestionElementValue = editDeletedQuestionElement.value;
+    // let previousEditDeletedQuestionImageElementValue = editDeletedQuestionImageElement.value;
+    // let previousEditDeletedQuestionTypeElementValue = editDeletedQuestionTypeElement.value;
+    // remove disabled from the form of adding the deleted questions on any change in the form
+    // console.log(editDeletedQuestionElement);
+    // editDeletedQuestionElement.addEventListener("input", () => {
+    // if(editDeletedQuestionElement.value.trim() != previousEditDeletedQuestionElementValue.trim()) {
+    // if(editDeletedQuestionElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").hasAttribute("disabled")) {
+    // editDeletedQuestionElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").removeAttribute("disabled");
+    // }
+    // } else {
+    // if(editDeletedQuestionImageElement.value.trim() == previousEditDeletedQuestionImageElementValue.trim() && editDeletedQuestionTypeElement.value.trim() == previousEditDeletedQuestionTypeElementValue.trim()) {
+    // if(!editDeletedQuestionElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").hasAttribute("disabled")) {
+    // editDeletedQuestionElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").setAttribute("disabled", "true");
+    // }
+    // }
+    // }
+    // });
+    // editDeletedQuestionImageElement.addEventListener("change", () => {
+    // if(editDeletedQuestionImageElement.value.trim() != previousEditDeletedQuestionImageElementValue.trim()) {
+    // if(editDeletedQuestionImageElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").hasAttribute("disabled")) {
+    // editDeletedQuestionImageElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").removeAttribute("disabled");
+    // }
+    // } else {
+    // if(previousEditDeletedQuestionElementValue.trim() == editDeletedQuestionElement.value.trim() && previousEditDeletedQuestionTypeElementValue.trim() == editDeletedQuestionTypeElement.value.trim()) {
+    // if(!editDeletedQuestionImageElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").hasAttribute("disabled")) {
+    // editDeletedQuestionImageElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").setAttribute("disabled", "true");
+    // }
+    // }
+    // }
+    // });
+    // console.log(editDeletedQuestionTypeElement);
+    // console.log(previousEditDeletedQuestionTypeElementValue);
+    // editDeletedQuestionTypeElement.addEventListener("change", () => {
+    // if(editDeletedQuestionTypeElement.value.trim() != previousEditDeletedQuestionTypeElementValue.trim()) {
+    // if(editDeletedQuestionTypeElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").hasAttribute("disabled")) {
+    // editDeletedQuestionTypeElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").removeAttribute("disabled");
+    // }
+    // } else {
+    // if(previousEditDeletedQuestionElementValue.trim() == editDeletedQuestionElement.value.trim() && previousEditDeletedQuestionImageElementValue.trim() == editDeletedQuestionImageElement.value.trim()) {
+    // if(!editDeletedQuestionTypeElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").hasAttribute("disabled")) {
+    // editDeletedQuestionTypeElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").setAttribute("disabled", "true");
+    // }
+    // }
+    // }
+    // });
+    // Topic Assignment to Question Ajax
+    $(document).ready(function () {
+        function removeTopicAjax() {
+            $(".assign-topics .remove-topic").off("click", removeTopicEvent);
+            $(".assign-topics .remove-topic").on("click", removeTopicEvent);
+        }
+        function removeTopicEvent(e) {
+            e.stopPropagation();
+            // console.log($(this).data("value"));
+            let statusBtn = $(this)[0].previousElementSibling;
+            let questionId = $(this).closest(".assign-topics").find(".toggle-status").data("question-id");
+            let topic = $(this)[0].previousElementSibling.dataset.topic;
+            let topicId = $(this)[0].previousElementSibling.dataset.topicId;
+            // console.log(examId);
+            let value = $(this).closest(".assign-topics").find(".toggle-status").data("value");
+            // console.log(value);
+            // console.log(examName);
+            $.ajax({
+                url: 'Ajax/toggle_question_topic_status.php',
+                type: 'POST',
+                data: {
+                    questionId: questionId,
+                    topicId: topicId,
+                    topic: topic,
+                    value: value
+                },
+                dataType: 'text',
+                success: function (response) {
+                    // console.log(response); // Log response to verify server output
+                    // console.log(statusBtn);
+                    // console.log(userId);
+                    // console.log(examId);
+                    statusBtn.parentElement.remove();
+                    document.querySelector(".toggle-topics-assignment[data-question-id='" + questionId + "'][data-topic='" + topic + "']").checked = false;
+                    toggleTopicFun();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error: " + error);
+                }
+            });
+        }
+        function toggleTopicFun() {
+            $(".toggle-topics-assignment").off("click", toggleTopicFunEvent);
+            $(".toggle-topics-assignment").on("click", toggleTopicFunEvent);
+        }
+        function toggleTopicFunEvent(e) {
+            let questionId = $(this).data("question-id");
+            let topicId = $(this).data("topic-id");
+            let topic = $(this).data("topic");
+            let checkStatus = $(this).prop("checked");
+            let value = checkStatus ? 1 : 0;
+            $.ajax({
+                url: "Ajax/toggle_question_topic_status.php",
+                type: "POST",
+                data: {
+                    questionId: questionId,
+                    topicId: topicId,
+                    topic: topic,
+                    value: value
+                },
+                dataType: "text",
+                success: function (response) {
+                    // console.log(value);
+                    // console.log(response); // Log response to verify server output
+                    if (value == 1 && !e.target.closest(".assign-topics").querySelector(`.toggle-status[data-question-id="${questionId}"][data-topic-id="${topicId}"][data-topic="${topic}"]`)) {
+                        let html = `<div class="assigned-topics p-1">
+                        <button class="btn btn-success toggle-status" data-value="0" data-question-id="${questionId}" data-topic-id="${topicId}" data-topic="${topic}">${topic}</button>
+                        <span class="bg-danger rounded-circle text-white remove-topic">X</span>
+                        </div>`;
+                        // console.log(value);
+                        e.target.closest(".assign-topics").insertAdjacentHTML('afterbegin', html);
+                    }
+                    if (value == 0 && e.target.closest(".assign-topics").querySelector(`.assigned-topics .toggle-status[data-question-id="${questionId}"][data-topic="${topic}"]`)) {
+                        // console.log(value);
+                        e.target.closest(".assign-topics").querySelector(`.assigned-topics:has(.toggle-status[data-question-id="${questionId}"][data-topic="${topic}"])`).remove();
+                    }
+                    removeTopicAjax();
+                }
+            });
+        }
+        removeTopicAjax();
+        toggleTopicFun();
+    });
     Array.from(assignTopics).forEach((e) => {
-        e.lastElementChild.addEventListener("click", function(event) {
+        e.lastElementChild.addEventListener("click", function (event) {
             event.stopPropagation();
         });
         e.addEventListener("click", () => {
-            if(e.lastElementChild.classList.contains("d-none")) {
+            if (e.lastElementChild.classList.contains("d-none")) {
                 e.lastElementChild.classList.remove("d-none");
             } else {
                 e.lastElementChild.classList.add("d-none");
             }
         });
+    });
+    // Main Group Assignment to Question Ajax
+    $(document).ready(function () {
+        function removeMainGroupAjax() {
+            $(".assign-main-groups .remove-main-group").off("click", removeMainGroupEvent);
+            $(".assign-main-groups .remove-main-group").on("click", removeMainGroupEvent);
+        }
+        function removeMainGroupEvent(e) {
+            e.stopPropagation();
+            // console.log($(this).data("value"));
+            let statusBtn = $(this)[0].previousElementSibling;
+            let questionId = $(this).closest(".assign-main-groups").find(".toggle-status").data("question-id");
+            let mainGroup = $(this)[0].previousElementSibling.dataset.mainGroup;
+            let mainGroupId = $(this)[0].previousElementSibling.dataset.mainGroupId;
+            // console.log(examId);
+            let value = $(this).closest(".assign-main-groups").find(".toggle-status").data("value");
+            // console.log(value);
+            // console.log(examName);
+            $.ajax({
+                url: 'Ajax/toggle_question_main_group_status.php',
+                type: 'POST',
+                data: {
+                    questionId: questionId,
+                    mainGroupId: mainGroupId,
+                    mainGroup: mainGroup,
+                    value: value
+                },
+                dataType: 'text',
+                success: function (response) {
+                    // console.log(response); // Log response to verify server output
+                    // console.log(statusBtn);
+                    // console.log(userId);
+                    // console.log(examId);
+                    statusBtn.parentElement.remove();
+                    document.querySelector(".toggle-main-groups-assignment[data-question-id='" + questionId + "'][data-main-group='" + mainGroup + "']").checked = false;
+                    toggleMainGroupFun();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error: " + error);
+                }
+            });
+        }
+        function toggleMainGroupFun() {
+            $(".toggle-main-groups-assignment").off("click", toggleMainGroupFunEvent);
+            $(".toggle-main-groups-assignment").on("click", toggleMainGroupFunEvent);
+        }
+        function toggleMainGroupFunEvent(e) {
+            let questionId = $(this).data("question-id");
+            let mainGroupId = $(this).data("main-group-id");
+            let mainGroup = $(this).data("main-group");
+            let checkStatus = $(this).prop("checked");
+            let value = checkStatus ? 1 : 0;
+            $.ajax({
+                url: "Ajax/toggle_question_main_group_status.php",
+                type: "POST",
+                data: {
+                    questionId: questionId,
+                    mainGroupId: mainGroupId,
+                    mainGroup: mainGroup,
+                    value: value
+                },
+                dataType: "text",
+                success: function (response) {
+                    // console.log(value);
+                    // console.log(response); // Log response to verify server output
+                    if (value == 1 && !e.target.closest(".assign-main-groups").querySelector(`.toggle-status[data-question-id="${questionId}"][data-main-group-id="${mainGroupId}"][data-main-group="${mainGroup}"]`)) {
+                        let html = `<div class="assigned-main-groups p-1">
+                        <button class="btn btn-success toggle-status" data-value="0" data-question-id="${questionId}" data-main-group-id="${mainGroupId}" data-main-group="${mainGroup}">${mainGroup}</button>
+                        <span class="bg-danger rounded-circle text-white remove-main-group">X</span>
+                        </div>`;
+                        // console.log(value);
+                        e.target.closest(".assign-main-groups").insertAdjacentHTML('afterbegin', html);
+                    }
+                    if (value == 0 && e.target.closest(".assign-main-groups").querySelector(`.assigned-main-groups .toggle-status[data-question-id="${questionId}"][data-main-group="${mainGroup}"]`)) {
+                        // console.log(value);
+                        e.target.closest(".assign-main-groups").querySelector(`.assigned-main-groups:has(.toggle-status[data-question-id="${questionId}"][data-main-group="${mainGroup}"])`).remove();
+                    }
+                    removeMainGroupAjax();
+                }
+            });
+        }
+        removeMainGroupAjax();
+        toggleMainGroupFun();
     });
     Array.from(assignMainGroups).forEach((e) => {
-        e.lastElementChild.addEventListener("click", function(event) {
+        e.lastElementChild.addEventListener("click", function (event) {
             event.stopPropagation();
         });
         e.addEventListener("click", () => {
-            if(e.lastElementChild.classList.contains("d-none")) {
+            if (e.lastElementChild.classList.contains("d-none")) {
                 e.lastElementChild.classList.remove("d-none");
             } else {
                 e.lastElementChild.classList.add("d-none");
             }
         });
     });
+    // Sub Group Assignment to Question Ajax
+    $(document).ready(function () {
+        function removeSubGroupAjax() {
+            $(".assign-sub-groups .remove-sub-group").off("click", removeSubGroupEvent);
+            $(".assign-sub-groups .remove-sub-group").on("click", removeSubGroupEvent);
+        }
+        function removeSubGroupEvent(e) {
+            e.stopPropagation();
+            // console.log($(this).data("value"));
+            let statusBtn = $(this)[0].previousElementSibling;
+            let questionId = $(this).closest(".assign-sub-groups").find(".toggle-status").data("question-id");
+            let subGroup = $(this)[0].previousElementSibling.dataset.subGroup;
+            let subGroupId = $(this)[0].previousElementSibling.dataset.subGroupId;
+            // console.log(examId);
+            let value = $(this).closest(".assign-sub-groups").find(".toggle-status").data("value");
+            // console.log(value);
+            // console.log(examName);
+            $.ajax({
+                url: 'Ajax/toggle_question_sub_group_status.php',
+                type: 'POST',
+                data: {
+                    questionId: questionId,
+                    subGroupId: subGroupId,
+                    subGroup: subGroup,
+                    value: value
+                },
+                dataType: 'text',
+                success: function (response) {
+                    // console.log(response); // Log response to verify server output
+                    // console.log(statusBtn);
+                    // console.log(userId);
+                    // console.log(examId);
+                    statusBtn.parentElement.remove();
+                    document.querySelector(".toggle-sub-groups-assignment[data-question-id='" + questionId + "'][data-sub-group='" + subGroup + "']").checked = false;
+                    toggleMainGroupFun();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error: " + error);
+                }
+            });
+        }
+        function toggleSubGroupFun() {
+            $(".toggle-sub-groups-assignment").off("click", toggleSubGroupFunEvent);
+            $(".toggle-sub-groups-assignment").on("click", toggleSubGroupFunEvent);
+        }
+        function toggleSubGroupFunEvent(e) {
+            let questionId = $(this).data("question-id");
+            let subGroupId = $(this).data("sub-group-id");
+            let subGroup = $(this).data("sub-group");
+            let checkStatus = $(this).prop("checked");
+            let value = checkStatus ? 1 : 0;
+            $.ajax({
+                url: "Ajax/toggle_question_sub_group_status.php",
+                type: "POST",
+                data: {
+                    questionId: questionId,
+                    subGroupId: subGroupId,
+                    subGroup: subGroup,
+                    value: value
+                },
+                dataType: "text",
+                success: function (response) {
+                    // console.log(value);
+                    // console.log(response); // Log response to verify server output
+                    if (value == 1 && !e.target.closest(".assign-sub-groups").querySelector(`.toggle-status[data-question-id="${questionId}"][data-sub-group-id="${subGroupId}"][data-sub-group="${subGroup}"]`)) {
+                        let html = `<div class="assigned-sub-groups p-1">
+                        <button class="btn btn-success toggle-status" data-value="0" data-question-id="${questionId}" data-sub-group-id="${subGroupId}" data-sub-group="${subGroup}">${subGroup}</button>
+                        <span class="bg-danger rounded-circle text-white remove-sub-group">X</span>
+                        </div>`;
+                        // console.log(value);
+                        e.target.closest(".assign-sub-groups").insertAdjacentHTML('afterbegin', html);
+                    }
+                    if (value == 0 && e.target.closest(".assign-sub-groups").querySelector(`.assigned-sub-groups .toggle-status[data-question-id="${questionId}"][data-sub-group="${subGroup}"]`)) {
+                        // console.log(value);
+                        e.target.closest(".assign-sub-groups").querySelector(`.assigned-sub-groups:has(.toggle-status[data-question-id="${questionId}"][data-sub-group="${subGroup}"])`).remove();
+                    }
+                    removeSubGroupAjax();
+                }
+            });
+        }
+        removeSubGroupAjax();
+        toggleSubGroupFun();
+    });
     Array.from(assignSubGroups).forEach((e) => {
-        e.lastElementChild.addEventListener("click", function(event) {
+        e.lastElementChild.addEventListener("click", function (event) {
             event.stopPropagation();
         });
         e.addEventListener("click", () => {
-            if(e.lastElementChild.classList.contains("d-none")) {
+            if (e.lastElementChild.classList.contains("d-none")) {
                 e.lastElementChild.classList.remove("d-none");
             } else {
                 e.lastElementChild.classList.add("d-none");
@@ -1028,6 +1622,28 @@ function questionBank() {
         placeholder: $(this).data('placeholder'),
         closeOnSelect: false,
     });
+    let addQuestionTopicElement = document.getElementById("add_question_topic");
+    let addQuestionMainGroupElement = document.getElementById("add_question_main_group");
+    let addQuestionSubGroupElement = document.getElementById("add_question_sub_group");
+    // console.log(addQuestionTopicElement.nextElementSibling);
+    addQuestionTopicElement.nextElementSibling.classList.add("border");
+    addQuestionTopicElement.nextElementSibling.classList.add("border-dark");
+    addQuestionTopicElement.nextElementSibling.classList.add("border-1");
+    addQuestionTopicElement.nextElementSibling.classList.add("rounded-2");
+    addQuestionTopicElement.nextElementSibling.firstElementChild.firstElementChild.style.borderColor = "transparent";
+    addQuestionTopicElement.nextElementSibling.firstElementChild.firstElementChild.style.backgroundColor = "transparent";
+    addQuestionMainGroupElement.nextElementSibling.classList.add("border");
+    addQuestionMainGroupElement.nextElementSibling.classList.add("border-dark");
+    addQuestionMainGroupElement.nextElementSibling.classList.add("border-1");
+    addQuestionMainGroupElement.nextElementSibling.classList.add("rounded-2");
+    addQuestionMainGroupElement.nextElementSibling.firstElementChild.firstElementChild.style.borderColor = "transparent";
+    addQuestionMainGroupElement.nextElementSibling.firstElementChild.firstElementChild.style.backgroundColor = "transparent";
+    addQuestionSubGroupElement.nextElementSibling.classList.add("border");
+    addQuestionSubGroupElement.nextElementSibling.classList.add("border-dark");
+    addQuestionSubGroupElement.nextElementSibling.classList.add("border-1");
+    addQuestionSubGroupElement.nextElementSibling.classList.add("rounded-2");
+    addQuestionSubGroupElement.nextElementSibling.firstElementChild.firstElementChild.style.borderColor = "transparent";
+    addQuestionSubGroupElement.nextElementSibling.firstElementChild.firstElementChild.style.backgroundColor = "transparent";
     // $('#edit_question_topic').select2({
     //     theme: "bootstrap-5",
     //     width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
@@ -1108,48 +1724,58 @@ function questionBank() {
     //         }
     //     });
     // });
-    addTopicElement.addEventListener("click", () => {
-        submitTopicElement.click();
-    });
-    addMainGroup.addEventListener("click", () => {
-        submitMainGroup.click();
-    });
-    addSubGroup.addEventListener("click", () => {
-        submitSubGroup.click();
-    });
-    createQuizElement.addEventListener("click", () => {
-        submitCreateQuiz.click();
-    });
-    selectQuizElement.addEventListener("change", () => {
-        if (selectQuizElement.value == "") {
-            if (newQuizElement.getAttribute("disabled")) {
-                newQuizElement.removeAttribute("disabled");
+    if (addTopicElement) {
+        addTopicElement.addEventListener("click", () => {
+            submitTopicElement.click();
+        });
+    }
+    if (addMainGroup) {
+        addMainGroup.addEventListener("click", () => {
+            submitMainGroup.click();
+        });
+    }
+    if (addSubGroup) {
+        addSubGroup.addEventListener("click", () => {
+            submitSubGroup.click();
+        });
+    }
+    if (createQuizElement) {
+        createQuizElement.addEventListener("click", () => {
+            submitCreateQuiz.click();
+        });
+    }
+    if (selectQuizElement) {
+        selectQuizElement.addEventListener("change", () => {
+            if (selectQuizElement.value == "") {
+                if (newQuizElement.getAttribute("disabled")) {
+                    newQuizElement.removeAttribute("disabled");
+                }
+                if (examDurationInputElement.getAttribute("disabled")) {
+                    examDurationInputElement.removeAttribute("disabled");
+                }
+            } else {
+                if (!newQuizElement.getAttribute("disabled")) {
+                    newQuizElement.setAttribute("disabled", true);
+                }
+                if (!examDurationInputElement.getAttribute("disabled")) {
+                    examDurationInputElement.setAttribute("disabled", true);
+                }
             }
-            if (examDurationInputElement.getAttribute("disabled")) {
-                examDurationInputElement.removeAttribute("disabled");
-            }
-        } else {
-            if (!newQuizElement.getAttribute("disabled")) {
-                newQuizElement.setAttribute("disabled", true);
-            }
-            if (!examDurationInputElement.getAttribute("disabled")) {
-                examDurationInputElement.setAttribute("disabled", true);
-            }
-        }
-    });
+        });
+    }
 
     Array.from(addToQuiz).forEach(e => {
         e.addEventListener("click", function () {
             // console.log(e.parentElement.parentElement);
             let uniqueQuestionID = e.parentElement.parentElement.querySelectorAll(".dt-type-numeric")[1];
             if (e.checked == true) {
-                console.log(uniqueQuestionID);
+                // console.log(uniqueQuestionID);
                 let questionHiddenElement = document.createElement("input");
                 questionHiddenElement.setAttribute("type", "hidden");
                 questionHiddenElement.setAttribute("value", uniqueQuestionID.innerText.trim());
                 questionHiddenElement.setAttribute("name", "unique-question-id-" + uniqueQuestionID.innerText.trim());
                 questionHiddenElement.setAttribute("id", "unique-question-id-" + uniqueQuestionID.innerText.trim());
-                console.log(submitCreateQuiz);
+                // console.log(submitCreateQuiz);
                 createQuizForm.insertBefore(questionHiddenElement, submitCreateQuiz);
             } else {
                 // console.log("unique-question-id-" + uniqueQuestionID.innerText);
@@ -1169,12 +1795,12 @@ const download_button =
 if (document.getElementById("result-table")) {
     var content =
         document.getElementById('result-table');
-    console.log(content);
+    // console.log(content);
 }
 if (document.getElementById("user-result-table-pdf")) {
     var content =
         document.getElementById('user-result-table-pdf');
-    console.log(content);
+    // console.log(content);
 }
 
 // download_button.addEventListener
@@ -1273,7 +1899,7 @@ window.onload = function () {
                 }
             });
     } catch {
-        console.log("handled");
+        // console.log("handled");
     }
 }
 // }
@@ -1289,7 +1915,7 @@ function toggleExamStatus() {
             let status = $(this).parent().find(".status");
             let examName = $(this).parent().find(".exam-name");
             let examNameArr = examName.text().split(" ");
-            console.log(status);
+            // console.log(status);
             // let fixStrting = examNameArr[0] + examNameArr[1];
             let fixStrting = "";
             examNameArr.forEach(((elem, index) => {
@@ -1310,14 +1936,14 @@ function toggleExamStatus() {
                         $(toggleStatus).text("Deactivate");
                         $(toggleStatus).attr("data-value", "1"); // Use .attr() to update the HTML attribute
                         $(toggleStatus).data("value", 1);
-                        $(highlighter).addClass("bg-success");
+                        $(highlighter).addClass("bg-success").removeClass("bg-danger");
                         $(status).text("Status: Activated");
                     } else if ($(toggleStatus).hasClass("btn-danger")) {
                         $(toggleStatus).toggleClass("btn-danger btn-success");
                         $(toggleStatus).text("Activate");
                         $(toggleStatus).attr("data-value", "0"); // Use .attr() to update the HTML attribute
                         $(toggleStatus).data("value", 0);
-                        $(highlighter).removeClass("bg-success");
+                        $(highlighter).removeClass("bg-success").addClass("bg-danger");
                         $(status).text("Status: Deactivated");
                         $(examName).text(fixStrting);
                     }
@@ -1333,7 +1959,27 @@ function toggleExamStatus() {
 function usersPage() {
     let assignQizes = document.querySelectorAll(".assign-quizzes");
     let toggleQuizzesAssignment = document.querySelectorAll(".toggle-quizzes-assignment");
+    let examNameSearchElement = document.querySelectorAll(".exam_name");
     var selectedColumn = "all"; // Default: search in all columns
+    Array.from(examNameSearchElement).forEach((e, i) => {
+        e.addEventListener("input", (event) => {
+            // event.stopPropagation();
+            let quizContainer = e.nextElementSibling;
+            // console.log(quizContainer.firstElementChild.innerText);
+            Array.from(quizContainer.children).forEach((child, index) => {
+                // console.log(child.innerText);
+                if(child.innerText.toLowerCase().includes(event.target.value.toLowerCase())) {
+                    if(child.classList.contains("d-none")) {
+                        child.classList.remove("d-none");
+                    }
+                } else {
+                    if(!child.classList.contains("d-none")) {
+                        child.classList.add("d-none");
+                    }
+                }
+            })
+        });
+    });
     $('#columnSelector').on('change', function () {
         selectedColumn = $(this).val();
         table.draw(); // Refresh the table after selecting a column
@@ -1387,7 +2033,7 @@ function usersPage() {
             let examId = $(this)[0].previousElementSibling.dataset.examId;
             // console.log(examId);
             let value = $(this).closest(".assign-quizzes").find(".toggle-status").data("value");
-            console.log(value);
+            // console.log(value);
             // console.log(examName);
             $.ajax({
                 url: 'Ajax/toggle_individual_exam_status.php',
@@ -1445,7 +2091,7 @@ function usersPage() {
                         e.target.closest(".assign-quizzes").insertAdjacentHTML('afterbegin', html);
                     }
                     if (value == 0 && e.target.closest(".assign-quizzes").querySelector(`.assigned-exams .toggle-status[data-id="${userId}"][data-exam-name="${examName}"]`)) {
-                        console.log(value);
+                        // console.log(value);
                         e.target.closest(".assign-quizzes").querySelector(`.assigned-exams:has(.toggle-status[data-id="${userId}"][data-exam-name="${examName}"])`).remove();
                     }
                     removeExamAjax();
@@ -1463,7 +2109,7 @@ function usersPage() {
 
     Array.from(editUserButton).forEach((e, i) => {
         e.addEventListener("click", () => {
-            console.log(e.dataset);
+            // console.log(e.dataset);
             editId.value = e.dataset.id;
             editName.value = e.dataset.name;
             editEmailId.value = e.dataset.emailId;

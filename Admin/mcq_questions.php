@@ -23,14 +23,80 @@
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST["add_question"])) {
-            $check_sql_question = "SELECT * FROM questions WHERE questions = '" . get_safe_value($conn, $_POST['question']) . "' AND exam_id = '$exam_id'";
+            $check_sql_question = "SELECT * FROM questions WHERE questions = '" . get_safe_value($conn, $_POST['question']) . "'";
             $check_result_question = mysqli_query($conn, $check_sql_question);
 
             if (mysqli_num_rows($check_result_question) > 0) {
-                $alert_message = "<div class=\"alert alert-warning alert-dismissible fade show\" role=\"alert\">
-                <strong>Question already exists!</strong> Please add a different Question.
-                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>
-                </div>";
+                $available_id = mysqli_fetch_assoc($check_result_question)["id"];
+                $check_status_sql = "SELECT * FROM questions WHERE id = $available_id AND status = 1";
+                $check_status_request = mysqli_query($conn, $check_status_sql);
+                if(mysqli_num_rows($check_status_request) > 0) {
+                    $alert_message = "<div class=\"alert alert-warning alert-dismissible fade show\" role=\"alert\">
+                    <strong>Question already exists!</strong> Please add a different Question.
+                    <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>
+                    </div>";
+                } else {
+                    // Sanitize inputs
+                    $question = get_safe_value($conn, $_POST["question"]);
+                    $exam_name = get_safe_value($conn, $_GET["exam"]);
+                    $question_type = get_safe_value($conn, $_POST["question-type"]);
+                    $questionImage = '';
+                    if (!empty($_FILES["question-image"]["tmp_name"])) {
+                        $uploadDir = "IMG/Questions/";
+                        $questionImage = basename($_FILES["question-image"]["name"]);
+                        move_uploaded_file($_FILES["question-image"]["tmp_name"], $uploadDir . $questionImage);
+                    }
+                    if($_POST["question-type"] == "title"){
+                        // $sql = "INSERT INTO questions (questions, question_image, question_type, exam_id) 
+                        //             VALUES ('$question', '', 'title', '$exam_id')";
+                        $sql = "UPDATE questions SET questions = '$questions', status = 1 WHERE id = $available_id";
+                        $result = mysqli_query($conn, $sql);
+                        if($result) {
+                            $alert_message = '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                                Title added successfully!
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>';
+                        }
+                    } else {
+                        // Combine Options and Correct Status in Single Array
+                        $options = $_POST['options'];
+                        $correct_options = $_POST['correct_options'];
+        
+                        // Insert into Database
+                        // $sql = "INSERT INTO questions (questions, question_image, question_id, question_type, exam_id, no_of_times_correctly_attempted, no_of_times_attempted, status) 
+                                    // VALUES ('$question', '$questionImage', '', '$question_type', '$exam_id', 0, 0, 1)";
+
+                        $sql = "UPDATE questions SET questions = '$question', question_image = '$questionImage', question_id = , question_type, exam_id, no_of_times_correctly_attempted, no_of_times_attempted, status = 1 
+                                    VALUES ('$question', '$questionImage', '', '$question_type', '$exam_id', 0, 0, 1) WHERE id = $available_id";
+        
+                        $result = mysqli_query($conn, $sql);
+        
+                        if ($result) {
+                            $select_question_sql = "SELECT id FROM questions WHERE questions = '$question' AND exam_id = '$exam_id'";
+                            $select_question_result = mysqli_query($conn, $select_question_sql);
+                            $question_id = mysqli_fetch_assoc($select_question_result)["id"];
+                            
+                            for ($i = 0; $i < count($options); $i++) {
+                                $is_correct = ($correct_options[$i] == "correct") ? 1 : 0;
+                                $option_sql = "INSERT INTO options (question_id, answers, is_correct, status) VALUES 
+                                ('$question_id', '" . get_safe_value($conn, $options[$i]) . "', '" . $is_correct . "', 1)";
+                                // echo $option_sql;
+                                // die;
+                                $option_result = mysqli_query($conn, $option_sql);
+        
+                                if (!$option_result) {
+                                    die("Error inserting option: " . mysqli_error($conn));
+                                }
+                            }
+        
+                            $alert_message = '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                                Question added successfully!
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>';
+                        }
+                    }
+
+                }
             } else {
                 // Sanitize inputs
                 $question = get_safe_value($conn, $_POST["question"]);
@@ -241,18 +307,18 @@
     </div>
 </div>
 <h2 class="text-center">Exam Name: <?= $_GET["exam"];?></h2>
-<div class="container d-flex justify-content-end">
+<!-- <div class="container d-flex justify-content-end">
     <label class="">Search in: 
         <select id="columnSelector">
             <option value="all">All Columns</option>
-            <option value="1">Question ID</option>
-            <option value="2">Topic</option>
-            <option value="3">Main Group</option>
-            <option value="4">Sub Group</option>
-            <option value="5">Questions</option>
+            <option value="4">Question ID</option>
+            <option value="5">Topic</option>
+            <option value="6">Main Group</option>
+            <option value="7">Sub Group</option>
+            <option value="8">Questions</option>
         </select>
     </label>
-</div>
+</div> -->
 <div class="container min-height-100-vh">
     <table class="table table-bordered" id="question-table">
         <thead>
@@ -283,7 +349,7 @@
                 $show_series = 0;
                 $remove_sr_no = 1;
                 if(mysqli_num_rows($result) > 0) {
-                    mysqli_set_charset($conn, "utf8mb4");
+                    // mysqli_set_charset($conn, "utf8mb4");
                     // echo array_output_die(mysqli_fetch_assoc($result));
                     while($row = mysqli_fetch_assoc($result)) {
                         $question_id = $row["id"];
@@ -326,42 +392,107 @@
                                     <?php $remove_sr_no++;?>
                                 </td>
                                 <td><?= $question_unique_id; ?></td>
-                                <td>
+                                <td class="assign-topics">
                                 <?php
+                                    // array_output_die($topic_id_array);
                                     if(count($topic_id_array) > 0) {
-                                        $sql = "SELECT topic FROM topic WHERE id IN (" . implode(",", $topic_id_array) . ") ORDER BY FIELD(id, " . implode(",", $topic_id_array) . ")";
-                                        echo $sql;
+                                        $sql = "SELECT * FROM topic WHERE id IN (" . implode(",", $topic_id_array) . ") ORDER BY FIELD(id, " . implode(",", $topic_id_array) . ")";
+                                        // echo $sql;
                                         $topic_result = mysqli_query($conn, $sql);
                                         if(mysqli_num_rows($topic_result) > 0) {
-                                            echo mysqli_fetch_assoc($topic_result)["topic"];
+                                            while($topic_row = mysqli_fetch_assoc($topic_result)) {
+                                                echo "<div class='assigned-topics p-1'><button class='btn toggle-status' data-value='0' data-question-id='" . $row["id"] . "' data-topic-id='" . $topic_row["id"] . "' data-topic='" . $topic_row["topic"] . "'>" . $topic_row["topic"] . "</button><span class='bg-danger rounded-circle text-white remove-topic'>X</span></div>";
+                                            }
                                         }
                                     }
                                 ?>
+                                <div class='card d-none' style='width: 18rem;'>
+                                    <div class='card-body'>
+                                        <input type="text" class="form-control search-topic" name="search-topic" placeholder="Search for Topic...">
+                                        <div class="topic-container mt-2">
+                                            <?php
+                                                $topic_sql = "SELECT * FROM topic";
+                                                $topic_result = mysqli_query($conn, $topic_sql);
+                                                if($topic_result) {
+                                                    while($topic_row = mysqli_fetch_assoc($topic_result)) {
+                                                        // if(in_array($row["exam_name"], $assigned_exam_array)) {
+                                                            $is_available = in_array($topic_row["id"], $topic_id_array) ? 1 : 0;
+                                                            echo "<div><input type='checkbox' class='form-check-input toggle-topics-assignment' data-question-id='" . $row["id"] . "' data-topic-id='" . $topic_row["id"] . "' data-topic='" . $topic_row["topic"] . "' data-value='0' " . ($is_available ? "checked" : "") . "><p class='card-title d-inline-block mx-2'>" . $topic_row["topic"] . "</p></div>";
+                                                        // }
+                                                    }
+                                                }
+                                            ?>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
-                            <td>
+                            <td class="assign-main-groups">
                                 <?php
                                     // array_output_die($main_group_id_array);
                                     if(count($main_group_id_array) > 0) {
-                                        $sql = "SELECT main_group FROM main_group WHERE id IN (" . implode(",", $main_group_id_array) . ") ORDER BY FIELD(id, " . implode(",", $main_group_id_array) . ")";
+                                        $sql = "SELECT * FROM main_group WHERE id IN (" . implode(",", $main_group_id_array) . ") ORDER BY FIELD(id, " . implode(",", $main_group_id_array) . ")";
                                         $main_group_result = mysqli_query($conn, $sql);
                                         if(mysqli_num_rows($main_group_result) > 0) {
-                                            echo mysqli_fetch_assoc($main_group_result)["main_group"];
+                                            while($main_group_row = mysqli_fetch_assoc($main_group_result)) {
+                                                echo "<div class='assigned-main-groups p-1'><button class='btn toggle-status' data-value='0' data-question-id='" . $row["id"] . "' data-main-group-id='" . $main_group_row["id"] . "' data-main-group='" . $main_group_row["main_group"] . "'>" . $main_group_row["main_group"] . "</button><span class='bg-danger rounded-circle text-white remove-main-group'>X</span></div>";
+                                            }
                                         }
                                     }
                                 ?>
+                                <div class='card d-none' style='width: 18rem;'>
+                                    <div class='card-body'>
+                                        <input type="text" class="form-control search-main-group" name="search-main-group" placeholder="Search for Main Group...">
+                                        <div class="main-group-container mt-2">
+                                            <?php
+                                                $main_group_sql = "SELECT * FROM main_group";
+                                                $main_group_result = mysqli_query($conn, $main_group_sql);
+                                                if(mysqli_num_rows($main_group_result) > 0) {
+                                                    while($main_group_row = mysqli_fetch_assoc($main_group_result)) {
+                                                        // if(in_array($row["exam_name"], $assigned_exam_array)) {
+                                                            $is_available = in_array($main_group_row["id"], $main_group_id_array) ? 1 : 0;
+                                                            echo "<div><input type='checkbox' class='form-check-input toggle-main-groups-assignment' data-question-id='" . $row["id"] . "' data-main-group-id='" . $main_group_row["id"] . "' data-main-group='" . $main_group_row["main_group"] . "' data-value='0' " . ($is_available ? "checked" : "") . "><p class='card-title d-inline-block mx-2'>" . $main_group_row["main_group"] . "</p></div>";
+                                                        // }
+                                                    }
+                                                }
+                                            ?>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                             <!-- <td <?php if($row["question_type"] !== "title") {?> class="d-none" <?php } ?>></td> -->
-                            <td>
-                            <?php
+                            <td class="assign-sub-groups">
+                                <?php
                                     // array_output_die($sub_group_id_array);
                                     if(count($sub_group_id_array) > 0) {
-                                        $sql = "SELECT sub_group FROM sub_group WHERE id IN (" . implode(",", $sub_group_id_array) . ") ORDER BY FIELD(id, " . implode(",", $sub_group_id_array) . ")";
+                                        $sql = "SELECT * FROM sub_group WHERE id IN (" . implode(",", $sub_group_id_array) . ") ORDER BY FIELD(id, " . implode(",", $sub_group_id_array) . ")";
                                         $sub_group_result = mysqli_query($conn, $sql);
                                         if(mysqli_num_rows($sub_group_result) > 0) {
-                                            echo mysqli_fetch_assoc($sub_group_result)["sub_group"];
+                                            while($sub_group_row = mysqli_fetch_assoc($sub_group_result)) {
+                                                echo "<div class='assigned-sub-groups p-1'><button class='btn toggle-status' data-value='0' data-question-id='" . $row["id"] . "' data-sub-group-id='" . $sub_group_row["id"] . "' data-sub-group='" . $sub_group_row["sub_group"] . "'>" . $sub_group_row["sub_group"] . "</button>
+                                                <span class='bg-danger rounded-circle text-white remove-sub-group'>X</span></div>";
+                                            }
                                         }
                                     }
                                 ?>
+                                <div class='card d-none' style='width: 18rem;'>
+                                    <div class='card-body'>
+                                        <input type="text" class="form-control search-sub-group" name="search-sub-group" placeholder="Search for Sub Group...">
+                                        <div class="sub-group-container mt-2">
+                                            <?php
+                                                $sub_group_sql = "SELECT * FROM sub_group";
+                                                $sub_group_result = mysqli_query($conn, $sub_group_sql);
+                                                if($sub_group_result) {
+                                                    while($sub_group_row = mysqli_fetch_assoc($sub_group_result)) {
+                                                        // if(in_array($row["exam_name"], $assigned_exam_array)) {
+                                                            $is_available = in_array($sub_group_row["id"], $sub_group_id_array) ? 1 : 0;
+                                                            echo "<div><input type='checkbox' class='form-check-input toggle-sub-groups-assignment' data-question-id='" . $row["id"] . "' data-sub-group-id='" . $sub_group_row["id"] . "' data-sub-group='" . $sub_group_row["sub_group"] . "' data-value='0' " . ($is_available ? "checked" : "") . "><p class='card-title d-inline-block mx-2'>" . $sub_group_row["sub_group"] . "</p></div>";
+                                                        // }
+                                                    }
+                                                }
+                                            ?>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                                 <td <?php if($row["question_type"] == "title") {?> colspan="5" <?php }
                                 ?>>
@@ -376,7 +507,7 @@
                                 </div>
                                 <img src="IMG/Questions/<?php echo $row["question_image"]; ?>" alt="<?php echo $row["question_image"]; ?>" class="question-image <?php if($row["question_image"] == "") { echo "d-none"; }?> mb-2"/>
                                 <?php
-                                    $sql = "SELECT * FROM options WHERE question_id = '" . $question_id . "'";
+                                    $sql = "SELECT * FROM options WHERE question_id = '" . $question_id . "' AND status = 1";
                                     $option_result = mysqli_query($conn, $sql);
                                     if(mysqli_num_rows($option_result) > 0) {
                                         while($row2 = mysqli_fetch_assoc($option_result)) { ?>
@@ -451,7 +582,7 @@
                         $sr_no++;
                     }
                 } else { ?>
-                    <tr><td colspan='11' class="text-center">No questions found</td></tr>
+                    <tr><td colspan='11' class="text-center">No questions found.</td></tr>
                 <?php }
                 ?>
         </tbody>

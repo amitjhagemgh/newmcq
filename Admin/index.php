@@ -7,6 +7,10 @@
     }
 ?>
 <h2 class="text-center mt-4">Quizzes</h2>
+<div class="container d-flex align-items-end flex-column">
+    <div>Search in: <select id="section-selector"><option value="all">All</option><option value="status">Status</option><option value="exam-name">Exam Name</option><option value="duration">Duration</option></select></div>
+    <div class="mt-2">Search: <input type="text" name="search" id="search"></div>
+</div>
 <div class="container dashboard-container mb-4">
     <div class="row">
         <?php
@@ -21,7 +25,7 @@
                     <div class="col-4 mt-4">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title"><?= chr($series++); ?><span class="<?php if($row["status"] == 1) {?>bg-success<?php }?> p-1 rounded-circle float-end status-highlight"></span></h5>
+                                <h5 class="card-title"><?= chr($series++); ?><span class="<?php if($row["status"] == 1) {?>bg-success<?php } else {?>bg-danger<?php }?> p-2 rounded-circle float-end status-highlight"></span></h5>
                                 <p class="card-text mb-0 status">Status: <?php if($row["status"] == 0) {?>Deactivated<?php } else {?>Activated<?php }?></p>
                                 <p class="card-text mb-0 exam-name">Exam Name: <span><?= $row["exam_name"];?></span></p>
                                 <p class="card-text duration">Duration: <span><?= $row["duration"] . " minutes";?></span></p>

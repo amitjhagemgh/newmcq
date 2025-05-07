@@ -33,7 +33,7 @@
                 $query = "SELECT exam_attended_time,
                             MIN(opinion_result.id)      AS id,
                             MIN(opinion_result.user_id) AS user_id,
-                            MIN(opinion_result.status) AS status,
+                            MIN(opinion_result.status)  AS status,
                             MIN(users.email_id)         AS email_id,
                             MIN(users.name)             AS name,
                             MIN(exam_portal.exam_name)  AS exam_name,

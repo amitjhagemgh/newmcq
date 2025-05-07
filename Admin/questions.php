@@ -42,7 +42,7 @@
             }
         } elseif(isset($_POST["delete_question"])) {
             $id = get_safe_value($conn, $_POST["delete_question"]);
-            $sql = "DELETE FROM opinion_questions WHERE id = '$id'";
+            $sql = "UPDATE opinion_questions SET status = 0 WHERE id = '$id'";
             $result = mysqli_query($conn, $sql);
             if($result) {
                 echo "<script>alert('Question deleted successfully!')</script>";
@@ -66,15 +66,15 @@
                     <form action="questions.php?exam=<?= $_GET["exam"]; ?>" method="POST">
                         <div class="mb-3">
                             <label for="question" class="form-label">Question</label>
-                            <textarea class="form-control" id="question" name="question" rows="3"></textarea>
+                            <textarea class="form-control border border-dark" id="question" name="question" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="opt_a" class="form-label">Option A</label>
-                            <input type="input" class="form-control" id="opt_a" name="opt_a">
+                            <input type="input" class="form-control border border-dark" id="opt_a" name="opt_a">
                         </div>
                         <div class="mb-3">
                             <label for="opt_b" class="form-label">Option B</label>
-                            <input type="input" class="form-control" id="opt_b" name="opt_b">
+                            <input type="input" class="form-control border border-dark" id="opt_b" name="opt_b">
                         </div>
                         <button type="submit" class="btn btn-primary d-none" id="submit-question" name="add_question">Submit</button>
                     </form>
@@ -93,11 +93,11 @@
         <thead>
             <tr>
                 <th scope="col">Sr. no.</th>
+                <th scope="col">Edit</th>
+                <th scope="col">Delete</th>
                 <th scope="col">Questions</th>
                 <th scope="col">Option A</th>
                 <th scope="col">Option B</th>
-                <th scope="col">Edit</th>
-                <th scope="col">Delete</th>
             </tr>
         </thead>
         <tbody>
@@ -109,9 +109,6 @@
                     while($row = mysqli_fetch_assoc($result)) { ?>
                         <tr>
                                 <th scope='row'><?php echo $sr_no; ?></th>
-                                <td><?php echo $row["questions"]; ?></td>
-                                <td><?php echo $row["opt_a"]; ?></td>
-                                <td><?php echo $row["opt_b"]; ?></td>
                                 <td>
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                         data-bs-target="#questionEditModal<?php echo $sr_no; ?>">Edit</button>
@@ -120,6 +117,9 @@
                                     <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                                     data-bs-target="#questionDeleteModal<?php echo $sr_no; ?>">Delete</button>
                                 </td>
+                                <td><?php echo $row["questions"]; ?></td>
+                                <td><?php echo $row["opt_a"]; ?></td>
+                                <td><?php echo $row["opt_b"]; ?></td>
                                 <!-- Edit Modal -->
                                 <div class="modal fade" id="questionEditModal<?php echo $sr_no; ?>" tabindex="-1"
                                     aria-labelledby="questionModalLabel" aria-hidden="true">
@@ -133,19 +133,19 @@
                                             <div class="modal-body">
                                                 <form action="questions.php?exam=<?= $_GET["exam"]; ?>" method="POST">
                                                     <div class="mb-3 d-none">
-                                                        <input type="text" class="form-control" id="edit_id" name="edit_id" value="<?php echo $row["id"]; ?>" readonly>
+                                                        <input type="text" class="form-control border border-dark" id="edit_id" name="edit_id" value="<?php echo $row["id"]; ?>" readonly>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="question" class="form-label">Question</label>
-                                                        <textarea class="form-control" id="edit_question" name="edit_question" rows="3"><?php echo $row["questions"]; ?></textarea>
+                                                        <textarea class="form-control border border-dark" id="edit_question" name="edit_question" rows="3"><?php echo $row["questions"]; ?></textarea>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="opt_a" class="form-label">Option A</label>
-                                                        <input type="text" class="form-control" id="edit_opt_a" name="edit_opt_a" value="<?php echo $row["opt_a"]; ?>">
+                                                        <input type="text" class="form-control border border-dark" id="edit_opt_a" name="edit_opt_a" value="<?php echo $row["opt_a"]; ?>">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="opt_b" class="form-label">Option B</label>
-                                                        <input type="text" class="form-control" id="edit_opt_b" name="edit_opt_b" value="<?php echo $row["opt_b"]; ?>">
+                                                        <input type="text" class="form-control border border-dark" id="edit_opt_b" name="edit_opt_b" value="<?php echo $row["opt_b"]; ?>">
                                                     </div>
                                                     <button type="submit" class="btn btn-primary d-none edit_question_submit"
                                                         id="submit-question<?php echo $sr_no; ?>" name="edit_question_submit">Submit</button>

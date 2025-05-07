@@ -44,8 +44,8 @@
     }
         ?>
         <?php
-            // $_SESSION["exam_id"] = $exam_id;
-            // $_SESSION["user_id"] = $user_id;
+            $_SESSION["exam_id"] = $exam_id;
+            $_SESSION["user_id"] = $user_id;
         ?>
         <div class="col-12">
             <ul class="mt-4">

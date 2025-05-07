@@ -14,14 +14,14 @@ body {
     height: 100%;
 }
 
-.assigned-exams, .assigned-topic, .assigned-main-group, .assigned-sub-group {
+.assigned-exams, .assigned-topics, .assigned-main-groups, .assigned-sub-groups {
     display: inline-block;
     /* justify-content: space-between; */
     position: relative;
     /* width: fit-content; */
 }
 
-.assigned-exams span, .assigned-topic span, .assigned-main-group span, .assigned-sub-group span {
+.assigned-exams span, .assigned-topics span, .assigned-main-groups span, .assigned-sub-groups span {
     position: absolute;
     aspect-ratio: 1 / 1;
     width: 12px;
@@ -29,13 +29,13 @@ body {
     padding: 0;
     font-size: 8px;
     text-align: center;
-    right: 0px;
-    bottom: 33px;
+    right: 0;
+    top: 0;
     cursor: pointer;
     transition: opacity 0.1s ease-in-out;
 }
 
-.assigned-exams button, .assigned-topic button, .assigned-main-group button, .assigned-sub-group button {
+.assigned-exams button, .assigned-topics button, .assigned-main-groups button, .assigned-sub-groups button {
     background-color: #f8f9fa !important;
 }
 

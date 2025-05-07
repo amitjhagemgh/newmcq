@@ -59,6 +59,10 @@
         $test_series_sql = "SELECT * FROM eit_result WHERE user_id = '$user_id' AND exam_id = '$exam_id' ORDER BY test_series DESC";
         $test_series_result = mysqli_query($conn, $test_series_sql);
         $test_series = (mysqli_num_rows($test_series_result) > 0)?mysqli_fetch_assoc($test_series_result)["test_series"]:0;
+        if($test_series != 0) {
+            $delete_previous_result_sql = "UPDATE eit_result SET status = 0 WHERE user_id = '$user_id' AND exam_id = '$exam_id' AND test_series = '$test_series'";
+            $delete_previous_result_result = mysqli_query($conn, $delete_previous_result_sql);
+        }
         $new_test_series = (int)$test_series + 1;
         // pre_post();
         $sql = "INSERT INTO eit_result(user_id, question, answer, exam_id, test_series, status) VALUES ";

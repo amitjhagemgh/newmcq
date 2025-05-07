@@ -42,27 +42,27 @@
     <div class="container my-5 min-height-100-vh">
         <h2 class="text-center">Results</h2>
         <div class="container d-flex justify-content-end p-0">
-    <label class="">Search in: 
-        <select id="columnSelector">
-            <option value="all">All Columns</option>
-            <option value="1">Name</option>
-            <option value="2">Email ID</option>
-            <option value="3">Exam Name</option>
-        </select>
-    </label>
-</div>
+        <label class="">Search in: 
+            <select id="columnSelector">
+                <option value="all">All Columns</option>
+                <option value="2">Name</option>
+                <option value="3">Email ID</option>
+                <option value="4">Exam Name</option>
+            </select>
+        </label>
+    </div>
 
         <!-- User Table -->
         <table class="table table-bordered mt-4" id="result-table">
             <thead>
                 <tr>
                     <th>Sr. No.</th>
+                    <th>Delete</th>
                     <th>Name</th>
                     <th>Email ID</th>
                     <th>Exam Name</th>
                     <th>Score</th>
                     <th>Exam Attended Time</th>
-                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody id="userTable">
@@ -92,16 +92,16 @@ GROUP BY result.user_id, result.exam_id, exam_portal.exam_name, users.email_id;"
                         ?>
                         <tr>
                             <td><?= $i; ?></td>
+                            <td><button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteResultModal<?= $row['email_id']; ?>" data-id="<?= $row['email_id']; ?>" data-exam_name="<?= $row['exam_name'];?>">Delete</button></td>
                             <td><?= $row['name']; ?></td>
                             <td><?= $row['email_id']; ?></td>
                             <td><?= $row['exam_name']; ?></td>
                             <td>
-                            <?php
+                                <?php
                                 echo $row['score'] . "/" . $row['total_marks'];
-                            ?>
+                                ?>
                             </td>
                             <td><?= $row['exam_attended_time']; ?></td>
-                            <td><button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteResultModal<?= $row['email_id']; ?>" data-id="<?= $row['email_id']; ?>" data-exam_name="<?= $row['exam_name'];?>">Delete</button></td>
                             <!-- Modal -->
                             <div class="modal fade" id="deleteResultModal<?= $row['email_id']; ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
@@ -144,7 +144,7 @@ GROUP BY result.user_id, result.exam_id, exam_portal.exam_name, users.email_id;"
         
         
         <!-- User Result Table for Excel Output -->
-        <table class="table table-bordered mt-4" id="result-table-excel-output">
+        <table class="table table-bordered mt-4 d-none" id="result-table-excel-output">
             <thead>
                 <tr>
                     <th>Sr. No.</th>

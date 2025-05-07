@@ -83,11 +83,11 @@
                     <form action="eit_questions.php?exam=<?= $_GET["exam"]; ?>" method="POST">
                         <div class="mb-3">
                             <label for="question" class="form-label">Question</label>
-                            <textarea class="form-control" id="question" name="question" rows="3" required></textarea>
+                            <textarea class="form-control border border-dark" id="question" name="question" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="domain" class="form-label">Domain</label>
-                            <select name="domain" id="domain" class="form-select" required>
+                            <select name="domain" id="domain" class="form-select border border-dark" required>
                                 <option value="">Select Domain</option>
                                 <?php
                                     $domain_sql = "SELECT * FROM domain";
@@ -102,43 +102,43 @@
                         </div>
                         <div class="mb-3">
                             <label for="opt_a" class="form-label">Option A</label>
-                            <input type="input" class="form-control" id="opt_a" name="opt_a" required>
+                            <input type="input" class="form-control border border-dark" id="opt_a" name="opt_a" required>
                         </div>
                         <div class="mb-3">
                             <label for="opt_a" class="form-label">Marks A</label>
-                            <input type="input" class="form-control" id="marks_a" name="marks_a" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="3" required>
+                            <input type="input" class="form-control border border-dark" id="marks_a" name="marks_a" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="3" required>
                         </div>
                         <div class="mb-3">
                             <label for="opt_b" class="form-label">Option B</label>
-                            <input type="input" class="form-control" id="opt_b" name="opt_b" required>
+                            <input type="input" class="form-control border border-dark" id="opt_b" name="opt_b" required>
                         </div>
                         <div class="mb-3">
                             <label for="opt_b" class="form-label">Marks B</label>
-                            <input type="input" class="form-control" id="marks_b" name="marks_b" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="3" required>
+                            <input type="input" class="form-control border border-dark" id="marks_b" name="marks_b" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="3" required>
                         </div>
                         <div class="mb-3">
                             <label for="opt_b" class="form-label">Option C</label>
-                            <input type="input" class="form-control" id="opt_c" name="opt_c" required>
+                            <input type="input" class="form-control border border-dark" id="opt_c" name="opt_c" required>
                         </div>
                         <div class="mb-3">
                             <label for="opt_b" class="form-label">Marks C</label>
-                            <input type="input" class="form-control" id="marks_c" name="marks_c" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="3" required>
+                            <input type="input" class="form-control border border-dark" id="marks_c" name="marks_c" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="3" required>
                         </div>
                         <div class="mb-3">
                             <label for="opt_b" class="form-label">Option D</label>
-                            <input type="input" class="form-control" id="opt_d" name="opt_d" required>
+                            <input type="input" class="form-control border border-dark" id="opt_d" name="opt_d" required>
                         </div>
                         <div class="mb-3">
                             <label for="opt_b" class="form-label">Marks D</label>
-                            <input type="input" class="form-control" id="marks_d" name="marks_d" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="3" required>
+                            <input type="input" class="form-control border border-dark" id="marks_d" name="marks_d" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="3" required>
                         </div>
                         <div class="mb-3">
                             <label for="opt_b" class="form-label">Option E</label>
-                            <input type="input" class="form-control" id="opt_e" name="opt_e" required>
+                            <input type="input" class="form-control border border-dark" id="opt_e" name="opt_e" required>
                         </div>
                         <div class="mb-3">
                             <label for="opt_b" class="form-label">Marks E</label>
-                            <input type="input" class="form-control" id="marks_e" name="marks_e" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="3" required>
+                            <input type="input" class="form-control border border-dark" id="marks_e" name="marks_e" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="3" required>
                         </div>
                         <button type="submit" class="btn btn-primary d-none" id="submit-question" name="add_question">Submit</button>
                     </form>
@@ -157,6 +157,8 @@
         <thead>
             <tr>
                 <th scope="col">Sr. no.</th>
+                <th scope="col">Edit</th>
+                <th scope="col">Delete</th>
                 <th scope="col">Questions</th>
                 <th scope="col">Domain</th>
                 <th scope="col">Option A</th>
@@ -164,8 +166,6 @@
                 <th scope="col">Option C</th>
                 <th scope="col">Option D</th>
                 <th scope="col">Option E</th>
-                <th scope="col">Edit</th>
-                <th scope="col">Delete</th>
             </tr>
         </thead>
         <tbody>
@@ -177,6 +177,14 @@
                     while($row = mysqli_fetch_assoc($result)) { ?>
                         <tr>
                                 <th scope='row'><?php echo $sr_no; ?></th>
+                                <td>
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#questionEditModal<?php echo $sr_no; ?>">Edit</button>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#questionDeleteModal<?php echo $sr_no; ?>">Delete</button>
+                                </td>
                                 <td><?php echo $row["questions"]; ?></td>
                                 <td><?php
                                     $domain_id = $row["domain_id"];
@@ -191,14 +199,6 @@
                                 <td><?php echo "<div class='eit-options-container'><span>" . $row["opt_c"] . "</span> <span>(" . $row["marks_c"] . " Marks)</span>"; ?></td>
                                 <td><?php echo "<div class='eit-options-container'><span>" . $row["opt_d"] . "</span> <span>(" . $row["marks_d"] . " Marks)</span>"; ?></td>
                                 <td><?php echo "<div class='eit-options-container'><span>" . $row["opt_e"] . "</span> <span>(" . $row["marks_e"] . " Marks)</span>"; ?></td>
-                                <td>
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#questionEditModal<?php echo $sr_no; ?>">Edit</button>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#questionDeleteModal<?php echo $sr_no; ?>">Delete</button>
-                                </td>
                                 <!-- Edit Modal -->
                                 <div class="modal fade" data-bs-backdrop="static" id="questionEditModal<?php echo $sr_no; ?>" tabindex="-1"
                                     aria-labelledby="questionModalLabel" aria-hidden="true">
@@ -212,51 +212,51 @@
                                             <div class="modal-body">
                                                 <form action="eit_questions.php?exam=<?= $_GET["exam"]; ?>" method="POST">
                                                     <div class="mb-3 d-none">
-                                                        <input type="text" class="form-control" id="edit_id" name="edit_id" value="<?php echo $row["id"]; ?>" readonly>
+                                                        <input type="text" class="form-control border border-dark" id="edit_id" name="edit_id" value="<?php echo $row["id"]; ?>" readonly>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="question" class="form-label">Question</label>
-                                                        <textarea class="form-control" id="edit_question" name="edit_question" rows="3"><?php echo $row["questions"]; ?></textarea>
+                                                        <textarea class="form-control border border-dark" id="edit_question" name="edit_question" rows="3"><?php echo $row["questions"]; ?></textarea>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="opt_a" class="form-label">Option A</label>
-                                                        <input type="text" class="form-control" id="edit_opt_a" name="edit_opt_a" value="<?php echo $row["opt_a"]; ?>">
+                                                        <input type="text" class="form-control border border-dark" id="edit_opt_a" name="edit_opt_a" value="<?php echo $row["opt_a"]; ?>">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="opt_a" class="form-label">Marks A</label>
-                                                        <input type="text" class="form-control" id="edit_marks_a" name="edit_marks_a" value="<?php echo $row["marks_a"]; ?>">
+                                                        <input type="text" class="form-control border border-dark" id="edit_marks_a" name="edit_marks_a" value="<?php echo $row["marks_a"]; ?>">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="opt_b" class="form-label">Option B</label>
-                                                        <input type="text" class="form-control" id="edit_opt_b" name="edit_opt_b" value="<?php echo $row["opt_b"]; ?>">
+                                                        <input type="text" class="form-control border border-dark" id="edit_opt_b" name="edit_opt_b" value="<?php echo $row["opt_b"]; ?>">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="opt_b" class="form-label">Marks B</label>
-                                                        <input type="text" class="form-control" id="edit_marks_b" name="edit_marks_b" value="<?php echo $row["marks_b"]; ?>">
+                                                        <input type="text" class="form-control border border-dark" id="edit_marks_b" name="edit_marks_b" value="<?php echo $row["marks_b"]; ?>">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="opt_b" class="form-label">Option C</label>
-                                                        <input type="text" class="form-control" id="edit_opt_c" name="edit_opt_c" value="<?php echo $row["opt_c"]; ?>">
+                                                        <input type="text" class="form-control border border-dark" id="edit_opt_c" name="edit_opt_c" value="<?php echo $row["opt_c"]; ?>">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="opt_b" class="form-label">Marks C</label>
-                                                        <input type="text" class="form-control" id="edit_marks_c" name="edit_marks_c" value="<?php echo $row["marks_c"]; ?>">
+                                                        <input type="text" class="form-control border border-dark" id="edit_marks_c" name="edit_marks_c" value="<?php echo $row["marks_c"]; ?>">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="opt_b" class="form-label">Option D</label>
-                                                        <input type="text" class="form-control" id="edit_opt_d" name="edit_opt_d" value="<?php echo $row["opt_d"]; ?>">
+                                                        <input type="text" class="form-control border border-dark" id="edit_opt_d" name="edit_opt_d" value="<?php echo $row["opt_d"]; ?>">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="opt_b" class="form-label">Marks D</label>
-                                                        <input type="text" class="form-control" id="edit_marks_d" name="edit_marks_d" value="<?php echo $row["marks_d"]; ?>">
+                                                        <input type="text" class="form-control border border-dark" id="edit_marks_d" name="edit_marks_d" value="<?php echo $row["marks_d"]; ?>">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="opt_b" class="form-label">Option E</label>
-                                                        <input type="text" class="form-control" id="edit_opt_e" name="edit_opt_e" value="<?php echo $row["opt_e"]; ?>">
+                                                        <input type="text" class="form-control border border-dark" id="edit_opt_e" name="edit_opt_e" value="<?php echo $row["opt_e"]; ?>">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="opt_b" class="form-label">Marks E</label>
-                                                        <input type="text" class="form-control" id="edit_marks_e" name="edit_marks_e" value="<?php echo $row["marks_e"]; ?>">
+                                                        <input type="text" class="form-control border border-dark" id="edit_marks_e" name="edit_marks_e" value="<?php echo $row["marks_e"]; ?>">
                                                     </div>
                                                     <button type="submit" class="btn btn-primary d-none edit_question_submit"
                                                         id="submit-question<?php echo $sr_no; ?>" name="edit_question_submit">Submit</button>

@@ -33,7 +33,7 @@ $remove_old_outcome_sql = "UPDATE result SET status = 0 WHERE user_id = '$user_i
 $result = mysqli_query($conn, $remove_old_outcome_sql);
 $new_test_series = $test_series + 1;
 
-$get_total_marks_sql = "SELECT * FROM question_exam_mapping AS qem JOIN questions AS q ON qem.question_id = q.id WHERE qem.exam_id = '$exam_id' AND q.question_type != 'title' AND q.status = 1";
+$get_total_marks_sql = "SELECT * FROM question_exam_mapping AS qem JOIN questions AS q ON qem.question_id = q.id WHERE qem.exam_id = '$exam_id' AND q.question_type != 'title' AND q.status = 1 AND qem.status = 1";
 $total_marks = mysqli_num_rows(mysqli_query($conn, $get_total_marks_sql));
 if (empty($inputData) || !isset($inputData["questions"])) {
     if ($user_id && $exam_id) {
@@ -62,7 +62,7 @@ $result = mysqli_query($conn, $sql);
 
 if(count($inputData["questions"]) == 0) {
     $sql = "INSERT INTO result (user_id, score, total_marks, exam_id, questions_attempted_id, correctly_questions_attempted_id, test_series, status)
-            VALUES ('$user_id', '0', '$total_marks', '$exam_id', '0', '0', `, '$new_test_series', 1)";
+            VALUES ('$user_id', '0', '$total_marks', '$exam_id', '0', '0', '$new_test_series', 1)";
     $result = mysqli_query($conn, $sql);
     if (!$result) {
         http_response_code(500);

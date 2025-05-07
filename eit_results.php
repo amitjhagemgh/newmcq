@@ -79,7 +79,7 @@
 FROM eit_result AS result
 INNER JOIN users ON result.user_id = users.id 
 INNER JOIN exam_portal ON result.exam_id = exam_portal.id 
-WHERE exam_portal.exam_name = 'Emotional Intelligence Test' AND users.email_id = '$email_id'
+WHERE exam_portal.exam_name = 'Emotional Intelligence Test' AND users.email_id = '$email_id' AND result.status = 1
 GROUP BY result.user_id, result.exam_id, result.test_series, result.test_series;";
                         // echo $query;
                 $result = mysqli_query($conn, $query);
@@ -179,6 +179,7 @@ GROUP BY result.user_id, result.exam_id, result.test_series, result.test_series;
           LEFT JOIN handling_relationships_result hrr ON all_users.user_id = hrr.user_id AND all_users.series = hrr.series
           WHERE all_users.user_id = " . $row["user_id"] . " 
           AND all_users.series = " . $row["test_series"];
+        //   echo $total_score_sql;
                                     $total_score_result = mysqli_query($conn, $total_score_sql);
                                     $total_marks_sql = "SELECT COUNT(*) FROM eit_questions";
                                     $total_marks_result = mysqli_query($conn, $total_marks_sql);
@@ -260,82 +261,82 @@ GROUP BY result.user_id, result.exam_id, result.test_series, result.test_series;
                     <?php
                     // Fetch users from the database
                     // Right before the query
-                    $query = "SELECT 
-        result.user_id AS user_id,
-        result.exam_id AS exam_id,
-        MAX(result.score) AS score,
-        exam_portal.exam_name,
-        users.email_id AS email_id,
-        MAX(result.exam_attended_time) AS exam_attended_time,
-        GROUP_CONCAT(DISTINCT users.name) AS name 
-    FROM result 
-    INNER JOIN users ON result.user_id = users.id 
-    INNER JOIN exam_portal ON result.exam_id = exam_portal.id 
-    GROUP BY result.user_id, result.exam_id, exam_portal.exam_name, users.email_id;
-    ";
+    //                 $query = "SELECT 
+    //     result.user_id AS user_id,
+    //     result.exam_id AS exam_id,
+    //     MAX(result.score) AS score,
+    //     exam_portal.exam_name,
+    //     users.email_id AS email_id,
+    //     MAX(result.exam_attended_time) AS exam_attended_time,
+    //     GROUP_CONCAT(DISTINCT users.name) AS name 
+    // FROM result 
+    // INNER JOIN users ON result.user_id = users.id 
+    // INNER JOIN exam_portal ON result.exam_id = exam_portal.id 
+    // GROUP BY result.user_id, result.exam_id, exam_portal.exam_name, users.email_id;
+    // ";
                             // echo $query;
-                    $result = mysqli_query($conn, $query);
-                    $i=0;
-                    if(mysqli_num_rows($result) > 0) {
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            $i++;
+                    // $result = mysqli_query($conn, $query);
+                    // $i=0;
+                    // if(mysqli_num_rows($result) > 0) {
+                        // while ($row = mysqli_fetch_assoc($result)) {
+                            // $i++;
                             // array_output($row);
                             // die;
                             ?>
                             <tr>
-                                <td><?= $i; ?></td>
-                                <td><?= $row['name']; ?></td>
-                                <!--<td class="user_id"><?= $row['user_id']; ?></td>-->
-                                <td><?= $row['email_id']; ?></td>
-                                <td><?= $row['exam_name']; ?></td>
+                                <td><?php // echo $i; ?></td>
+                                <td><?php // echo $row['name']; ?></td>
+                                <!--<td class="user_id"><?php // echo $row['user_id']; ?></td>-->
+                                <td><?php // echo $row['email_id']; ?></td>
+                                <td><?php // echo $row['exam_name']; ?></td>
                                 <td><?php
-                                    $total_marks_sql = "SELECT * FROM questions WHERE exam_id = " . $row["exam_id"] . " AND question_type != 'title'";
+                                    // $total_marks_sql = "SELECT * FROM questions WHERE question_type != 'title'";
                                     // echo $row["exam_id"];
                                     // echo $total_marks_sql;
-                                    $total_marks = mysqli_num_rows(mysqli_query($conn, $total_marks_sql));
-                                    echo $row['score'] . "/" . $total_marks;
+                                    // $total_marks = mysqli_num_rows(mysqli_query($conn, $total_marks_sql));
+                                    // echo $row['score'] . "/" . $total_marks;
                                 ?></td>
-                                <td><?= $row['exam_attended_time']; ?></td>
+                                <!-- <td><?php // echo $row['exam_attended_time']; ?></td> -->
                                 <?php
-                                    $user_id = $row["user_id"];
-                                    $exam_id = $row["exam_id"];
-                                    $exam_attended_time = $row["exam_attended_time"];
-                                    $question_sql = "SELECT * FROM questions WHERE exam_id = $exam_id AND question_type != 'title'";
+                                    // $user_id = $row["user_id"];
+                                    // $exam_id = $row["exam_id"];
+                                    // $exam_attended_time = $row["exam_attended_time"];
+                                    // $question_sql = "SELECT * FROM questions WHERE question_type != 'title'";
                                                 //  echo "<br /><br /><br /><br /><pre>" . $question_sql . "</pre>";
-                                    $question_result = mysqli_query($conn, $question_sql);
-                                    if(mysqli_num_rows($question_result) > 0) {
-                                        while($question_row = mysqli_fetch_assoc($question_result)) {
-                                            $question_id = $question_row["id"];
+                                    // $question_result = mysqli_query($conn, $question_sql);
+                                    // if(mysqli_num_rows($question_result) > 0) {
+                                        // while($question_row = mysqli_fetch_assoc($question_result)) {
+                                            // $question_id = $question_row["id"];
                                             ?>
-                                            <td><?= $question_row["questions"];?></td>
+                                            <!-- <td><?php // echo $question_row["questions"];?></td> -->
                                             <!--<td class="question_id"><?php //echo $question_row["id"];?></td>-->
                                         <td><?php
-                                                $is_correct_sql = "SELECT * FROM result WHERE questions_attempted_id = $question_id AND user_id = $user_id AND exam_id = $exam_id LIMIT 1";
-                                                $is_correct_result = mysqli_query($conn, $is_correct_sql);
-                                                if(mysqli_num_rows($is_correct_result) > 0) {
-                                                    while($is_correct_row = mysqli_fetch_assoc($is_correct_result)) {
-                                                        if(($is_correct_row["questions_attempted_id"] == $is_correct_row["correctly_questions_attempted_id"]) || ($is_correct_row["correctly_questions_attempted_id"] == 1)) {
-                                                            echo 1;
-                                                        } else {
-                                                            echo 0;
-                                                        }
-                                                    }
-                                                } else {
-                                                    echo 0;
-                                                }
+                                                // $is_correct_sql = "SELECT * FROM result WHERE questions_attempted_id = $question_id AND user_id = $user_id AND exam_id = $exam_id LIMIT 1";
+                                                // $is_correct_result = mysqli_query($conn, $is_correct_sql);
+                                                // if(mysqli_num_rows($is_correct_result) > 0) {
+                                                    // while($is_correct_row = mysqli_fetch_assoc($is_correct_result)) {
+                                                        // if(($is_correct_row["questions_attempted_id"] == $is_correct_row["correctly_questions_attempted_id"]) || ($is_correct_row["correctly_questions_attempted_id"] == 1)) {
+                                                            // echo 1;
+                                                        // } else {
+                                                            // echo 0;
+                                                        // }
+                                                    // }
+                                                // } else {
+                                                    // echo 0;
+                                                // }
                                         ?></td>
                                             <?php
-                                        }
-                                    }
+                                        // }
+                                    // }
                                 ?>
                             </tr>
                 <?php
-                        }
-                    } else { ?>
+                        // }
+                    // } else { ?>
                         <tr>
-                            <td colspan="7" class="text-center">No results found.</td>
+                            <!-- <td colspan="7" class="text-center">No results found.</td> -->
                         </tr>
-                    <?php }
+                    <?php // }
                     // mysqli_close($conn);
                 ?>
                 </tbody>

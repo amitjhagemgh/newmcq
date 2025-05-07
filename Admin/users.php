@@ -11,7 +11,7 @@
         if(isset($_POST["add-user"])) {
             $name = get_safe_value($conn, $_POST["name"]);
             $email_id = get_safe_value($conn, $_POST["email_id"]);
-            $check_query = "SELECT email_id FROM users WHERE email_id = '$email_id'";
+            $check_query = "SELECT email_id FROM users WHERE email_id = '$email_id' AND status = 1";
             $check_result = mysqli_query($conn, $check_query);
             if(mysqli_num_rows($check_result) > 0) {
                 echo "<div class=\"alert alert-warning alert-dismissible fade show\" role=\"alert\">
@@ -19,51 +19,77 @@
                 <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>
                 </div>";
             } else {
+                $check_query = "SELECT email_id FROM users WHERE email_id = '$email_id' AND status = 0";
+                $check_result = mysqli_query($conn, $check_query);
+                if(mysqli_num_rows($check_result) > 0) {
+                    $update_query = "UPDATE users SET name = '$name', status = 1 WHERE email_id = '$email_id' AND status = 0";
+                    $update_result = mysqli_query($conn, $update_query);
+                    if($update_result) {
+                        echo "<div class=\"alert alert-success alert-dismissible fade show\" role=\"alert\">
+            <strong>successfully!</strong> $name is added.
+            <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>
+            </div>";
+                    }
+                } else {
+                    $query = "INSERT INTO users (name, email_id, status) VALUES ('$name', '$email_id', '1')";
+                    $result = mysqli_query($conn, $query);
             
-                $query = "INSERT INTO users (name, email_id, status) VALUES ('$name', '$email_id', '1')";
-                $result = mysqli_query($conn, $query);
-        
-                if($result) {
-                    echo "<div class=\"alert alert-success alert-dismissible fade show\" role=\"alert\">
-        <strong>successfully!</strong> $name is added.
-        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>
-        </div>";
+                    if($result) {
+                        echo "<div class=\"alert alert-success alert-dismissible fade show\" role=\"alert\">
+            <strong>successfully!</strong> $name is added.
+            <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>
+            </div>";
+                    }
                 }
             }
         } elseif(isset($_POST["edit-user"])) {
             $id = get_safe_value($conn, $_POST["edit_id"]);
             $name = get_safe_value($conn, $_POST["edit_name"]);
             $email_id = get_safe_value($conn, $_POST["edit_email_id"]);
-            $query = "UPDATE users SET name = '$name', email_id = '$email_id' WHERE id = '$id'";
-            $result = mysqli_query($conn, $query);
-            if($result) {
-                echo "<div class=\"alert alert-success alert-dismissible fade show\" role=\"alert\">
-        <strong>successfully!</strong> User is updated.
-         <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>
-        </div>";
+            $check_query = "SELECT * FROM users WHERE email_id = '$email_id' AND id != '$id'";
+            $check_result = mysqli_query($conn, $check_query);
+            if(mysqli_num_rows($check_result) > 0) {
+                echo "<div class=\"alert alert-warning alert-dismissible fade show\" role=\"alert\">
+                <strong>Email ID already exists!</strong> Please choose a different Email ID.
+                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>
+                </div>";
+            } else {
+                $query = "UPDATE users SET name = '$name', email_id = '$email_id' WHERE id = '$id'";
+                $result = mysqli_query($conn, $query);
+                if($result) {
+                    echo "<div class=\"alert alert-success alert-dismissible fade show\" role=\"alert\">
+            <strong>successfully!</strong> User is updated.
+             <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>
+            </div>";
+                }
             }
         } elseif(isset($_POST["delete-user"])) {
             $id = get_safe_value($conn, $_POST["id"]);
-            $select_user_mapping_sql = "SELECT * FROM user_exam_mapping WHERE user_id = '$id'";
-            $select_user_mapping_result = mysqli_query($conn, $select_user_mapping_sql);
-            if(mysqli_num_rows($select_user_mapping_result) > 0) {
-                $delete_user_mapping_sql = "DELETE FROM user_exam_mapping WHERE user_id = '$id'";
-                $delete_user_mapping_result = mysqli_query($conn, $delete_user_mapping_sql);
+            $check_sql = "SELECT * FROM users WHERE id = '$id' AND status = 1";
+            $check_result = mysqli_query($conn, $check_sql);
+            if(mysqli_num_rows($check_result) > 0) {
+                $sql = "UPDATE users SET status = 0 WHERE id = '$id' AND status = 1";
+                $result = mysqli_query($conn, $sql);
+                if($result) {
+                    echo "<div class=\"alert alert-success alert-dismissible fade show\" role=\"alert\">
+            <strong>successfully!</strong> User is deleted.
+            <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>
+            </div>";
+                } else {
+                    echo "<div class=\"alert alert-danger alert-dismissible fade show\" role=\"alert\">
+            <strong>Something went wrong!</strong> Please try again later.
+            <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>
+            </div>";
+                }
             }
-            $select_outcome_sql = "SELECT * FROM result WHERE user_id = '$id'";
-            $select_outcome_result = mysqli_query($conn, $select_outcome_sql);
-            if(mysqli_num_rows($select_outcome_result) > 0) {
-                $delete_outcome_sql = "DELETE FROM result WHERE user_id = '$id'";
-                $delete_outcome_result = mysqli_query($conn, $delete_outcome_sql);
-            }
-            $query = "DELETE FROM users WHERE id = '$id'";
-            $result = mysqli_query($conn, $query);
-            if($result) {
-                echo "<div class=\"alert alert-success alert-dismissible fade show\" role=\"alert\">
-        <strong>successfully!</strong> User is deleted.
-        <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>
-        </div>";
-            }
+            // $select_outcome_sql = "SELECT * FROM result WHERE user_id = '$id'";
+            // $select_outcome_result = mysqli_query($conn, $select_outcome_sql);
+            // if(mysqli_num_rows($select_outcome_result) > 0) {
+            //     $delete_outcome_sql = "DELETE FROM result WHERE user_id = '$id'";
+            //     $delete_outcome_result = mysqli_query($conn, $delete_outcome_sql);
+            // }
+            // $query = "DELETE FROM users WHERE id = '$id'";
+            // $result = mysqli_query($conn, $query);
         }
     }
 ?>
@@ -73,8 +99,8 @@
             <label class="">Search in: 
                 <select id="columnSelector">
                     <option value="all">All Columns</option>
-                    <option value="1">Name</option>
-                    <option value="2">Email ID</option>
+                    <option value="3">Name</option>
+                    <option value="4">Email ID</option>
                 </select>
             </label>
         </div>
@@ -96,17 +122,17 @@
             <thead>
                 <tr>
                     <th>Sr. No.</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
                     <th>Name</th>
                     <th>Email ID</th>
                     <th>Assign Quizzes</th>
-                    <th>Edit</th>
-                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody id="userTable">
                 <?php
                 // Fetch users from the database
-                $query = "SELECT * FROM users";
+                $query = "SELECT * FROM users WHERE status = 1";
                 $result = mysqli_query($conn, $query);
                 $i = 0;
                 if(mysqli_num_rows($result) > 0) {
@@ -116,6 +142,8 @@
                         ?>
                         <tr>
                             <td><?= $i; ?></td>
+                            <td><button class="btn btn-primary edit-user-button" data-bs-toggle="modal" data-bs-target="#editUserModal" data-id="<?= $row['id']; ?>" data-name="<?= $row['name']; ?>" data-email-id="<?= $row['email_id']; ?>" id="edit-user-button">Edit</button></td>
+                            <td><button class="btn btn-danger delete-user-button" data-bs-toggle="modal" data-bs-target="#deleteUserModal" data-id="<?= $row['id']; ?>" data-email-id="<?= $row['email_id']; ?>" id="deleteUserButton">Delete</button></td>
                             <td><?= $row['name']; ?></td>
                             <td><?= $row['email_id']; ?></td>
                             <td class="assign-quizzes">
@@ -168,23 +196,24 @@
                                 ?>
                                 <div class='card d-none' style='width: 18rem;'>
                                     <div class='card-body'>
-                                        <?php
-                                            $exam_portal_sql = "SELECT * FROM exam_portal WHERE status = 1";
-                                            $exam_portal_result = mysqli_query($conn, $exam_portal_sql);
-                                            if($exam_portal_result) {
-                                                while($exam_portal_row = mysqli_fetch_assoc($exam_portal_result)) {
-                                                    // if(in_array($row["exam_name"], $assigned_exam_array)) {
-                                                        $is_available = in_array($exam_portal_row["id"], $exam_id_array) ? 1 : 0;
-                                                        echo "<div><input type='checkbox' class='form-check-input toggle-quizzes-assignment' data-id='" . $row["id"] . "' data-exam-id='" . $exam_portal_row["id"] . "' data-exam-name='" . $exam_portal_row["exam_name"] . "' data-value='0' " . ($is_available ? "checked" : "") . "><p class='card-title d-inline-block mx-2'>" . $exam_portal_row["exam_name"] . "</p></div>";
-                                                    // }
+                                        <input type="text" class="form-control exam_name" name="exam_name" placeholder="Search for quiz...">
+                                        <div class="quiz-container mt-2">
+                                            <?php
+                                                $exam_portal_sql = "SELECT * FROM exam_portal WHERE status = 1";
+                                                $exam_portal_result = mysqli_query($conn, $exam_portal_sql);
+                                                if($exam_portal_result) {
+                                                    while($exam_portal_row = mysqli_fetch_assoc($exam_portal_result)) {
+                                                        // if(in_array($row["exam_name"], $assigned_exam_array)) {
+                                                            $is_available = in_array($exam_portal_row["id"], $exam_id_array) ? 1 : 0;
+                                                            echo "<div><input type='checkbox' class='form-check-input toggle-quizzes-assignment' data-id='" . $row["id"] . "' data-exam-id='" . $exam_portal_row["id"] . "' data-exam-name='" . $exam_portal_row["exam_name"] . "' data-value='0' " . ($is_available ? "checked" : "") . "><p class='card-title d-inline-block mx-2'>" . $exam_portal_row["exam_name"] . "</p></div>";
+                                                        // }
+                                                    }
                                                 }
-                                            }
-                                        ?>
+                                            ?>
+                                        </div>
                                     </div>
                                 </div>
                             </td>
-                            <td><button class="btn btn-primary edit-user-button" data-bs-toggle="modal" data-bs-target="#editUserModal" data-id="<?= $row['id']; ?>" data-name="<?= $row['name']; ?>" data-email-id="<?= $row['email_id']; ?>" id="edit-user-button">Edit</button></td>
-                            <td><button class="btn btn-danger delete-user-button" data-bs-toggle="modal" data-bs-target="#deleteUserModal" data-id="<?= $row['id']; ?>" data-email-id="<?= $row['email_id']; ?>" id="deleteUserButton">Delete</button></td>
                         </tr>
                 <?php
                     }
@@ -213,11 +242,11 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label for="name">Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                                <input type="text" class="form-control border border-dark" id="name" name="name" required>
                             </div>
                             <div class="form-group">
                                 <label for="email_id">Email ID</label>
-                                <input type="email" class="form-control" id="email_id" name="email_id" required>
+                                <input type="email" class="form-control border border-dark" id="email_id" name="email_id" required>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -240,15 +269,15 @@
                         <div class="modal-body">
                             <div class="form-group d-none">
                                 <label for="edit_id">ID</label>
-                                <input type="hidden" class="form-control" id="edit_id" name="edit_id" readonly>
+                                <input type="hidden" class="form-control border border-dark" id="edit_id" name="edit_id" readonly>
                             </div>
                             <div class="form-group">
                                 <label for="edit_name">Name</label>
-                                <input type="text" class="form-control" id="edit_name" name="edit_name" required>
+                                <input type="text" class="form-control border border-dark" id="edit_name" name="edit_name" required>
                             </div>
                             <div class="form-group">
                                 <label for="edit_email_id">Email ID</label>
-                                <input type="text" class="form-control" id="edit_email_id" name="edit_email_id" required>
+                                <input type="text" class="form-control border border-dark" id="edit_email_id" name="edit_email_id" required>
                             </div>
                         </div>
                         <div class="modal-footer">

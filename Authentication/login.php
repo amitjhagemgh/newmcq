@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email_id = get_safe_value($conn, $_POST['email_id']);
     
     // Query the database to check if the user exists
-    $sql = "SELECT email_id FROM users WHERE email_id='$email_id'";
+    $sql = "SELECT email_id FROM users WHERE email_id='$email_id' AND status = 1";
     // echo "<pre>";
     // echo $sql;
     // echo "</pre>";
@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <form action="login.php" method="POST">
                 <div class="mb-3">
                   <label for="exampleInputEmail1" class="form-label">Email ID</label>
-                  <input type="text" class="form-control" name="email_id" id="email_id" required>
+                  <input type="email" class="form-control border border-dark" name="email_id" id="email_id" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Login</button>
                 <a href="../Admin/Authentication/login.php" class="btn btn-warning">Admin Login</a>

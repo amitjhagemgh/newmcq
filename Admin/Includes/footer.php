@@ -1,8 +1,8 @@
-<footer class="footer mt-auto py-3 bg-dark text-white text-center" id="footer">
+<footer class="footer mt-auto py-3 bg-body-tertiary text-center" id="footer">
     <div class="container">
         <span>
             Copyright © at
-            <?php echo date("Y");?> as <a href="https://gemengserv.com" target="_blank" class="text-white">gemengserv.com</a> All rights reserved.
+            <?php echo date("Y");?> as <a href="https://gemengserv.com" target="_blank">gemengserv.com</a> All rights reserved.
         </span>
         <!-- <a href="<?php echo 'Admin/Authentication/login.php';?>" target="_blank" class="<?php if(isset($_SESSION['is_login'])) {echo " d-none";}?>"><small>Admin Login</small></a> -->
     </div>
@@ -22,7 +22,7 @@
         integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" 
         crossorigin="anonymous">
     </script>
-    <script src="jQueryPlugins/jQuery-Plugin-Resizable-Table-Columns/jQuery.resizableColumns.js"></script>
+    <!-- <script src="jQueryPlugins/jQuery-Plugin-Resizable-Table-Columns/jQuery.resizableColumns.js"></script> -->
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -45,11 +45,11 @@
             downloadAsPDF();
         </script>
     <?php }?>
-    <?php if(PAGE == "Dashboard") { ?><script>toggleExamStatus();</script><?php }?>
+    <?php if(PAGE == "Dashboard") { ?><script>toggleExamStatus();dashboardSearchingFeature();</script><?php }?>
     <?php if(PAGE == "Questions") { ?><script>questionsPage();</script><?php }?>
     <?php if(PAGE == "Users") { ?><script>usersPage();</script><?php }?>
     <?php if(PAGE == "MCQ Questions" || PAGE == "Question Bank") { ?><script>mcqQuestions();</script><?php }?>
-    <?php if(PAGE == "Question Bank") { ?><script>questionBank();</script><?php }?>
+    <?php if(PAGE == "MCQ Questions" || PAGE == "Question Bank") { ?><script>questionBank();</script><?php }?>
     <?php if(PAGE == "Personality Type Test Result") { ?><script>resultPage();</script><?php }?>
     <?php
         if(PAGE=="Personality Type Test Result") {

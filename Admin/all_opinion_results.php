@@ -37,12 +37,12 @@
             <thead>
                 <tr>
                     <th>Sr. No.</th>
+                    <th>View</th>
+                    <th>Delete</th>
                     <th>Name</th>
                     <th>Username</th>
                     <th>Exam Name</th>
                     <th>Exam Attended Time</th>
-                    <th>View</th>
-                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody id="userTable">
@@ -71,12 +71,12 @@ GROUP BY opinion_result.user_id, opinion_result.exam_id, exam_portal.exam_name, 
                         ?>
                         <tr>
                             <td><?= $i; ?></td>
+                            <td><a href="view_opinion_result.php?email_id=<?= $row['email_id']; ?>&exam_name=<?= $row['exam_name']; ?>&test_series=<?= $row['test_series']; ?>" class="btn btn-primary">View</a></td>
+                            <td><button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteResultModal<?= $row['email_id']; ?>-<?= $row['test_series']?>" data-id="<?= $row['email_id']; ?>" data-exam_name="<?= $row['exam_name'];?>" data-test-series="<?= $row['test_series'];?>">Delete</button></td>
                             <td><?= $row['name']; ?></td>
                             <td><?= $row['email_id']; ?></td>
                             <td><?= $row['exam_name']; ?></td>
                             <td><?= $row['exam_attended_time']; ?></td>
-                            <td><a href="view_opinion_result.php?email_id=<?= $row['email_id']; ?>&exam_name=<?= $row['exam_name']; ?>&test_series=<?= $row['test_series']; ?>" class="btn btn-primary">View</a></td>
-                            <td><button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteResultModal<?= $row['email_id']; ?>-<?= $row['test_series']?>" data-id="<?= $row['email_id']; ?>" data-exam_name="<?= $row['exam_name'];?>" data-test-series="<?= $row['test_series'];?>">Delete</button></td>
                         </tr>
             <?php
                     }

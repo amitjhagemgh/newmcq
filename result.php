@@ -40,7 +40,26 @@
             $email_id_sql = "SELECT user_id FROM result WHERE user_id = '$user_id' GROUP BY user_id";
             $email_id_sql_result = mysqli_query($conn, $email_id_sql);
             if(mysqli_num_rows($email_id_sql_result) > 0) {
-                $exam_name_sql = "SELECT DISTINCT user_id, exam_id, score, exam_attended_time FROM result WHERE user_id = '$user_id' AND status = 1";
+                $exam_name_sql = "SELECT 
+    result.user_id AS user_id, 
+    result.exam_id AS exam_id, 
+    MAX(result.score) AS score,
+    MAX(result.total_marks) AS total_marks,
+    exam_portal.exam_name, 
+    users.email_id AS email_id, 
+    MAX(result.test_series) AS test_series,
+    result.exam_attended_time, 
+    users.name AS name 
+FROM 
+    result 
+INNER JOIN 
+    users ON result.user_id = users.id 
+INNER JOIN 
+    exam_portal ON result.exam_id = exam_portal.id
+WHERE result.status = 1 AND user_id = '$user_id'
+GROUP BY 
+    result.user_id, 
+    result.exam_id";
                 $exam_name_sql_result = mysqli_query($conn, $exam_name_sql);
                     while($row = mysqli_fetch_assoc($exam_name_sql_result)) { ?>
                     <?php // array_output($row); ?>
@@ -50,9 +69,10 @@
                             <td><?= $email_id; ?></td>
                             <td><?php
                                     // echo $row["exam_id"] . "<br />";
-                                    $total_marks_sql = "SELECT * FROM questions WHERE exam_id = $row[exam_id] AND question_type != 'title'";
+                                    $total_marks_sql = "SELECT * FROM questions WHERE question_type != 'title'";
                                     $total_marks = mysqli_num_rows(mysqli_query($conn, $total_marks_sql));
-                                    echo $row["score"] . "/" . $total_marks;
+                                    echo "$row[score]/$row[total_marks]";
+                                    // echo $row["score"] . "/" . $row["total_marks"] . " (" . round(($row["score"]/$row["total_marks"])*100, 2) . "%)";
                                 ?></td>
                             <td><?php
                                 $exam_id = $row["exam_id"];
