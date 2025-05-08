@@ -1142,7 +1142,7 @@
                                 ?></span>
                             </td>
                             <td>
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-danger individual-delete-question" data-bs-toggle="modal"
                                 data-bs-target="#questionDeleteModal">Delete</button>
                                 <?php //$edit_and_delete_sr_no++;?>
                             </td>
@@ -1484,8 +1484,8 @@
             <div class="modal-body">
                 <p>Are you sure to delete this question?</p>
                 <form action="question_bank.php" method="POST">
-                    <input type="hidden" name="question_id" value="<?php // echo $modal_row["id"]; ?>">
-                    <input type="hidden" name="question_type" value="<?php // echo $modal_row["question_type"]; ?>">
+                    <input type="hidden" name="question_id" id="delete_question_id" value="<?php // echo $modal_row["id"]; ?>">
+                    <input type="hidden" name="question_type" id="delete_question_type" value="<?php // echo $modal_row["question_type"]; ?>">
                     <button type="submit" class="btn btn-primary d-none delete_question_submit"
                         id="delete_question<?php // echo $sr_no; ?>" name="delete_question" value="<?php // echo $modal_row["id"];?>">Submit</button>
                 </form>

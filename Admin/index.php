@@ -20,12 +20,12 @@
             // echo $first_exam_name;
             // die;
             if($result) {
-                $series = 65;
+                $series = 1;
                 while($row = mysqli_fetch_assoc($result)) { ?>
                     <div class="col-4 mt-4">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title"><?= chr($series++); ?><span class="<?php if($row["status"] == 1) {?>bg-success<?php } else {?>bg-danger<?php }?> p-2 rounded-circle float-end status-highlight"></span></h5>
+                                <h5 class="card-title"><?= $series++; ?><span class="<?php if($row["status"] == 1) {?>bg-success<?php } else {?>bg-danger<?php }?> p-2 rounded-circle float-end status-highlight"></span></h5>
                                 <p class="card-text mb-0 status">Status: <?php if($row["status"] == 0) {?>Deactivated<?php } else {?>Activated<?php }?></p>
                                 <p class="card-text mb-0 exam-name">Exam Name: <span><?= $row["exam_name"];?></span></p>
                                 <p class="card-text duration">Duration: <span><?= $row["duration"] . " minutes";?></span></p>

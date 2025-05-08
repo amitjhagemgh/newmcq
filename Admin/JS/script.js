@@ -565,6 +565,7 @@ function mcqQuestions() {
     let questionElement = document.getElementById("question");
     let addQuestionInputElements = document.querySelectorAll("#add-question-form input[type='text']");
     let individualEditQuestion = document.querySelectorAll(".individual-edit-question");
+    let individualDeleteQuestion = document.querySelectorAll(".individual-delete-question");
     let questionType = document.querySelectorAll(".question-type");
     // console.log(addQuestionInputElement);
     let addQuestion = document.getElementById("add-question");
@@ -944,6 +945,12 @@ function mcqQuestions() {
                 }
                 optionContainers.querySelector(".form-control").value = hiddenOptions.lastElementChild.innerHTML.trim();
             })
+        });
+    });
+    Array.from(individualDeleteQuestion).forEach(e => {
+        e.addEventListener("click", (event) => {
+            let questionIdElement = document.getElementById("delete_question_id");
+            questionIdElement.value = event.target.parentElement.previousElementSibling.querySelector(".id").nextElementSibling.innerHTML.trim();
         });
     });
     let deleteQuestion = document.querySelectorAll(".delete-question");
