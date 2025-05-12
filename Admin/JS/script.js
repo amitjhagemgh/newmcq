@@ -1,5 +1,4 @@
 let agreeToUpdate = true;
-// import { jsPDF } from "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.es.min.js";
 function dashboardSearchingFeature() {
     let sectionSelectorElement = document.getElementById("section-selector");
     let searchInputElement = document.getElementById("search");
@@ -13,15 +12,6 @@ function dashboardSearchingFeature() {
         if (searchValue === "") {
             Array.from(allCards).forEach((e, i) => {
                 e.parentElement.classList.remove("d-none");
-                // if (e.querySelector(".status").textContent.toLowerCase().includes(searchValue)) {
-                //     e.parentElement.classList.remove("d-none");
-                // }
-                // if (e.querySelector(".exam-name").textContent.toLowerCase().includes(searchValue)) {
-                //     e.parentElement.classList.remove("d-none");
-                // }
-                // if (e.querySelector(".duration").textContent.toLowerCase().includes(searchValue)) {
-                //     e.parentElement.classList.remove("d-none");
-                // }
             });
         } else {
             Array.from(allCards).forEach((e, i) => {
@@ -80,9 +70,9 @@ if (document.querySelector("#all-user-table")) {
             lengthMenu: [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
             columns: [
                 null, // For Sr. No. (auto-detected)
-                { "data": "name" }, // Name
-                { "data": "email_id" }, // Email ID
-                { "data": "assign_quizzes" }, // Exam Name
+                { "data": "name" },
+                { "data": "email_id" },
+                { "data": "assign_quizzes" },
                 null,  // For Edit button (auto-detected)
                 null  // For Delete button (auto-detected)
             ]
@@ -94,6 +84,7 @@ if (document.querySelector("#result-table")) {
         var table = $('#result-table').DataTable({
             pageLength: 10, // Set default number of rows to display
             scrollX: true,
+            paging: false,
             initComplete: function () {
                 // Check if table needs scroll
                 var scrollCheck = function () {
@@ -176,17 +167,17 @@ if (document.querySelector("#eit-result-table")) {
             lengthMenu: [[10, 25, 50, 100, 500, 1000, -1], [10, 25, 50, 100, 500, 1000, "All"]],
             columns: [
                 null, // For Sr. No. (auto-detected)
-                { "data": "name" }, // Name
-                { "data": "email_id" }, // Email ID
-                { "data": "exam_name" }, // Exam Name
-                { "data": "self_awareness" }, // Self Awareness
-                { "data": "managing_emotions" }, // Managing Emotions
-                { "data": "motivating_oneself" }, // Motivating Oneself
-                { "data": "empathy" }, // Empathy
-                { "data": "handling_relationships" }, // Handling Relationships
-                { "data": "total" }, // Total
-                { "data": "exam_attended_time" }, // Exam Attended Time
-                { "data": "delete" }, // Delete
+                { "data": "name" },
+                { "data": "email_id" },
+                { "data": "exam_name" },
+                { "data": "self_awareness" },
+                { "data": "managing_emotions" },
+                { "data": "motivating_oneself" },
+                { "data": "empathy" },
+                { "data": "handling_relationships" },
+                { "data": "total" },
+                { "data": "exam_attended_time" },
+                { "data": "delete" },
                 // null  // For View button (auto-detected)
             ]
         });
@@ -224,11 +215,11 @@ if (document.querySelector("#question-bank-table")) {
                 null,
                 null,  // For View button (auto-detected)
                 { "data": "add_to_quiz" },
-                { "data": "question_id" }, // Name
-                { "data": "topic" }, // Email ID
-                { "data": "main_group" }, // Exam Name
-                { "data": "sub_group" }, // Exam Name
-                { "data": "questions" }, // View
+                { "data": "question_id" },
+                { "data": "topic" },
+                { "data": "main_group" },
+                { "data": "sub_group" },
+                { "data": "questions" },
                 { "data": "no_of_correctly_attempted" },
                 { "data": "no_of_times_attempted" },
                 { "data": "percentage_correctly_attempted" },
@@ -253,9 +244,6 @@ if (document.querySelector("#question-bank-table")) {
                 // `.d-none` class wale elements ko remove karo
                 tempElement.querySelectorAll('.d-none').forEach(el => el.remove());
 
-                // console.log("Original HTML:", html);
-                // console.log("Extracted Text:", tempElement.textContent.trim());
-
                 return tempElement.textContent.trim() || "";
             }
 
@@ -276,76 +264,8 @@ if (document.querySelector("#question-bank-table")) {
         $('#example_filter input').on('input', function () {
             table.draw();
         });
-
-
-        // $(function () {
-        //     $("#question-bank-table").resizableColumns({
-        //         // optional
-        //         store: window.store,
-        //     });
-        // });
-        // table.on('init', function () {
-        //     $("#question-bank-table").resizableColumns({
-        //         selector: function($table) {
-        //             if ($table.find('thead').length) {
-        //                 return _constants.SELECTOR_TH;
-        //             }
-        //             return _constants.SELECTOR_TD;
-        //         },
-        //         syncHandlers: true,
-        //         resizeFromBody: true,
-        //         maxWidth: null,
-        //         minWidth: 0.01
-        //     });
-        // });
-        // $(function(){
-        //     $('table.resizable').resizableColumns();
-        //   })
     }
 }
-// $.ajax({
-//     url: 'ajax/get_questions.php',
-//     type: 'POST',
-//     dataType: 'json',
-//     data: {
-//         draw: 1,
-//         start: 0,
-//         length: 10,
-//         search: { value: "" },
-//         order: [{ column: 0, dir: "asc" }]
-//     },
-//     success: function (response) {
-//         let html = "";
-//         console.log(response);
-//         console.log(JSON.stringify(response));
-//         // document.write(JSON.stringify(response));
-//         let srNo = 0
-//         for(let i = 0; i < response.data.length; i++) {
-//             console.log(response.data[i].questions);
-//             srNo++;
-//             html += `<tr>
-//                 <td>${srNo}</td>
-//                 <td><div>${response.data[i].questions}</div>`;
-//             for(let j = 0; j < response.data[i].options.length; j++) {
-//                 html += `<div class="d-flex">`;
-//                 html += `<input type="checkbox" name="options[]" id="options-${j + 1}" ${response.data[i].options[j].is_correct ? "checked" : ""}/>`;
-//                 html += `<label for="options-${j + 1}" class="w-100 ms-2" question-id="${response.data[i].question_id}" data-option="${response.data[i].options[j].text}">`;
-//                 html += `&#${65 + j}.
-//                     ${response.data[i].options[j].text} ${response.data[i].options[j].is_correct ? " (correct)" : ""}
-//                     <!--<td>${response.data[i].options[j].is_correct ? " (correct)" : ""}</td> -->
-//                     <!--<td>${response.data[i].options[j].text}</td>-->`;
-//                 html += `</label></div>`;
-//                 console.log(response.data[i].options[j].text + (response.data[i].options[j].is_correct ? " (correct)" : ""));
-//             }
-//         }
-//         html += `</tr>`;
-//         let questionBankTable = document.getElementById("question-bank-table");
-//         questionBankTable.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.innerHTML = html;
-//     },
-//     error: function (xhr, status, error) {
-//         console.error("AJAX Error: ", error);
-//     }
-// });
 
 if (document.querySelector("#question-table")) {
     if (!document.querySelector("#question-table").innerHTML.includes("No questions found.")) {
@@ -425,17 +345,6 @@ if (document.querySelector("#question-table")) {
         });
     }
 }
-// console.log(table);
-
-// $('#result-table').DataTable({
-//     "columns": [
-//         null,       // For Sr. No. (auto-detected)
-//         { "data": "name" },
-//         { "data": "email_id" },
-//         { "data": "exam_name" },
-//         null        // For View button (auto-detected)
-//     ]
-// });
 
 
 
@@ -446,7 +355,6 @@ async function generateExcel() {
     // Function to add table data to the worksheet in the same column with gaps
     function addTableToSheet(tableId, startRow, startColumn) {
         const table = document.getElementById(tableId);
-        // console.log(table);
         const rows = table.rows;
         let currentRow = startRow;
 
@@ -457,17 +365,14 @@ async function generateExcel() {
 
             // Loop through cells of each row
             for (let j = 0; j < row.cells.length; j++) {
-                // console.log(row.cells[j].querySelectorAll("[class*='remove-']"));
                 if(row.cells[j].querySelectorAll("[class^='remove-']")) {
                     Array.from(row.cells[j].querySelectorAll("[class*='remove-']")).forEach((e) => {
-                        // console.log(e);
                         e.innerHTML = ",&nbsp;";
                     });
                 }
                 rowData.push(row.cells[j].innerText); // Get cell data
                 if(row.cells[j].querySelectorAll("[class^='remove-']")) {
                     Array.from(row.cells[j].querySelectorAll("[class*='remove-']")).forEach((e) => {
-                        // console.log(e);
                         e.innerHTML = "X";
                     });
                 }
@@ -509,18 +414,6 @@ async function generateExcel() {
     if (document.getElementById('question-bank-table')) {
         addTableToSheet('question-bank-table', startRow, startColumn);
     }
-
-    // Add data for Table 2 (Exams) starting after a gap in the same column
-    // addTableToSheet('result-values-1', startRow + 13, startColumn + 1); // Start after a gap of 13 rows and 1 columns
-
-    // Add data for Table 3 (Countries) starting after a gap in the same column
-    // addTableToSheet('result-values-2', startRow + 13, startColumn + 4); // Start after a gap of 13 rows and 4 columns
-
-    // Add data for Table 4 (Countries) starting after a gap in the same column
-    // addTableToSheet('result-values-3', startRow + 13, startColumn + 7); // Start after a gap of 13 rows and 7 columns
-
-    // Add data for Table 5 (Countries) starting after a gap in the same column
-    // addTableToSheet('result-values-4', startRow + 13, startColumn + 10); // Start after a gap of 13 rows and 10 columns
 
     if (document.title == "Personality Type Test Result") {
         addTableToSheet('result-calculation-table', startRow, startColumn);
@@ -567,21 +460,12 @@ function mcqQuestions() {
     let individualEditQuestion = document.querySelectorAll(".individual-edit-question");
     let individualDeleteQuestion = document.querySelectorAll(".individual-delete-question");
     let questionType = document.querySelectorAll(".question-type");
-    // console.log(addQuestionInputElement);
     let addQuestion = document.getElementById("add-question");
     let submitQuestion = document.getElementById("submit-question");
     let checkBoxElements = document.querySelectorAll("input[type='checkbox']:has(+[data-question-id][data-option])");
     let resetButtonElements = document.querySelectorAll("button[type='reset']");
     let removeQuestion = document.querySelectorAll(".remove-question");
     let removeQuestionSubmit = document.querySelectorAll(".remove_question_submit");
-    // console.log(removeQuestion);
-    // console.log(removeQuestionSubmit);
-    // let btnCloseElements = document.querySelectorAll(".btn-close");
-    // let closeModalBtnElements = document.querySelectorAll(".close-modal-btn");
-    // console.log(resetButtonElements.length);
-    // console.log(btnCloseElements.length);
-    // console.log(closeModalBtnElements.length);
-    // console.log(resetButtonElements);
     let correctOption = 0;
     let editCorrectOption = 0;
     Array.from(removeQuestion).forEach((e, i) => {
@@ -662,11 +546,6 @@ function mcqQuestions() {
                             option.appendChild(spacingElement);
                             option.appendChild(markingLabelElement);
                             option.appendChild(markingFieldElement);
-
-                            // Allow only numeric input
-                            // markingFieldElement.addEventListener("input", () => {
-                            //     markingFieldElement.value = markingFieldElement.value.replace(/\D/g, ""); // Remove non-numeric chars
-                            // });
                         }
                     });
                 } else {
@@ -717,10 +596,6 @@ function mcqQuestions() {
                         }
                         currentElement = next; // Move to the next sibling
                     }
-                    // } else if(e.value === "weighted") {
-                    //     e.parentElement.parentElement.querySelectorAll(".toggle-correct").forEach((toggle) => {
-                    //         toggle.style.display = "none";
-                    //     })
                 } else {
                     // Restore previously removed elements if they exist
                     if (removedElements.length > 0) {
@@ -737,24 +612,11 @@ function mcqQuestions() {
 
 
     addQuestion.addEventListener("click", () => {
-        // let isAnyEmptyField = false;
-        // Array.from(addQuestionInputElements).forEach((e) => {
-        //     if(e.target.value == "") {
-        //         isAnyEmptyField = true;
-        //     } else {
-        //         isAnyEmptyField = false;
-        //     }
-        // });
-        // console.log(addQuestion.parentElement.parentElement.querySelector(".question-type"));
         if (correctOption == 0 && addQuestion.parentElement.parentElement.querySelectorAll(".option-container").length > 0) {
             alert("Please select correct option");
         } else {
             submitQuestion.click();
         }
-        // if(isAnyEmptyField) {
-        //     submitQuestion.click();
-        // } else {
-        // }
     });
 
     Array.from(addOption).forEach((e, i) => {
@@ -763,11 +625,6 @@ function mcqQuestions() {
 
             // Check if it's Add Form or Edit Form
             addQuestionsOptionsElement = e.previousElementSibling.querySelectorAll(".add-questions-options");
-            // if (e.classList.contains("add-question-add-option")) {
-                // addQuestionsOptionsElement = e.previousElementSibling.querySelectorAll(".add-questions-options");
-            // } else if (e.classList.contains("edit-question-add-option")) {
-                // addQuestionsOptionsElement = e.previousElementSibling.querySelectorAll(".add-questions-options");
-            // }
 
             let option;
             let nextOption;
@@ -795,11 +652,6 @@ function mcqQuestions() {
                 <label for="marking-${nextOption}" class="marking-label form-label">${nextOption.toUpperCase()} Mark</label>
                    <input type="text" id="marking-${nextOption}" class="marking-field form-control" oninput="this.value = this.value.split('').filter(e => !isNaN(e) && e != ' ').join('');" value="1" min="0" name="marking[]" maxlength="3" required>`
                 : "";
-            // console.log(markingFieldHTML);
-            // console.log(isWeighted);
-            // console.log(questionTypeElement);
-            // console.log(formElement);
-            // console.log(e);
             let newElement;
 
             // Case for Add Form
@@ -829,11 +681,6 @@ function mcqQuestions() {
             if (addQuestionsOptionsElement.length === 0) {
                 console.log(e);
                 console.log(newElement);
-                // newElement = `<div class="wrapper">${newElement}</div>`;
-                // let notRequiredElement = document.createElement("div");
-                // notRequiredElement.innerHTML = newElement;
-                // let newElementWrapper = notRequiredElement.querySelector(".wrapper");
-                // console.log(newElementWrapper);
                 e.previousElementSibling.insertAdjacentHTML('beforeend', newElement);
             } else {
                 addQuestionsOptionsElement[addQuestionsOptionsElement.length - 1].parentElement.insertAdjacentHTML('afterend', newElement);
@@ -866,11 +713,9 @@ function mcqQuestions() {
     let editQuestionSubmit = document.querySelectorAll(".edit_question_submit");
     Array.from(editQuestion).forEach((e, i) => {
         e.addEventListener("click", () => {
-            // console.log(editQuestion);
             if (editCorrectOption == 0 && e.parentElement.parentElement.querySelectorAll(".option-container").length > 0) {
                 alert("Please select correct option");
             } else {
-                // console.log(editCorrectOption);
                 editQuestionSubmit[i].click();
             }
         });
@@ -878,19 +723,14 @@ function mcqQuestions() {
     Array.from(individualEditQuestion).forEach(e => {
         e.addEventListener("click", (event) => {
             editCorrectOption = 0;
-            // console.log(e.dataset.bsTarget);
             let questionEditModalId = event.target.dataset.bsTarget.split("#")[1];
-            // console.log(questionEditModalId);
             let questionEditModal = document.getElementById(questionEditModalId);
             let textSuccessElements = questionEditModal.querySelectorAll(".text-success");
             let allOptions = questionEditModal.querySelectorAll(".option-container");
             console.log(allOptions);
             editCorrectOption = textSuccessElements.length;
             console.log(editCorrectOption);
-            // console.log(event.target.nextElementSibling.innerHTML);
-            // event.target.nextElementSibling.innerHTML = event.target.nextElementSibling.innerHTML.replace(/class\s*=\s*"(font-size-20)"/g, "class='$1'");
             console.log(event.target.nextElementSibling.innerHTML);
-            // console.log(JSON.parse(event.target.nextElementSibling.innerHTML.replace(/class\s*=\s*"(font-size-20)"/g, "class='$1'")));
             let questionData = event.target.nextElementSibling.children;
             let editIdElement = document.getElementById("edit_id");
             let editQuestionIdElement = document.getElementById("edit_question_id");
@@ -964,13 +804,11 @@ function mcqQuestions() {
     // Function to toggle correct option
     function toggleCorrect() {
         document.querySelectorAll(".toggle-correct").forEach((e) => {
-            // console.log(getEventListeners(e));
             e.removeEventListener("click", toggleCorrectEvent);
             e.addEventListener("click", toggleCorrectEvent);
         });
     }
     function toggleCorrectEvent(event) {
-        // console.log(event.target);
         if (event.target.classList.contains("fa-circle-check")) {
             event.target.classList.remove("text-success");
             event.target.classList.replace("fa-circle-check", "fa-circle");
@@ -1002,7 +840,6 @@ function mcqQuestions() {
                 editCorrectOption++;
             }
         }
-        // console.log(event.target.nextElementSibling.id.includes("edit"));
     }
 
     // Function to add remove option functionality
@@ -1017,9 +854,7 @@ function mcqQuestions() {
 
     // Function to handle option removal
     function handleRemoveOption(event) {
-        // console.log(event.target);
         let allOptions = event.target.parentElement.parentElement.querySelectorAll(".option-container");
-        // console.log(allOptions);
 
         if (allOptions.length <= 1) {
             alert("At least one option is required."); // Prevent removing the last remaining option
@@ -1031,7 +866,6 @@ function mcqQuestions() {
 
         // Shift values upwards
         for (let i = clickedIndex; i < allOptions.length - 1; i++) {
-            // console.log(allOptions[i]);
             let currentInput = allOptions[i].querySelector("input");
             let nextInput = allOptions[i + 1].querySelector("input");
 
@@ -1047,8 +881,6 @@ function mcqQuestions() {
     }
     $(document).ready(function () {
         $("input[type='checkbox']:has(+[data-question-id][data-option])").change(function (e) {
-            // $("input[type='checkbox'][data-question-id][data-option]").not(this).prop("checked", false);
-            // debugger;
             e.preventDefault();
             if (e.target.nextElementSibling.dataset.questionType == "single") {
                 Array.from(e.target.parentElement.parentElement.querySelectorAll("input[type='checkbox']:checked:has(+[data-question-id][data-option])")).forEach((elem) => {
@@ -1056,7 +888,6 @@ function mcqQuestions() {
                 })
                 e.target.checked = true;
             }
-            // console.log(e);
             let questionId = $(this).next().data("question-id");
             let option = $(this).next().data("option");
             let questionType = $(this).next().data("question-type");
@@ -1066,7 +897,6 @@ function mcqQuestions() {
             } else {
                 isCorrect = "incorrect";
             }
-            // console.log(question);
             $.ajax({
                 url: 'Ajax/toggle_correct_option.php',
                 type: 'POST',
@@ -1078,47 +908,10 @@ function mcqQuestions() {
                 },
                 dataType: 'text',
                 success: function (response) {
-                    // console.log(response);
-                    // if(response == "success") {
-                    // console.log(srNo);
-                    // let questionEditModal = document.getElementById("questionEditModal" + srNo);
-                    // let toggleCorrect = questionEditModal.querySelectorAll(".toggle-correct");
-                    // // console.log(questionEditModal);
-                    // console.log(toggleCorrect[index].previousElementSibling);
-                    // console.log(index);
-                    // console.log(e.target);
-                    // }
                 }
             })
         })
-        // mcqQuestions();
     });
-    // let isCorrect = "incorrect";
-    // Array.from(checkBoxElements).forEach((e) => {
-    //     // console.log(e);
-    //     e.nextElementSibling.addEventListener("click", () => {
-    //         let question = e.nextElementSibling.dataset.question;
-    //         // console.log(e.nextElementSibling.dataset);
-    //         let option = e.nextElementSibling.dataset.option;
-    //         // console.log(option);
-    //         if (e.checked) {
-    //             isCorrect = "correct";
-    //         }
-    //         $.ajax({
-    //             url: 'Ajax/toggle_correct_option.php',
-    //             type: 'POST',
-    //             data: {
-    //                 question: question,
-    //                 option: option,
-    //                 isCorrect: isCorrect
-    //             },
-    //             dataType: 'text',
-    //             success: function (response) {
-    //                 // console.log(response);
-    //             }
-    //         })
-    //     })
-    // })
 
     Array.from(resetButtonElements).forEach((e) => {
         e.parentElement.parentElement.nextElementSibling.lastElementChild.addEventListener("click", () => {
@@ -1142,28 +935,6 @@ function mcqQuestions() {
         SELECTOR_TH: 'th',
         SELECTOR_TD: 'td'
     };
-    // let questionBankTable = document.getElementById("question-bank-table");
-    // $(function () {
-    //     $("#question-bank-table").resizableColumns({
-    //         // optional
-    //         store: window.store,
-    //     });
-    // });
-    // questionBankTable.on('init', function () {
-    //     $("#question-bank-table").resizableColumns({
-    //         selector: function selector($table) {
-    //             if ($table.find('thead').length) {
-    //                 return _constants.SELECTOR_TH;
-    //             }
-    //             return _constants.SELECTOR_TD;
-    //         },
-    //         store: window.store,
-    //         syncHandlers: true,
-    //         resizeFromBody: true,
-    //         maxWidth: null,
-    //         minWidth: 0.01
-    //     });
-    // });
 }
 
 
@@ -1187,18 +958,11 @@ function questionBank() {
     let searchTopicElement = document.querySelectorAll(".search-topic");
     let searchMainGroupElement = document.querySelectorAll(".search-main-group");
     let searchSubGroupElement = document.querySelectorAll(".search-sub-group");
-    // let editDeletedQuestionElement = document.getElementById("edit_deleted_question");
-    // let editDeletedQuestionImageElement = document.getElementById("edit-deleted-question-image");
-    // let editDeletedQuestionTypeElement = document.getElementById("edit-deleted-question-type");
-    // let editQuestionElement = document.querySelectorAll("edit-question");
 
     Array.from(searchTopicElement).forEach((e, i) => {
         e.addEventListener("input", (event) => {
-            // event.stopPropagation();
             let topicContainer = e.nextElementSibling;
-            // console.log(topicContainer.firstElementChild.innerText);
             Array.from(topicContainer.children).forEach((child, index) => {
-                // console.log(child.innerText);
                 if(child.innerText.toLowerCase().includes(event.target.value.toLowerCase())) {
                     if(child.classList.contains("d-none")) {
                         child.classList.remove("d-none");
@@ -1213,11 +977,8 @@ function questionBank() {
     });
     Array.from(searchMainGroupElement).forEach((e, i) => {
         e.addEventListener("input", (event) => {
-            // event.stopPropagation();
             let mainGroupContainer = e.nextElementSibling;
-            // console.log(mainGroupContainer.firstElementChild.innerText);
             Array.from(mainGroupContainer.children).forEach((child, index) => {
-                // console.log(child.innerText);
                 if(child.innerText.toLowerCase().includes(event.target.value.toLowerCase())) {
                     if(child.classList.contains("d-none")) {
                         child.classList.remove("d-none");
@@ -1232,11 +993,8 @@ function questionBank() {
     });
     Array.from(searchSubGroupElement).forEach((e, i) => {
         e.addEventListener("input", (event) => {
-            // event.stopPropagation();
             let subGroupContainer = e.nextElementSibling;
-            // console.log(mainGroupContainer.firstElementChild.innerText);
             Array.from(subGroupContainer.children).forEach((child, index) => {
-                // console.log(child.innerText);
                 if(child.innerText.toLowerCase().includes(event.target.value.toLowerCase())) {
                     if(child.classList.contains("d-none")) {
                         child.classList.remove("d-none");
@@ -1249,7 +1007,6 @@ function questionBank() {
             })
         });
     });
-    // console.log($);
     $(document).ready(function () {
         // Input event: AJAX call karke already exists flag set karo
         $(".edit_question").on("input", async function () {
@@ -1286,61 +1043,12 @@ function questionBank() {
                 if (!agreeToUpdate) {
                     // Agar user cancel karta hai, toh submission cancel karo
                     e.preventDefault();
-                    // console.log("Submission cancelled by user.");
                     return false;
                 }
             }
         });
     });
     
-    
-    
-    // let previousEditDeletedQuestionElementValue = editDeletedQuestionElement.value;
-    // let previousEditDeletedQuestionImageElementValue = editDeletedQuestionImageElement.value;
-    // let previousEditDeletedQuestionTypeElementValue = editDeletedQuestionTypeElement.value;
-    // remove disabled from the form of adding the deleted questions on any change in the form
-    // console.log(editDeletedQuestionElement);
-    // editDeletedQuestionElement.addEventListener("input", () => {
-    // if(editDeletedQuestionElement.value.trim() != previousEditDeletedQuestionElementValue.trim()) {
-    // if(editDeletedQuestionElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").hasAttribute("disabled")) {
-    // editDeletedQuestionElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").removeAttribute("disabled");
-    // }
-    // } else {
-    // if(editDeletedQuestionImageElement.value.trim() == previousEditDeletedQuestionImageElementValue.trim() && editDeletedQuestionTypeElement.value.trim() == previousEditDeletedQuestionTypeElementValue.trim()) {
-    // if(!editDeletedQuestionElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").hasAttribute("disabled")) {
-    // editDeletedQuestionElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").setAttribute("disabled", "true");
-    // }
-    // }
-    // }
-    // });
-    // editDeletedQuestionImageElement.addEventListener("change", () => {
-    // if(editDeletedQuestionImageElement.value.trim() != previousEditDeletedQuestionImageElementValue.trim()) {
-    // if(editDeletedQuestionImageElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").hasAttribute("disabled")) {
-    // editDeletedQuestionImageElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").removeAttribute("disabled");
-    // }
-    // } else {
-    // if(previousEditDeletedQuestionElementValue.trim() == editDeletedQuestionElement.value.trim() && previousEditDeletedQuestionTypeElementValue.trim() == editDeletedQuestionTypeElement.value.trim()) {
-    // if(!editDeletedQuestionImageElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").hasAttribute("disabled")) {
-    // editDeletedQuestionImageElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").setAttribute("disabled", "true");
-    // }
-    // }
-    // }
-    // });
-    // console.log(editDeletedQuestionTypeElement);
-    // console.log(previousEditDeletedQuestionTypeElementValue);
-    // editDeletedQuestionTypeElement.addEventListener("change", () => {
-    // if(editDeletedQuestionTypeElement.value.trim() != previousEditDeletedQuestionTypeElementValue.trim()) {
-    // if(editDeletedQuestionTypeElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").hasAttribute("disabled")) {
-    // editDeletedQuestionTypeElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").removeAttribute("disabled");
-    // }
-    // } else {
-    // if(previousEditDeletedQuestionElementValue.trim() == editDeletedQuestionElement.value.trim() && previousEditDeletedQuestionImageElementValue.trim() == editDeletedQuestionImageElement.value.trim()) {
-    // if(!editDeletedQuestionTypeElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").hasAttribute("disabled")) {
-    // editDeletedQuestionTypeElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector(".edit-question").setAttribute("disabled", "true");
-    // }
-    // }
-    // }
-    // });
     // Topic Assignment to Question Ajax
     $(document).ready(function () {
         function removeTopicAjax() {
@@ -1349,15 +1057,11 @@ function questionBank() {
         }
         function removeTopicEvent(e) {
             e.stopPropagation();
-            // console.log($(this).data("value"));
             let statusBtn = $(this)[0].previousElementSibling;
             let questionId = $(this).closest(".assign-topics").find(".toggle-status").data("question-id");
             let topic = $(this)[0].previousElementSibling.dataset.topic;
             let topicId = $(this)[0].previousElementSibling.dataset.topicId;
-            // console.log(examId);
             let value = $(this).closest(".assign-topics").find(".toggle-status").data("value");
-            // console.log(value);
-            // console.log(examName);
             $.ajax({
                 url: 'Ajax/toggle_question_topic_status.php',
                 type: 'POST',
@@ -1369,10 +1073,6 @@ function questionBank() {
                 },
                 dataType: 'text',
                 success: function (response) {
-                    // console.log(response); // Log response to verify server output
-                    // console.log(statusBtn);
-                    // console.log(userId);
-                    // console.log(examId);
                     statusBtn.parentElement.remove();
                     document.querySelector(".toggle-topics-assignment[data-question-id='" + questionId + "'][data-topic='" + topic + "']").checked = false;
                     toggleTopicFun();
@@ -1403,18 +1103,14 @@ function questionBank() {
                 },
                 dataType: "text",
                 success: function (response) {
-                    // console.log(value);
-                    // console.log(response); // Log response to verify server output
                     if (value == 1 && !e.target.closest(".assign-topics").querySelector(`.toggle-status[data-question-id="${questionId}"][data-topic-id="${topicId}"][data-topic="${topic}"]`)) {
                         let html = `<div class="assigned-topics p-1">
                         <button class="btn btn-success toggle-status" data-value="0" data-question-id="${questionId}" data-topic-id="${topicId}" data-topic="${topic}">${topic}</button>
                         <span class="bg-danger rounded-circle text-white remove-topic">X</span>
                         </div>`;
-                        // console.log(value);
                         e.target.closest(".assign-topics").insertAdjacentHTML('afterbegin', html);
                     }
                     if (value == 0 && e.target.closest(".assign-topics").querySelector(`.assigned-topics .toggle-status[data-question-id="${questionId}"][data-topic="${topic}"]`)) {
-                        // console.log(value);
                         e.target.closest(".assign-topics").querySelector(`.assigned-topics:has(.toggle-status[data-question-id="${questionId}"][data-topic="${topic}"])`).remove();
                     }
                     removeTopicAjax();
@@ -1444,15 +1140,11 @@ function questionBank() {
         }
         function removeMainGroupEvent(e) {
             e.stopPropagation();
-            // console.log($(this).data("value"));
             let statusBtn = $(this)[0].previousElementSibling;
             let questionId = $(this).closest(".assign-main-groups").find(".toggle-status").data("question-id");
             let mainGroup = $(this)[0].previousElementSibling.dataset.mainGroup;
             let mainGroupId = $(this)[0].previousElementSibling.dataset.mainGroupId;
-            // console.log(examId);
             let value = $(this).closest(".assign-main-groups").find(".toggle-status").data("value");
-            // console.log(value);
-            // console.log(examName);
             $.ajax({
                 url: 'Ajax/toggle_question_main_group_status.php',
                 type: 'POST',
@@ -1464,10 +1156,6 @@ function questionBank() {
                 },
                 dataType: 'text',
                 success: function (response) {
-                    // console.log(response); // Log response to verify server output
-                    // console.log(statusBtn);
-                    // console.log(userId);
-                    // console.log(examId);
                     statusBtn.parentElement.remove();
                     document.querySelector(".toggle-main-groups-assignment[data-question-id='" + questionId + "'][data-main-group='" + mainGroup + "']").checked = false;
                     toggleMainGroupFun();
@@ -1498,18 +1186,14 @@ function questionBank() {
                 },
                 dataType: "text",
                 success: function (response) {
-                    // console.log(value);
-                    // console.log(response); // Log response to verify server output
                     if (value == 1 && !e.target.closest(".assign-main-groups").querySelector(`.toggle-status[data-question-id="${questionId}"][data-main-group-id="${mainGroupId}"][data-main-group="${mainGroup}"]`)) {
                         let html = `<div class="assigned-main-groups p-1">
                         <button class="btn btn-success toggle-status" data-value="0" data-question-id="${questionId}" data-main-group-id="${mainGroupId}" data-main-group="${mainGroup}">${mainGroup}</button>
                         <span class="bg-danger rounded-circle text-white remove-main-group">X</span>
                         </div>`;
-                        // console.log(value);
                         e.target.closest(".assign-main-groups").insertAdjacentHTML('afterbegin', html);
                     }
                     if (value == 0 && e.target.closest(".assign-main-groups").querySelector(`.assigned-main-groups .toggle-status[data-question-id="${questionId}"][data-main-group="${mainGroup}"]`)) {
-                        // console.log(value);
                         e.target.closest(".assign-main-groups").querySelector(`.assigned-main-groups:has(.toggle-status[data-question-id="${questionId}"][data-main-group="${mainGroup}"])`).remove();
                     }
                     removeMainGroupAjax();
@@ -1539,15 +1223,11 @@ function questionBank() {
         }
         function removeSubGroupEvent(e) {
             e.stopPropagation();
-            // console.log($(this).data("value"));
             let statusBtn = $(this)[0].previousElementSibling;
             let questionId = $(this).closest(".assign-sub-groups").find(".toggle-status").data("question-id");
             let subGroup = $(this)[0].previousElementSibling.dataset.subGroup;
             let subGroupId = $(this)[0].previousElementSibling.dataset.subGroupId;
-            // console.log(examId);
             let value = $(this).closest(".assign-sub-groups").find(".toggle-status").data("value");
-            // console.log(value);
-            // console.log(examName);
             $.ajax({
                 url: 'Ajax/toggle_question_sub_group_status.php',
                 type: 'POST',
@@ -1559,10 +1239,6 @@ function questionBank() {
                 },
                 dataType: 'text',
                 success: function (response) {
-                    // console.log(response); // Log response to verify server output
-                    // console.log(statusBtn);
-                    // console.log(userId);
-                    // console.log(examId);
                     statusBtn.parentElement.remove();
                     document.querySelector(".toggle-sub-groups-assignment[data-question-id='" + questionId + "'][data-sub-group='" + subGroup + "']").checked = false;
                     toggleMainGroupFun();
@@ -1593,18 +1269,14 @@ function questionBank() {
                 },
                 dataType: "text",
                 success: function (response) {
-                    // console.log(value);
-                    // console.log(response); // Log response to verify server output
                     if (value == 1 && !e.target.closest(".assign-sub-groups").querySelector(`.toggle-status[data-question-id="${questionId}"][data-sub-group-id="${subGroupId}"][data-sub-group="${subGroup}"]`)) {
                         let html = `<div class="assigned-sub-groups p-1">
                         <button class="btn btn-success toggle-status" data-value="0" data-question-id="${questionId}" data-sub-group-id="${subGroupId}" data-sub-group="${subGroup}">${subGroup}</button>
                         <span class="bg-danger rounded-circle text-white remove-sub-group">X</span>
                         </div>`;
-                        // console.log(value);
                         e.target.closest(".assign-sub-groups").insertAdjacentHTML('afterbegin', html);
                     }
                     if (value == 0 && e.target.closest(".assign-sub-groups").querySelector(`.assigned-sub-groups .toggle-status[data-question-id="${questionId}"][data-sub-group="${subGroup}"]`)) {
-                        // console.log(value);
                         e.target.closest(".assign-sub-groups").querySelector(`.assigned-sub-groups:has(.toggle-status[data-question-id="${questionId}"][data-sub-group="${subGroup}"])`).remove();
                     }
                     removeSubGroupAjax();
@@ -1647,7 +1319,6 @@ function questionBank() {
     let addQuestionTopicElement = document.getElementById("add_question_topic");
     let addQuestionMainGroupElement = document.getElementById("add_question_main_group");
     let addQuestionSubGroupElement = document.getElementById("add_question_sub_group");
-    // console.log(addQuestionTopicElement.nextElementSibling);
     addQuestionTopicElement.nextElementSibling.classList.add("border");
     addQuestionTopicElement.nextElementSibling.classList.add("border-dark");
     addQuestionTopicElement.nextElementSibling.classList.add("border-1");
@@ -1666,86 +1337,6 @@ function questionBank() {
     addQuestionSubGroupElement.nextElementSibling.classList.add("rounded-2");
     addQuestionSubGroupElement.nextElementSibling.firstElementChild.firstElementChild.style.borderColor = "transparent";
     addQuestionSubGroupElement.nextElementSibling.firstElementChild.firstElementChild.style.backgroundColor = "transparent";
-    // $('#edit_question_topic').select2({
-    //     theme: "bootstrap-5",
-    //     width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-    //     placeholder: $(this).data('placeholder'),
-    //     closeOnSelect: false,
-    // });
-    // $('#edit_question_main_group').select2({
-    //     theme: "bootstrap-5",
-    //     width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-    //     placeholder: $(this).data('placeholder'),
-    //     closeOnSelect: false,
-    // });
-    // $('#edit_question_sub_group').select2({
-    //     theme: "bootstrap-5",
-    //     width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-    //     placeholder: $(this).data('placeholder'),
-    //     closeOnSelect: false,
-    // });
-    // colResize = {
-    //     isEnabled: true,
-    //     saveState: false,
-    //     hoverClass: 'dt-colresizable-hover',
-    //     hasBoundCheck: true,
-    //     minBoundClass: 'dt-colresizable-bound-min',
-    //     maxBoundClass: 'dt-colresizable-bound-max',
-    //     isResizable: function (column) {
-    //         return true;
-    //     },
-    //     onResizeStart: function (column, columns) {
-    //     },
-    //     onResize: function (column) {
-    //     },
-    //     onResizeEnd: function (column, columns) {
-    //     },
-    //     getMinWidthOf: function ($thNode) {
-    //     },
-    //     stateSaveCallback: function (settings, data) {
-    //     },
-    //     stateLoadCallback: function (settings) {
-    //     }
-    // }
-    // let options = { ...colResize };
-    // Either:
-    // var table = $('#question-bank-table').DataTable({
-    // colResize: options
-    // });
-
-    // Or:
-    // var table = $('#question-bank-table').DataTable();
-    // new $.fn.dataTable.ColResize(table, options);
-
-    // Available methods:
-    // table.colResize.enable();  // enable plugin (i.e. when options was isEnabled: false)
-    // table.colResize.disable(); // remove all events
-    // table.colResize.reset();   // reset column.sWidth values
-    // table.colResize.save();    // save the current state (defaults to localstorage)
-    // table.colResize.restore(); // restore the state from storage (defaults to localstorage)
-    // let addQuestionTopicInputElement = document.getElementById("add-question-topic");
-    // let topicsListElements = document.querySelectorAll(".topics-list");
-    // console.log(addQuestionTopicInputElement);
-    // console.log(topicsListElements);
-    // addQuestionTopicInputElement.addEventListener("input", (event) => {
-    //     // console.log(event.target.value);
-    //     Array.from(topicsListElements).forEach((e) => {
-    //         if(e.lastElementChild.innerText.toLowerCase().includes(event.target.value.toLowerCase())) {
-    //             if(e.classList.contains("d-none")) {
-    //                 e.classList.remove("d-none");
-    //             }
-    //         } else {
-    //             if(!e.classList.contains("d-none")) {
-    //                 e.classList.add("d-none");
-    //             }
-    //         }
-    //         if(event.target.value == "") {
-    //             if(!e.classList.contains("d-none")) {
-    //                 e.classList.add("d-none");
-    //             }
-    //         }
-    //     });
-    // });
     if (addTopicElement) {
         addTopicElement.addEventListener("click", () => {
             submitTopicElement.click();
@@ -1788,19 +1379,15 @@ function questionBank() {
 
     Array.from(addToQuiz).forEach(e => {
         e.addEventListener("click", function () {
-            // console.log(e.parentElement.parentElement);
             let uniqueQuestionID = e.parentElement.parentElement.querySelectorAll(".dt-type-numeric")[1];
             if (e.checked == true) {
-                // console.log(uniqueQuestionID);
                 let questionHiddenElement = document.createElement("input");
                 questionHiddenElement.setAttribute("type", "hidden");
                 questionHiddenElement.setAttribute("value", uniqueQuestionID.innerText.trim());
                 questionHiddenElement.setAttribute("name", "unique-question-id-" + uniqueQuestionID.innerText.trim());
                 questionHiddenElement.setAttribute("id", "unique-question-id-" + uniqueQuestionID.innerText.trim());
-                // console.log(submitCreateQuiz);
                 createQuizForm.insertBefore(questionHiddenElement, submitCreateQuiz);
             } else {
-                // console.log("unique-question-id-" + uniqueQuestionID.innerText);
                 if (createQuizForm.contains(document.getElementById("unique-question-id-" + uniqueQuestionID.innerText))) {
                     createQuizForm.removeChild(document.getElementById("unique-question-id-" + uniqueQuestionID.innerText));
                 }
@@ -1812,40 +1399,14 @@ function questionBank() {
 
 const download_button =
     document.getElementById('download_Btn');
-// download_button.addEventListener("click", downloadAsPDF);
-// function downloadAsPDF() {
 if (document.getElementById("result-table")) {
     var content =
         document.getElementById('result-table');
-    // console.log(content);
 }
 if (document.getElementById("user-result-table-pdf")) {
     var content =
         document.getElementById('user-result-table-pdf');
-    // console.log(content);
 }
-
-// download_button.addEventListener
-//     ('click', async function () {
-//         const filename = 'exam_data.pdf';
-
-//         try {
-//             const opt = {
-//                 margin: 1,
-//                 filename: filename,
-//                 image: { type: 'jpeg', quality: 0.98 },
-//                 html2canvas: { scale: 2 },
-//                 jsPDF: {
-//                     unit: 'in', format: 'letter',
-//                     orientation: 'portrait'
-//                 }
-//             };
-//             await html2pdf().set(opt).
-//                 from(content).save();
-//         } catch (error) {
-//             console.error('Error:', error.message);
-//         }
-//     });
 window.onload = function () {
     try {
         download_button.addEventListener
@@ -1862,7 +1423,6 @@ window.onload = function () {
                             before: '.page-break-before',
                             after: '.page-break-after'
                         },
-                        // image: { type: 'jpeg', quality: 0.98 },
                         html2canvas: {
                             scale: 2,
                             useCORS: true,
@@ -1921,7 +1481,6 @@ window.onload = function () {
                 }
             });
     } catch {
-        // console.log("handled");
     }
 }
 // }
@@ -1937,8 +1496,6 @@ function toggleExamStatus() {
             let status = $(this).parent().find(".status");
             let examName = $(this).parent().find(".exam-name");
             let examNameArr = examName.text().split(" ");
-            // console.log(status);
-            // let fixStrting = examNameArr[0] + examNameArr[1];
             let fixStrting = "";
             examNameArr.forEach(((elem, index) => {
                 fixStrting += " " + elem.charAt(0).toUpperCase() + elem.slice(1);
@@ -1952,7 +1509,6 @@ function toggleExamStatus() {
                 },
                 dataType: 'text',
                 success: function (response) {
-                    // console.log(response); // Log response to verify server output
                     if ($(toggleStatus).hasClass("btn-success")) {
                         $(toggleStatus).toggleClass("btn-success btn-danger");
                         $(toggleStatus).text("Deactivate");
@@ -1985,11 +1541,8 @@ function usersPage() {
     var selectedColumn = "all"; // Default: search in all columns
     Array.from(examNameSearchElement).forEach((e, i) => {
         e.addEventListener("input", (event) => {
-            // event.stopPropagation();
             let quizContainer = e.nextElementSibling;
-            // console.log(quizContainer.firstElementChild.innerText);
             Array.from(quizContainer.children).forEach((child, index) => {
-                // console.log(child.innerText);
                 if(child.innerText.toLowerCase().includes(event.target.value.toLowerCase())) {
                     if(child.classList.contains("d-none")) {
                         child.classList.remove("d-none");
@@ -2048,15 +1601,11 @@ function usersPage() {
         }
         function removeExamEvent(e) {
             e.stopPropagation();
-            // console.log($(this).data("value"));
             let statusBtn = $(this)[0].previousElementSibling;
             let userId = $(this).closest(".assign-quizzes").find(".toggle-status").data("id");
             let examName = $(this)[0].previousElementSibling.dataset.examName;
             let examId = $(this)[0].previousElementSibling.dataset.examId;
-            // console.log(examId);
             let value = $(this).closest(".assign-quizzes").find(".toggle-status").data("value");
-            // console.log(value);
-            // console.log(examName);
             $.ajax({
                 url: 'Ajax/toggle_individual_exam_status.php',
                 type: 'POST',
@@ -2068,10 +1617,6 @@ function usersPage() {
                 },
                 dataType: 'text',
                 success: function (response) {
-                    // console.log(response); // Log response to verify server output
-                    // console.log(statusBtn);
-                    // console.log(userId);
-                    // console.log(examId);
                     statusBtn.parentElement.remove();
                     document.querySelector(".toggle-quizzes-assignment[data-id='" + userId + "'][data-exam-name='" + examName + "']").checked = false;
                     toggleExamFun();
@@ -2102,18 +1647,14 @@ function usersPage() {
                 },
                 dataType: "text",
                 success: function (response) {
-                    // console.log(value);
-                    // console.log(response); // Log response to verify server output
                     if (value == 1 && !e.target.closest(".assign-quizzes").querySelector(`.toggle-status[data-id="${userId}"][data-exam-id="${examId}"][data-exam-name="${examName}"]`)) {
                         let html = `<div class="assigned-exams p-1">
                         <button class="btn btn-success toggle-status" data-value="0" data-id="${userId}" data-exam-id="${examId}" data-exam-name="${examName}">${examName}</button>
                         <span class="bg-danger rounded-circle text-white remove-exam">X</span>
                         </div>`;
-                        // console.log(value);
                         e.target.closest(".assign-quizzes").insertAdjacentHTML('afterbegin', html);
                     }
                     if (value == 0 && e.target.closest(".assign-quizzes").querySelector(`.assigned-exams .toggle-status[data-id="${userId}"][data-exam-name="${examName}"]`)) {
-                        // console.log(value);
                         e.target.closest(".assign-quizzes").querySelector(`.assigned-exams:has(.toggle-status[data-id="${userId}"][data-exam-name="${examName}"])`).remove();
                     }
                     removeExamAjax();
@@ -2131,11 +1672,9 @@ function usersPage() {
 
     Array.from(editUserButton).forEach((e, i) => {
         e.addEventListener("click", () => {
-            // console.log(e.dataset);
             editId.value = e.dataset.id;
             editName.value = e.dataset.name;
             editEmailId.value = e.dataset.emailId;
-            // editEmailId.value = "Kaam nahi kar raha hai";
         })
     })
     // Delete User
@@ -2144,7 +1683,6 @@ function usersPage() {
     let deleteUserButton = document.querySelectorAll(".delete-user-button");
     Array.from(deleteUserButton).forEach((e, i) => {
         e.addEventListener("click", () => {
-            // console.log(e);
             deleteUserId.value = e.dataset.id;
         })
     });

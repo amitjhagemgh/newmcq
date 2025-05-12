@@ -16,20 +16,20 @@
                 $user_id_row = mysqli_fetch_assoc($user_id_result);
                 $user_id = $user_id_row["id"];
                 $exam_name = get_safe_value($conn, $_POST['delete_exam_name']);
-                $exam_attended_time = get_safe_value($conn, $_POST['delete_exam_attended_time']);
+                $test_series = get_safe_value($conn, $_POST['delete_test_series']);
                 $get_exam_id_sql = "SELECT id FROM exam_portal WHERE exam_name = '$exam_name'";
                 $exam_id_result = mysqli_query($conn, $get_exam_id_sql);
                 $exam_id_row = mysqli_fetch_assoc($exam_id_result);
                 $exam_id = $exam_id_row["id"];
                 // Fetching result ID for deleting the answer_attempts records accordingly result_id
-                $result_id = mysqli_fetch_assoc(mysqli_query($conn, "SELECT id FROM result WHERE user_id = '$user_id' AND exam_id = '$exam_id' AND exam_attended_time = '$exam_attended_time'"))["id"];
+                $result_id = mysqli_fetch_assoc(mysqli_query($conn, "SELECT id FROM result WHERE user_id = '$user_id' AND exam_id = '$exam_id' AND test_series = '$test_series'"))["id"];
                 // $sql = "DELETE FROM answer_attempts WHERE result_id = '$result_id'";
                 // $result = mysqli_query($conn, $sql);
                 $sql = "UPDATE result AS r
                         JOIN users AS u ON r.user_id = u.id
                         JOIN exam_portal AS ep ON ep.id = r.exam_id
                         SET r.status = 0
-                        WHERE r.exam_id = '$exam_id' AND r.user_id = '$user_id';";
+                        WHERE r.exam_id = '$exam_id' AND r.user_id = '$user_id' AND r.test_series = '$test_series';";
                 $result = mysqli_query($conn, $sql);
                 if($result) {
                     // $sql = "DELETE FROM answer_attempts WHERE result_id = '$result_id'";
@@ -77,6 +77,7 @@
     exam_portal.exam_name,
     users.email_id AS email_id,
     MAX(result.exam_attended_time) AS exam_attended_time,
+    MAX(result.test_series) AS test_series,
     GROUP_CONCAT(DISTINCT users.name) AS name 
 FROM result 
 INNER JOIN users ON result.user_id = users.id 
@@ -92,7 +93,7 @@ GROUP BY result.user_id, result.exam_id, exam_portal.exam_name, users.email_id;"
                         ?>
                         <tr>
                             <td><?= $i; ?></td>
-                            <td><button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteResultModal<?= $row['email_id']; ?>" data-id="<?= $row['email_id']; ?>" data-exam_name="<?= $row['exam_name'];?>">Delete</button></td>
+                            <td><button type="button" class="btn btn-danger delete-result-btn" data-bs-toggle="modal" data-bs-target="#deleteResultModal" data-id="<?= $row['email_id']; ?>" data-exam_name="<?= $row['exam_name'];?>" data-test-series="<?= $row['test_series'];?>">Delete</button></td>
                             <td><?= $row['name']; ?></td>
                             <td><?= $row['email_id']; ?></td>
                             <td><?= $row['exam_name']; ?></td>
@@ -102,33 +103,6 @@ GROUP BY result.user_id, result.exam_id, exam_portal.exam_name, users.email_id;"
                                 ?>
                             </td>
                             <td><?= $row['exam_attended_time']; ?></td>
-                            <!-- Modal -->
-                            <div class="modal fade" id="deleteResultModal<?= $row['email_id']; ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                    <form action="all_results.php" method="POST" id="deleteResultForm">
-                                        <div class="modal-body">
-                                            <input type="hidden" id="delete_email_id" name="delete_email_id" value="<?= $row['email_id']; ?>">
-                                            <input type="hidden" id="delete_exam_name" name="delete_exam_name" value="<?= $row['exam_name']; ?>">
-                                            <input type="hidden" id="delete_exam_attended_time" name="delete_exam_attended_time" value="<?= $row['exam_attended_time']; ?>">
-                                            <div class="form-group">
-                                                <p>Are you sure you want to delete?</p>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-danger" name="delete-result">Delete</button>
-                                        </div>
-                                    </form>
-                                    </div>
-                                    </div>
-                                </div>
-                            </div>
                         </tr>
             <?php
                     }
@@ -141,6 +115,34 @@ GROUP BY result.user_id, result.exam_id, exam_portal.exam_name, users.email_id;"
             ?>
             </tbody>
         </table>
+
+        <!-- Modal -->
+        <div class="modal fade" id="deleteResultModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="all_results.php" method="POST" id="deleteResultForm">
+                            <div class="modal-body">
+                                <input type="hidden" id="delete_email_id" name="delete_email_id">
+                                <input type="hidden" id="delete_exam_name" name="delete_exam_name">
+                                <input type="hidden" id="delete_test_series" name="delete_test_series">
+                                <div class="form-group">
+                                    <p>Are you sure you want to delete?</p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-danger" name="delete-result">Delete</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         
         <!-- User Result Table for Excel Output -->

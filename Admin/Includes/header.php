@@ -39,7 +39,7 @@
 <body>
     <nav class="navbar nbg-dark navbar-expand-lg bg-body-tertiary position-sticky top-0 z-2">
         <div class="container-fluid">
-            <a class="navbar-brand" href="<?php if(PAGE == "Dashboard") {echo "#";} else {echo "index.php";}?>"><img src="IMG/logo.png" alt="GEM Engserv" width="34px"></a>
+            <a class="navbar-brand" href="<?php if(PAGE == "Dashboard") {echo "#";} else {echo "index.php";}?>"><img src="IMG/logo.png" alt="GEM Engserv" width="34px" height="24.125px"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">

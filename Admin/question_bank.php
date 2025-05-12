@@ -1,9 +1,9 @@
 <?php
+    header('Content-type: text/html; charset=ASCII');
     define("PAGE", "Question Bank");
     include "Connection/conn.inc.php";
     include "Includes/header.php";
     include "Includes/functions.inc.php";
-    header('Content-type: text/html; charset=ASCII');
 
     if (!isset($_SESSION["is_login"])) {
         header("location: Authentication/login.php");
