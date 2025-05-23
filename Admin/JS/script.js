@@ -190,7 +190,7 @@ if (document.querySelector("#question-bank-table")) {
             selectedColumn = $(this).val();
             table.draw(); // Refresh the table after selecting a column
         });
-        var table = $('#question-bank-table').DataTable({
+        var dataTableData = {
             paging: false,
             pageLength: 10, // Set default number of rows to display
             scrollX: true,
@@ -225,7 +225,8 @@ if (document.querySelector("#question-bank-table")) {
                 { "data": "percentage_correctly_attempted" },
                 { "data": "difficulty_level" }
             ]
-        });
+        };
+        var table = $('#question-bank-table').DataTable(dataTableData);
         var selectedColumn = "all"; // Default: search in all columns
 
         $('#columnSelector').on('change', function () {
@@ -446,9 +447,12 @@ function questionsPage() {
             deleteQuestionSubmit[i].click();
         })
     });
+    console.log(addQuestion.dataset.eventListenerAttached);
+    if(addQuestion.dataset.eventListenerAttached == "true") return;
     addQuestion.addEventListener("click", () => {
         submitQuestion.click();
     });
+    addQuestion.dataset.eventListenerAttached = "true";
 
 }
 
@@ -478,8 +482,8 @@ function mcqQuestions() {
         const questionTypes = document.querySelectorAll(".question-type");
 
         Array.from(questionTypes).forEach((e) => {
+            if(e.dataset.eventListenerAttached == "true") return;
             let removedElements = [];
-
             e.addEventListener("change", () => {
                 let currentElement = e.closest(".add-question-type-box").nextElementSibling;
 
@@ -569,6 +573,7 @@ function mcqQuestions() {
                     }
                 }
             });
+            e.dataset.eventListenerAttached = true;
         });
 
     });
@@ -610,16 +615,20 @@ function mcqQuestions() {
         });
     });
 
-
-    addQuestion.addEventListener("click", () => {
-        if (correctOption == 0 && addQuestion.parentElement.parentElement.querySelectorAll(".option-container").length > 0) {
-            alert("Please select correct option");
-        } else {
-            submitQuestion.click();
-        }
-    });
+    if(!(addQuestion.dataset.eventListenerAttached == "true")) {
+        addQuestion.addEventListener("click", () => {
+            if (correctOption == 0 && addQuestion.parentElement.parentElement.querySelectorAll(".option-container").length > 0) {
+                alert("Please select correct option");
+            } else {
+                submitQuestion.click();
+            }
+        });
+        addQuestion.dataset.eventListenerAttached = "true";
+    }
 
     Array.from(addOption).forEach((e, i) => {
+        // Check if event listener is already attached
+        if (e.dataset.eventListenerAttached == "true") return;
         e.addEventListener("click", () => {
             let addQuestionsOptionsElement;
 
@@ -679,8 +688,8 @@ function mcqQuestions() {
 
             // Insert the new option element after the last option, or if no options, after the add button
             if (addQuestionsOptionsElement.length === 0) {
-                console.log(e);
-                console.log(newElement);
+                // console.log(e);
+                // console.log(newElement);
                 e.previousElementSibling.insertAdjacentHTML('beforeend', newElement);
             } else {
                 addQuestionsOptionsElement[addQuestionsOptionsElement.length - 1].parentElement.insertAdjacentHTML('afterend', newElement);
@@ -704,6 +713,7 @@ function mcqQuestions() {
         // Add functionality to initially available options
         addRemoveOptionEvent();
         toggleCorrect();
+        e.dataset.eventListenerAttached = true;
     });
 
 
@@ -712,6 +722,7 @@ function mcqQuestions() {
     let editQuestion = document.querySelectorAll(".edit-question");
     let editQuestionSubmit = document.querySelectorAll(".edit_question_submit");
     Array.from(editQuestion).forEach((e, i) => {
+        if (e.dataset.eventListenerAttached == "true") return;
         e.addEventListener("click", () => {
             if (editCorrectOption == 0 && e.parentElement.parentElement.querySelectorAll(".option-container").length > 0) {
                 alert("Please select correct option");
@@ -719,30 +730,33 @@ function mcqQuestions() {
                 editQuestionSubmit[i].click();
             }
         });
+        e.dataset.eventListenerAttached = true;
     });
     Array.from(individualEditQuestion).forEach(e => {
+        // console.log(Object.keys(getEventListeners($0)));
+        if(e.dataset.eventListenerAttached == "true") return;
         e.addEventListener("click", (event) => {
             editCorrectOption = 0;
             let questionEditModalId = event.target.dataset.bsTarget.split("#")[1];
             let questionEditModal = document.getElementById(questionEditModalId);
             let textSuccessElements = questionEditModal.querySelectorAll(".text-success");
             let allOptions = questionEditModal.querySelectorAll(".option-container");
-            console.log(allOptions);
+            // console.log(allOptions);
             editCorrectOption = textSuccessElements.length;
-            console.log(editCorrectOption);
-            console.log(event.target.nextElementSibling.innerHTML);
+            // console.log(editCorrectOption);
+            // console.log(event.target.nextElementSibling.innerHTML);
             let questionData = event.target.nextElementSibling.children;
             let editIdElement = document.getElementById("edit_id");
             let editQuestionIdElement = document.getElementById("edit_question_id");
             let editQuestionElement = document.getElementById("edit_question");
             let oldQuestionElement = document.getElementById("old_question");
             let editQuestionTypeElement = document.getElementById("edit-question-type");
-            console.log(questionData);
+            // console.log(questionData);
             editIdElement.value = questionData[0].children[1].innerHTML;
             editQuestionIdElement.value = questionData[4].children[1].innerHTML;
             oldQuestionElement.value = questionData[1].children[1].innerHTML;
             editQuestionElement.value = questionData[1].children[1].innerHTML;
-            console.log(editQuestionTypeElement);
+            // console.log(editQuestionTypeElement);
             Array.from(editQuestionTypeElement.children).forEach(e => {
                 if(questionData[3].children[1].innerHTML == "single" || questionData[3].children[1].innerHTML == "multiple") {
                     if(e.value == "single" || e.value == "multiple") {
@@ -775,6 +789,7 @@ function mcqQuestions() {
             Array.from(allOptions).forEach(options => {
                 options.parentElement.removeChild(options);
             });
+            console.log(e.nextElementSibling.querySelectorAll(".mb-2:has(.options)"));
             Array.from(e.nextElementSibling.querySelectorAll(".mb-2:has(.options)")).forEach(hiddenOptions => {
                 document.querySelector(".edit-question-add-option").click();
                 let optionContainers = questionEditModal.querySelector(".option-container:last-child");
@@ -786,19 +801,24 @@ function mcqQuestions() {
                 optionContainers.querySelector(".form-control").value = hiddenOptions.lastElementChild.innerHTML.trim();
             })
         });
+        e.dataset.eventListenerAttached = true;
     });
     Array.from(individualDeleteQuestion).forEach(e => {
+        if(e.dataset.eventListenerAttached == "true") return;
         e.addEventListener("click", (event) => {
             let questionIdElement = document.getElementById("delete_question_id");
             questionIdElement.value = event.target.parentElement.previousElementSibling.querySelector(".id").nextElementSibling.innerHTML.trim();
         });
+        e.dataset.eventListenerAttached = true;
     });
     let deleteQuestion = document.querySelectorAll(".delete-question");
     let deleteQuestionSubmit = document.querySelectorAll(".delete_question_submit");
     Array.from(deleteQuestion).forEach((e, i) => {
+        if (e.dataset.eventListenerAttached == "true") return;
         e.addEventListener("click", () => {
             deleteQuestionSubmit[i].click();
         });
+        e.dataset.eventListenerAttached = true;
     });
 
     // Function to toggle correct option
@@ -914,6 +934,7 @@ function mcqQuestions() {
     });
 
     Array.from(resetButtonElements).forEach((e) => {
+        if (e.parentElement.parentElement.previousElementSibling.lastElementChild.dataset.eventListenerAttached == "true") return;
         e.parentElement.parentElement.nextElementSibling.lastElementChild.addEventListener("click", () => {
             Array.from(e.parentElement.querySelectorAll("input")).forEach((e) => {
                 if (e.hasAttribute("disabled")) {
@@ -930,6 +951,7 @@ function mcqQuestions() {
             });
             e.click();
         });
+        e.parentElement.parentElement.previousElementSibling.lastElementChild.dataset.eventListenerAttached = "true";
     });
     const _constants = {
         SELECTOR_TH: 'th',
@@ -1124,13 +1146,16 @@ function questionBank() {
         e.lastElementChild.addEventListener("click", function (event) {
             event.stopPropagation();
         });
-        e.addEventListener("click", () => {
+        if (e.dataset.eventListenerAttached) return;
+        e.addEventListener("click", (event) => {
+            event.stopPropagation();
             if (e.lastElementChild.classList.contains("d-none")) {
                 e.lastElementChild.classList.remove("d-none");
             } else {
                 e.lastElementChild.classList.add("d-none");
             }
         });
+        e.dataset.eventListenerAttached = true;
     });
     // Main Group Assignment to Question Ajax
     $(document).ready(function () {
@@ -1207,13 +1232,16 @@ function questionBank() {
         e.lastElementChild.addEventListener("click", function (event) {
             event.stopPropagation();
         });
-        e.addEventListener("click", () => {
+        if (e.dataset.eventListenerAttached) return;
+        e.addEventListener("click", (event) => {
+            event.stopPropagation();
             if (e.lastElementChild.classList.contains("d-none")) {
                 e.lastElementChild.classList.remove("d-none");
             } else {
                 e.lastElementChild.classList.add("d-none");
             }
         });
+        e.dataset.eventListenerAttached = true;
     });
     // Sub Group Assignment to Question Ajax
     $(document).ready(function () {
@@ -1241,7 +1269,7 @@ function questionBank() {
                 success: function (response) {
                     statusBtn.parentElement.remove();
                     document.querySelector(".toggle-sub-groups-assignment[data-question-id='" + questionId + "'][data-sub-group='" + subGroup + "']").checked = false;
-                    toggleMainGroupFun();
+                    toggleSubGroupFun();
                 },
                 error: function (xhr, status, error) {
                     console.error("Error: " + error);
@@ -1290,13 +1318,16 @@ function questionBank() {
         e.lastElementChild.addEventListener("click", function (event) {
             event.stopPropagation();
         });
-        e.addEventListener("click", () => {
+        if (e.dataset.eventListenerAttached) return;
+        e.addEventListener("click", (event) => {
+            event.stopPropagation();
             if (e.lastElementChild.classList.contains("d-none")) {
                 e.lastElementChild.classList.remove("d-none");
             } else {
                 e.lastElementChild.classList.add("d-none");
             }
         });
+        e.dataset.eventListenerAttached = true;
     });
     $('#add_question_topic').select2({
         theme: "bootstrap-5",
@@ -1338,26 +1369,35 @@ function questionBank() {
     addQuestionSubGroupElement.nextElementSibling.firstElementChild.firstElementChild.style.borderColor = "transparent";
     addQuestionSubGroupElement.nextElementSibling.firstElementChild.firstElementChild.style.backgroundColor = "transparent";
     if (addTopicElement) {
+        if (addTopicElement.dataset.eventListenerAttached) return;
         addTopicElement.addEventListener("click", () => {
             submitTopicElement.click();
         });
+        addTopicElement.dataset.eventListenerAttached = true;
     }
     if (addMainGroup) {
+        if (addMainGroup.dataset.eventListenerAttached) return;
         addMainGroup.addEventListener("click", () => {
             submitMainGroup.click();
         });
+        addMainGroup.dataset.eventListenerAttached = true;
     }
     if (addSubGroup) {
+        if (addSubGroup.dataset.eventListenerAttached) return;
         addSubGroup.addEventListener("click", () => {
             submitSubGroup.click();
         });
+        addSubGroup.dataset.eventListenerAttached = true;
     }
     if (createQuizElement) {
+        if (createQuizElement.dataset.eventListenerAttached) return;
         createQuizElement.addEventListener("click", () => {
             submitCreateQuiz.click();
         });
+        createQuizElement.dataset.eventListenerAttached = true;
     }
     if (selectQuizElement) {
+        if (selectQuizElement.dataset.eventListenerAttached) return;
         selectQuizElement.addEventListener("change", () => {
             if (selectQuizElement.value == "") {
                 if (newQuizElement.getAttribute("disabled")) {
@@ -1375,9 +1415,11 @@ function questionBank() {
                 }
             }
         });
+        selectQuizElement.dataset.eventListenerAttached = true;
     }
 
     Array.from(addToQuiz).forEach(e => {
+        if(e.dataset.eventListenerAttached) return;
         e.addEventListener("click", function () {
             let uniqueQuestionID = e.parentElement.parentElement.querySelectorAll(".dt-type-numeric")[1];
             if (e.checked == true) {
@@ -1393,6 +1435,7 @@ function questionBank() {
                 }
             }
         });
+        e.dataset.eventListenerAttached = true;
     });
 }
 

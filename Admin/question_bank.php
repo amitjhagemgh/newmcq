@@ -1075,7 +1075,7 @@
                 $exam_id_sql_result = mysqli_query($conn, $exam_id_sql);
                 $exam_id = mysqli_fetch_assoc($exam_id_sql_result)["id"];
                 $exam_name = mysqli_fetch_assoc($exam_id_sql_result)["exam_name"];
-                $sql = "SELECT * FROM questions WHERE status = 1 ORDER BY id ASC";
+                $sql = "SELECT * FROM questions WHERE status = 1 ORDER BY id ASC LIMIT 1";
                 $result = mysqli_query($conn, $sql);
                 $sr_no = 1;
                 $show_series = 0;
@@ -1117,7 +1117,7 @@
                         $char_sr_no = 65;
                         ?>
                         <tr>
-                            <th scope='row'><?php echo ++$show_series; ?></th>
+                            <th scope='row' class="main-question-table-series"><?php echo ++$show_series; ?></th>
                             <td>
                                 <button type="button" class="btn btn-primary individual-edit-question" data-bs-toggle="modal"
                                 data-bs-target="#questionEditModal">Edit</button>
@@ -1134,7 +1134,7 @@
                                     if(mysqli_num_rows($edit_option_data_sql_result) > 0) {
                                         while($edit_option_data_row = mysqli_fetch_assoc($edit_option_data_sql_result)) {
                                             // $edit_option_data_array[] = $edit_option_data_row;
-                                            echo "<div class='mb-2'><strong class='options' data-is-correct='" . $edit_option_data_row["is_correct"] . "'>Option: </strong><span>" . $edit_option_data_row["answers"] . "</span></div>";
+                                            echo "<div class='mb-2'><strong class='options' data-is-correct='" . $edit_option_data_row["is_correct"] . "'>option: </strong><span>" . $edit_option_data_row["answers"] . "</span></div>";
                                         }
                                     }
                                     // $edit_data_array["options"] = $edit_option_data_array;
